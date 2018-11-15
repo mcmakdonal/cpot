@@ -19,3 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 Route::get('/category', 'CategoryController@list');
+
+Route::get('/main_category', 'CategoryController@main_list');
+
+Route::get('/sub_category/{scat_id}', 'CategoryController@sub_list');
