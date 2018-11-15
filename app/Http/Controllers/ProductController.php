@@ -96,7 +96,26 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = DB::table('tbl_product')->where('pd_id', $id)->get();
+        foreach ($data as $k => $v) {
+            $data[$k]->pd_image = url('/files/' . $v->pd_image);
+            $sub_tag = explode(",", $v->pd_tag);
+            $matchThese = "where ";
+            foreach ($sub_tag as $k_t => $tag) {
+                $matchThese .= " bg_title like '%$tag%' or bg_tag like '%$tag%' ";
+                if(($k_t + 1) != count($sub_tag)){
+                    $matchThese .= " or ";
+                }
+            }
+            $matchThese .= " limit 4";
+            $blog = DB::select("select * from tbl_blog $matchThese");
+            foreach ($blog as $kk => $vv) {
+                $blog[$kk]->bg_image = url('/blog/' . $vv->bg_image);
+            }
+            $data[$k]->blog_relate = $blog;
+        }
+        $obj = ['data_object' => $data];
+        return $obj;
     }
 
     /**
@@ -122,7 +141,7 @@ class ProductController extends Controller
         // dd($request);
         $validator = Validator::make($request->all(), [
             'data' => 'required',
-            'file' => 'nullable'
+            'file' => 'nullable',
         ]);
 
         if ($validator->fails()) {

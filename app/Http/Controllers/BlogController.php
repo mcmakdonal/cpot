@@ -94,7 +94,26 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = DB::table('tbl_blog')->where('bg_id', $id)->get();
+        foreach ($data as $k => $v) {
+            $data[$k]->bg_image = url('/blog/' . $v->bg_image);
+            $sub_tag = explode(",", $v->bg_tag);
+            $matchThese = "where ";
+            foreach ($sub_tag as $k_t => $tag) {
+                $matchThese .= " pd_name like '%$tag%' or pd_tag like '%$tag%' ";
+                if(($k_t + 1) != count($sub_tag)){
+                    $matchThese .= " or ";
+                }
+            }
+            $matchThese .= " limit 4";
+            $blog = DB::select("select * from tbl_product $matchThese");
+            foreach ($blog as $kk => $vv) {
+                $blog[$kk]->pd_image = url('/blog/' . $vv->pd_image);
+            }
+            $data[$k]->product_relate = $blog;
+        }
+        $obj = ['data_object' => $data];
+        return $obj;
     }
 
     /**

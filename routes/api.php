@@ -30,6 +30,7 @@ Route::get('/product', 'ProductController@index');
 Route::post('/product/create', 'ProductController@store');
 Route::post('/product/{id}/update', 'ProductController@update');
 Route::post('/product/{id}/delete', 'ProductController@destroy');
+Route::get('/product/{id}/detail', 'ProductController@show');
 
 //////// Product ///////////////////////////////////
 
@@ -40,5 +41,6 @@ Route::get('/blog', 'BlogController@index');
 Route::post('/blog/create', 'BlogController@store');
 Route::post('/blog/{id}/update', 'BlogController@update');
 Route::post('/blog/{id}/delete', 'BlogController@destroy');
+Route::get('/blog/{id}/detail', 'BlogController@show');
 
 //////// Blog ///////////////////////////////////
