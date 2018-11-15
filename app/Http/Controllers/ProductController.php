@@ -1,0 +1,197 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use DB;
+use Illuminate\Http\Request;
+use Validator;
+
+class ProductController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $data = DB::table('tbl_product')->get();
+        foreach ($data as $k => $v) {
+            $data[$k]->pd_image = url('/files/' . $v->pd_image);
+        }
+        $obj = ['data_object' => $data];
+        return $obj;
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        // dd($request->data);
+        $validator = Validator::make($request->all(), [
+            'data' => 'required',
+            'file' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+
+        $file = "";
+        $data = json_decode($request->data, true);
+        if ($request->hasfile('file')) {
+            $file = $request->file('file');
+            $name = md5($file->getClientOriginalName() . " " . date('Y-m-d H:i:s')) . "." . $file->getClientOriginalExtension();
+            $file->move(public_path() . '/files/', $name);
+            $file = $name;
+        }
+
+        $args = array(
+            'pd_name' => $data['pd_name'],
+            'pd_price' => $data['pd_price'],
+            'pd_sprice' => $data['pd_sprice'],
+            'pd_description' => $data['pd_description'],
+            'pd_rating' => $data['pd_rating'],
+            'pd_tag' => $data['pd_tag'],
+            'pd_image' => $file,
+        );
+
+        $status = DB::table('tbl_product')->insertGetId($args);
+        if ($status) {
+            return [
+                'status' => true,
+                'message' => 'Success',
+                'id' => $status,
+            ];
+        } else {
+            return [
+                'status' => false,
+                'message' => 'Fail',
+            ];
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        // dd($request);
+        $validator = Validator::make($request->all(), [
+            'data' => 'required',
+            'file' => 'nullable'
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+
+        $file = "";
+        $data = json_decode($request->data, true);
+        if ($request->hasfile('file')) {
+            $file = $request->file('file');
+            $name = md5($file->getClientOriginalName() . " " . date('Y-m-d H:i:s')) . "." . $file->getClientOriginalExtension();
+            $file->move(public_path() . '/files/', $name);
+            $file = $name;
+        }
+
+        $args = array(
+            'pd_name' => $data['pd_name'],
+            'pd_price' => $data['pd_price'],
+            'pd_sprice' => $data['pd_sprice'],
+            'pd_description' => $data['pd_description'],
+            'pd_rating' => $data['pd_rating'],
+            'pd_tag' => $data['pd_tag'],
+        );
+        if ($file != "") {
+            $args['pd_image'] = $file;
+        }
+
+        $status = DB::table('tbl_product')->where('pd_id', $id)->update($args);
+        if ($status) {
+            return [
+                'status' => true,
+                'message' => 'Success',
+            ];
+        } else {
+            return [
+                'status' => false,
+                'message' => 'Fail',
+            ];
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        if ($id == "" && $id == null) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+        $status = DB::table('tbl_product')->where('pd_id', '=', $id)->delete();
+        if ($status) {
+            return [
+                'status' => true,
+                'message' => 'Success',
+            ];
+        } else {
+            return [
+                'status' => false,
+                'message' => 'Fail',
+            ];
+        }
+    }
+}
