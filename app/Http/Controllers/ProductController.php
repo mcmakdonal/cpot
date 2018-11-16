@@ -40,6 +40,37 @@ class ProductController extends Controller
         return $obj;
     }
 
+    public function search(Request $request)
+    {
+        $cat_id = ($request->cat_id == "")? "" : $request->cat_id;
+        $search = ($request->search == "")? "" : $request->search;
+        $matchThese = [];
+        if ($cat_id != "") {
+            $matchThese[] = ['tbl_cat_product.cat_id', '=', $cat_id];
+        }
+        if ($search != "") {
+            $matchThese[] = ['tbl_product.pd_name', 'like', "%$search%"];
+            $matchThese[] = ['tbl_product.pd_tag', 'like', "%$search%"];
+        }
+
+        $select = ['tbl_product.pd_id', 'tbl_product.pd_name', 'tbl_product.pd_price', 'tbl_product.pd_sprice', 'tbl_product.pd_description', 'tbl_product.pd_image', 'tbl_product.pd_rating','tbl_product.pd_tag','tbl_product.pd_ref'];
+
+        $data = DB::table('tbl_product')
+            ->select($select)
+            ->join('tbl_cat_product', 'tbl_product.pd_id', '=', 'tbl_cat_product.pd_id')
+            ->where($matchThese)
+            ->orderBy('pd_id', 'desc')
+            ->groupBy($select)
+            ->get();
+            // dd($data);
+        foreach ($data as $k => $v) {
+            $data[$k]->pd_image = url('/files/' . $v->pd_image);
+            $data[$k]->category = DB::table('tbl_cat_product')->select('cat_id')->where('pd_id', $v->pd_id)->get();
+        }
+        $obj = ['data_object' => $data];
+        return $obj;
+    }
+
     /**
      * Show the form for creating a new resource.
      *

@@ -33,6 +33,8 @@ Route::post('/product/{id}/delete', 'ProductController@destroy');
 Route::get('/product/{id}/detail', 'ProductController@show');
 Route::get('/product/category/{id}', 'ProductController@product_cat');
 
+Route::post('/product/search', 'ProductController@search');
+
 //////// Product ///////////////////////////////////
 
 //////// Blog ///////////////////////////////////
