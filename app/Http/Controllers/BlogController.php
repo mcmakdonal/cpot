@@ -15,7 +15,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $data = DB::table('tbl_blog')->get();
+        $data = DB::table('tbl_blog')->orderBy('bg_id', 'desc')->get();
         foreach ($data as $k => $v) {
             $data[$k]->bg_image = url('/blog/' . $v->bg_image);
         }

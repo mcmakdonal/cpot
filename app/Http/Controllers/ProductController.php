@@ -15,7 +15,23 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $data = DB::table('tbl_product')->get();
+        $data = DB::table('tbl_product')->orderBy('pd_id', 'desc')->get();
+        foreach ($data as $k => $v) {
+            $data[$k]->pd_image = url('/files/' . $v->pd_image);
+            $data[$k]->category = DB::table('tbl_cat_product')->select('cat_id')->where('pd_id', $v->pd_id)->get();
+        }
+        $obj = ['data_object' => $data];
+        return $obj;
+    }
+
+    public function product_cat($cat_id)
+    {
+        $data = DB::table('tbl_product')
+            ->select('tbl_product.*')
+            ->join('tbl_cat_product', 'tbl_product.pd_id', '=', 'tbl_cat_product.pd_id')
+            ->where('tbl_cat_product.cat_id', $cat_id)
+            ->orderBy('pd_id', 'desc')
+            ->get();
         foreach ($data as $k => $v) {
             $data[$k]->pd_image = url('/files/' . $v->pd_image);
             $data[$k]->category = DB::table('tbl_cat_product')->select('cat_id')->where('pd_id', $v->pd_id)->get();
@@ -189,7 +205,6 @@ class ProductController extends Controller
         foreach ($cat as $k => $v) {
             $category[]['cat_id'] = $v;
         }
-
 
         $args = array(
             'pd_name' => $data['pd_name'],

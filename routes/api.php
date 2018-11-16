@@ -31,6 +31,7 @@ Route::post('/product/create', 'ProductController@store');
 Route::post('/product/{id}/update', 'ProductController@update');
 Route::post('/product/{id}/delete', 'ProductController@destroy');
 Route::get('/product/{id}/detail', 'ProductController@show');
+Route::get('/product/category/{id}', 'ProductController@product_cat');
 
 //////// Product ///////////////////////////////////
 
