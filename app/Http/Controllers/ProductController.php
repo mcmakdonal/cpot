@@ -13,15 +13,9 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = DB::table('tbl_product')->orderBy('pd_id', 'desc')->get();
-        foreach ($data as $k => $v) {
-            $data[$k]->pd_image = url('/files/' . $v->pd_image);
-            $data[$k]->category = DB::table('tbl_cat_product')->select('cat_id')->where('pd_id', $v->pd_id)->get();
-        }
-        $obj = ['data_object' => $data];
-        return $obj;
+
     }
 
     public function product_cat($cat_id)
@@ -40,7 +34,7 @@ class ProductController extends Controller
         return $obj;
     }
 
-    public function search(Request $request)
+    public function list(Request $request)
     {
         $cat_id = ($request->cat_id == "")? "" : $request->cat_id;
         $search = ($request->search == "")? "" : $request->search;

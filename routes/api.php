@@ -26,14 +26,14 @@ Route::get('/sub_category/{mcat_id}', 'CategoryController@sub_list');
 //////// Product ///////////////////////////////////
 // Route::resource('product', 'ProductController');
 
-Route::get('/product', 'ProductController@index');
+Route::post('/product', 'ProductController@list');
 Route::post('/product/create', 'ProductController@store');
 Route::post('/product/{id}/update', 'ProductController@update');
 Route::post('/product/{id}/delete', 'ProductController@destroy');
 Route::get('/product/{id}/detail', 'ProductController@show');
 Route::get('/product/category/{id}', 'ProductController@product_cat');
 
-Route::post('/product/search', 'ProductController@search');
+// Route::post('/product/search', 'ProductController@search');
 
 //////// Product ///////////////////////////////////
 
