@@ -71,14 +71,17 @@ class BlogController extends Controller
             'bg_image' => $file,
         );
 
+        DB::beginTransaction();
         $status = DB::table('tbl_blog')->insertGetId($args);
         if ($status) {
+            DB::commit();
             return [
                 'status' => true,
                 'message' => 'Success',
                 'id' => $status,
             ];
         } else {
+            DB::rollBack();
             return [
                 'status' => false,
                 'message' => 'Fail',
@@ -168,13 +171,16 @@ class BlogController extends Controller
             $args['bg_image'] = $file;
         }
 
+        DB::beginTransaction();
         $status = DB::table('tbl_blog')->where('bg_id', $id)->update($args);
         if ($status) {
+            DB::commit();
             return [
                 'status' => true,
                 'message' => 'Success',
             ];
         } else {
+            DB::rollBack();
             return [
                 'status' => false,
                 'message' => 'Fail',
@@ -196,13 +202,16 @@ class BlogController extends Controller
                 'message' => 'Please fill all data',
             ];
         }
+        DB::beginTransaction();
         $status = DB::table('tbl_blog')->where('bg_id', '=', $id)->delete();
         if ($status) {
+            DB::commit();
             return [
                 'status' => true,
                 'message' => 'Success',
             ];
         } else {
+            DB::rollBack();
             return [
                 'status' => false,
                 'message' => 'Fail',

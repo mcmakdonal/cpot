@@ -248,13 +248,17 @@ class ProductController extends Controller
                 'message' => 'Please fill all data',
             ];
         }
+        DB::beginTransaction();
         $status = DB::table('tbl_product')->where('pd_id', '=', $id)->delete();
-        if ($status) {
+        $status2 = DB::table('tbl_cat_product')->where('pd_id', '=', $id)->delete();
+        if ($status && $status2) {
+            DB::commit();
             return [
                 'status' => true,
                 'message' => 'Success',
             ];
         } else {
+            DB::rollBack();
             return [
                 'status' => false,
                 'message' => 'Fail',
