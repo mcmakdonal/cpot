@@ -70,6 +70,7 @@ class ProductController extends Controller
             'pd_description' => $data['pd_description'],
             'pd_rating' => $data['pd_rating'],
             'pd_tag' => $data['pd_tag'],
+            'pd_ref' => $data['pd_ref'],
             'pd_image' => $file,
         );
 
@@ -167,6 +168,7 @@ class ProductController extends Controller
             'pd_description' => $data['pd_description'],
             'pd_rating' => $data['pd_rating'],
             'pd_tag' => $data['pd_tag'],
+            'pd_ref' => $data['pd_ref'],
         );
         if ($file != "") {
             $args['pd_image'] = $file;
