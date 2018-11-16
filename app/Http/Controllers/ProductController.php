@@ -18,6 +18,7 @@ class ProductController extends Controller
         $data = DB::table('tbl_product')->get();
         foreach ($data as $k => $v) {
             $data[$k]->pd_image = url('/files/' . $v->pd_image);
+            $data[$k]->category = DB::table('tbl_cat_product')->select('cat_id')->where('pd_id', $v->pd_id)->get();
         }
         $obj = ['data_object' => $data];
         return $obj;
@@ -63,6 +64,12 @@ class ProductController extends Controller
             $file = $name;
         }
 
+        $cat = $data['cat_id'];
+        $category = [];
+        foreach ($cat as $k => $v) {
+            $category[]['cat_id'] = $v;
+        }
+
         $args = array(
             'pd_name' => $data['pd_name'],
             'pd_price' => $data['pd_price'],
@@ -74,13 +81,28 @@ class ProductController extends Controller
             'pd_image' => $file,
         );
 
+        DB::beginTransaction();
         $status = DB::table('tbl_product')->insertGetId($args);
         if ($status) {
-            return [
-                'status' => true,
-                'message' => 'Success',
-                'id' => $status,
-            ];
+            foreach ($category as $k => $v) {
+                $category[$k]['pd_id'] = $status;
+            }
+            $result = DB::table('tbl_cat_product')->insert($category);
+            if ($result) {
+                DB::commit();
+                return [
+                    'status' => true,
+                    'message' => 'Success',
+                    'id' => $status,
+                ];
+            } else {
+                DB::rollBack();
+                return [
+                    'status' => false,
+                    'message' => 'Fail',
+                ];
+            }
+
         } else {
             return [
                 'status' => false,
@@ -104,7 +126,7 @@ class ProductController extends Controller
             $matchThese = "where ";
             foreach ($sub_tag as $k_t => $tag) {
                 $matchThese .= " bg_title like '%$tag%' or bg_tag like '%$tag%' ";
-                if(($k_t + 1) != count($sub_tag)){
+                if (($k_t + 1) != count($sub_tag)) {
                     $matchThese .= " or ";
                 }
             }
@@ -114,6 +136,7 @@ class ProductController extends Controller
                 $blog[$kk]->bg_image = url('/blog/' . $vv->bg_image);
             }
             $data[$k]->blog_relate = $blog;
+            $data[$k]->category = DB::table('tbl_cat_product')->select('cat_id')->where('pd_id', $id)->get();
         }
         $obj = ['data_object' => $data];
         return $obj;
@@ -161,6 +184,13 @@ class ProductController extends Controller
             $file = $name;
         }
 
+        $cat = $data['cat_id'];
+        $category = [];
+        foreach ($cat as $k => $v) {
+            $category[]['cat_id'] = $v;
+        }
+
+
         $args = array(
             'pd_name' => $data['pd_name'],
             'pd_price' => $data['pd_price'],
@@ -174,12 +204,28 @@ class ProductController extends Controller
             $args['pd_image'] = $file;
         }
 
+        DB::beginTransaction();
         $status = DB::table('tbl_product')->where('pd_id', $id)->update($args);
         if ($status) {
-            return [
-                'status' => true,
-                'message' => 'Success',
-            ];
+            foreach ($category as $k => $v) {
+                $category[$k]['pd_id'] = $id;
+            }
+            DB::table('tbl_cat_product')->where('pd_id', $id)->delete();
+            $result = DB::table('tbl_cat_product')->insert($category);
+            if ($result) {
+                DB::commit();
+                return [
+                    'status' => true,
+                    'message' => 'Success',
+                ];
+            } else {
+                DB::rollBack();
+                return [
+                    'status' => false,
+                    'message' => 'Fail',
+                ];
+            }
+
         } else {
             return [
                 'status' => false,
