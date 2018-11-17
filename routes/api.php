@@ -24,26 +24,32 @@ Route::get('/sub_category/{mcat_id}', 'CategoryController@sub_list');
 ///////// Category /////////////////////////////////
 
 //////// Product ///////////////////////////////////
-// Route::resource('product', 'ProductController');
 
 Route::post('/product', 'ProductController@list');
 Route::post('/product/create', 'ProductController@store');
 Route::post('/product/{id}/update', 'ProductController@update');
 Route::post('/product/{id}/delete', 'ProductController@destroy');
 Route::get('/product/{id}/detail', 'ProductController@show');
-Route::get('/product/category/{id}', 'ProductController@product_cat');
+// Route::get('/product/category/{id}', 'ProductController@product_cat');
 
 // Route::post('/product/search', 'ProductController@search');
 
 //////// Product ///////////////////////////////////
 
 //////// Blog ///////////////////////////////////
-// Route::resource('blog', 'BlogController');
 
 Route::get('/blog', 'BlogController@index');
 Route::post('/blog/create', 'BlogController@store');
 Route::post('/blog/{id}/update', 'BlogController@update');
 Route::post('/blog/{id}/delete', 'BlogController@destroy');
 Route::get('/blog/{id}/detail', 'BlogController@show');
+
+//////// Blog ///////////////////////////////////
+
+//////// Blog Category ///////////////////////////////////
+
+Route::get('/blog_main_category', 'BlogCategoryController@blog_main_list');
+Route::get('/blog_sub_category/{bmc_id}', 'BlogCategoryController@blog_sub_list');
+Route::get('/blog_category/{bsc_id}', 'BlogCategoryController@blog_cat_list');
 
 //////// Blog ///////////////////////////////////

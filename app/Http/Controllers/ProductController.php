@@ -18,26 +18,28 @@ class ProductController extends Controller
 
     }
 
-    public function product_cat($cat_id)
-    {
-        $data = DB::table('tbl_product')
-            ->select('tbl_product.*')
-            ->join('tbl_cat_product', 'tbl_product.pd_id', '=', 'tbl_cat_product.pd_id')
-            ->where('tbl_cat_product.cat_id', $cat_id)
-            ->orderBy('pd_id', 'desc')
-            ->get();
-        foreach ($data as $k => $v) {
-            $data[$k]->pd_image = url('/files/' . $v->pd_image);
-            $data[$k]->category = DB::table('tbl_cat_product')->select('cat_id')->where('pd_id', $v->pd_id)->get();
-        }
-        $obj = ['data_object' => $data];
-        return $obj;
-    }
+    // public function product_cat($cat_id)
+    // {
+    //     $data = DB::table('tbl_product')
+    //         ->select('tbl_product.*')
+    //         ->join('tbl_cat_product', 'tbl_product.pd_id', '=', 'tbl_cat_product.pd_id')
+    //         ->where('tbl_cat_product.cat_id', $cat_id)
+    //         ->orderBy('pd_id', 'desc')
+    //         ->get();
+    //     foreach ($data as $k => $v) {
+    //         $data[$k]->pd_image = url('/files/' . $v->pd_image);
+    //         $data[$k]->category = DB::table('tbl_cat_product')
+    //             ->select('cat_id', 'cat_name')
+    //             ->join('tbl_cat_product', 'tbl_category.cat_id', '=', 'tbl_category.cat_id')
+    //             ->where('pd_id', $v->pd_id)->get();
+    //     }
+    //     $obj = ['data_object' => $data];
+    //     return $obj;
+    // }
 
-    public function list(Request $request)
-    {
-        $cat_id = ($request->cat_id == "")? "" : $request->cat_id;
-        $search = ($request->search == "")? "" : $request->search;
+    function list(Request $request) {
+        $cat_id = ($request->cat_id == "") ? "" : $request->cat_id;
+        $search = ($request->search == "") ? "" : $request->search;
         $matchThese = [];
         if ($cat_id != "") {
             $matchThese[] = ['tbl_cat_product.cat_id', '=', $cat_id];
@@ -47,19 +49,21 @@ class ProductController extends Controller
             $matchThese[] = ['tbl_product.pd_tag', 'like', "%$search%"];
         }
 
-        $select = ['tbl_product.pd_id', 'tbl_product.pd_name', 'tbl_product.pd_price', 'tbl_product.pd_sprice', 'tbl_product.pd_description', 'tbl_product.pd_image', 'tbl_product.pd_rating','tbl_product.pd_tag','tbl_product.pd_ref'];
-
+        $select = ['tbl_product.pd_id', 'tbl_product.pd_name', 'tbl_product.pd_price', 'tbl_product.pd_sprice', 'tbl_product.pd_description', 'tbl_product.pd_image', 'tbl_product.pd_rating', 'tbl_product.pd_tag', 'tbl_product.pd_ref'];
         $data = DB::table('tbl_product')
             ->select($select)
             ->join('tbl_cat_product', 'tbl_product.pd_id', '=', 'tbl_cat_product.pd_id')
             ->where($matchThese)
-            ->orderBy('pd_id', 'desc')
+            ->orderBy('tbl_product.pd_id', 'desc')
             ->groupBy($select)
             ->get();
-            // dd($data);
+        // dd($data);
         foreach ($data as $k => $v) {
             $data[$k]->pd_image = url('/files/' . $v->pd_image);
-            $data[$k]->category = DB::table('tbl_cat_product')->select('cat_id')->where('pd_id', $v->pd_id)->get();
+            $data[$k]->category = DB::table('tbl_category')
+                ->select('tbl_category.cat_id', 'tbl_category.cat_name')
+                ->join('tbl_cat_product', 'tbl_cat_product.cat_id', '=', 'tbl_category.cat_id')
+                ->where('tbl_cat_product.pd_id', $v->pd_id)->get();
         }
         $obj = ['data_object' => $data];
         return $obj;
@@ -160,7 +164,13 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $data = DB::table('tbl_product')->where('pd_id', $id)->get();
+        $select = ['tbl_product.pd_id', 'tbl_product.pd_name', 'tbl_product.pd_price', 'tbl_product.pd_sprice', 'tbl_product.pd_description', 'tbl_product.pd_image', 'tbl_product.pd_rating', 'tbl_product.pd_tag', 'tbl_product.pd_ref'];
+        $data = DB::table('tbl_product')
+            ->select($select)
+            ->join('tbl_cat_product', 'tbl_product.pd_id', '=', 'tbl_cat_product.pd_id')
+            ->where('tbl_product.pd_id', $id)
+            ->groupBy($select)
+            ->get();
         foreach ($data as $k => $v) {
             $data[$k]->pd_image = url('/files/' . $v->pd_image);
             $sub_tag = explode(",", $v->pd_tag);
@@ -172,12 +182,15 @@ class ProductController extends Controller
                 }
             }
             $matchThese .= " limit 4";
-            $blog = DB::select("select * from tbl_blog $matchThese");
+            $blog = DB::select("select bg_id,bg_title,bg_image from tbl_blog $matchThese");
             foreach ($blog as $kk => $vv) {
                 $blog[$kk]->bg_image = url('/blog/' . $vv->bg_image);
             }
             $data[$k]->blog_relate = $blog;
-            $data[$k]->category = DB::table('tbl_cat_product')->select('cat_id')->where('pd_id', $id)->get();
+            $data[$k]->category = DB::table('tbl_category')
+                ->select('tbl_category.cat_id', 'tbl_category.cat_name')
+                ->join('tbl_cat_product', 'tbl_cat_product.cat_id', '=', 'tbl_category.cat_id')
+                ->where('tbl_cat_product.pd_id', $v->pd_id)->get();
         }
         $obj = ['data_object' => $data];
         return $obj;

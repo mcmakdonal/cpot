@@ -15,7 +15,15 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $data = DB::table('tbl_blog')->orderBy('bg_id', 'desc')->get();
+        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'tbl_blog.bc_id', 'bmc_name', 'bsc_name', 'bc_name'];
+        $data = DB::table('tbl_blog')
+            ->select($select)
+            ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
+            ->join('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
+            ->leftJoin('tbl_blog_category', 'tbl_blog_category.bc_id', '=', 'tbl_blog.bc_id')
+            ->groupBy($select)
+            ->orderBy('bg_id', 'desc')
+            ->get();
         foreach ($data as $k => $v) {
             $data[$k]->bg_image = url('/blog/' . $v->bg_image);
         }
@@ -68,6 +76,9 @@ class BlogController extends Controller
             'bg_description' => $data['bg_description'],
             'bg_tag' => $data['bg_tag'],
             'bg_embed' => $data['bg_embed'],
+            'bmc_id' => $data['bmc_id'],
+            'bsc_id' => $data['bsc_id'],
+            'bc_id' => $data['bc_id'],
             'bg_image' => $file,
         );
 
@@ -97,19 +108,26 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        $data = DB::table('tbl_blog')->where('bg_id', $id)->get();
+        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'tbl_blog.bc_id', 'bmc_name', 'bsc_name', 'bc_name'];
+        $data = DB::table('tbl_blog')
+            ->select($select)
+            ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
+            ->join('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
+            ->leftJoin('tbl_blog_category', 'tbl_blog_category.bc_id', '=', 'tbl_blog.bc_id')
+            ->groupBy($select)
+            ->where('bg_id', $id)->get();
         foreach ($data as $k => $v) {
             $data[$k]->bg_image = url('/blog/' . $v->bg_image);
             $sub_tag = explode(",", $v->bg_tag);
             $matchThese = "where ";
             foreach ($sub_tag as $k_t => $tag) {
                 $matchThese .= " pd_name like '%$tag%' or pd_tag like '%$tag%' ";
-                if(($k_t + 1) != count($sub_tag)){
+                if (($k_t + 1) != count($sub_tag)) {
                     $matchThese .= " or ";
                 }
             }
             $matchThese .= " limit 4";
-            $blog = DB::select("select * from tbl_product $matchThese");
+            $blog = DB::select("select pd_id,pd_name,pd_price,pd_sprice,pd_description,pd_image from tbl_product $matchThese");
             foreach ($blog as $kk => $vv) {
                 $blog[$kk]->pd_image = url('/blog/' . $vv->pd_image);
             }
@@ -142,7 +160,7 @@ class BlogController extends Controller
         // dd($request);
         $validator = Validator::make($request->all(), [
             'data' => 'required',
-            'file' => 'nullable'
+            'file' => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -166,6 +184,9 @@ class BlogController extends Controller
             'bg_description' => $data['bg_description'],
             'bg_tag' => $data['bg_tag'],
             'bg_embed' => $data['bg_embed'],
+            'bmc_id' => $data['bmc_id'],
+            'bsc_id' => $data['bsc_id'],
+            'bc_id' => $data['bc_id'],
         );
         if ($file != "") {
             $args['bg_image'] = $file;
