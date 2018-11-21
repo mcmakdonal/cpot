@@ -319,7 +319,16 @@ class ProductController extends Controller
         }
         DB::beginTransaction();
         $status = DB::table('tbl_product')->where('pd_id', '=', $id)->delete();
-        $status2 = DB::table('tbl_cat_product')->where('pd_id', '=', $id)->delete();
+        $count_join = DB::table('tbl_cat_product')
+            ->select('pd_id')
+            ->where('pd_id', $id)
+            ->count();
+        if ($count_join > 0) {
+            $status2 = DB::table('tbl_cat_product')->where('pd_id', '=', $id)->delete();
+        } else {
+            $status2 = true;
+        }
+
         if ($status && $status2) {
             DB::commit();
             return [
