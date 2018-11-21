@@ -320,7 +320,7 @@ class ProductController extends Controller
         DB::beginTransaction();
         $status = DB::table('tbl_product')->where('pd_id', '=', $id)->delete();
         $status2 = DB::table('tbl_cat_product')->where('pd_id', '=', $id)->delete();
-        if ($status) {
+        if ($status && $status2) {
             DB::commit();
             return [
                 'status' => true,
