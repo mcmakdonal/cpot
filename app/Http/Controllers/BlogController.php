@@ -108,7 +108,7 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'tbl_blog.bc_id', 'bmc_name', 'bsc_name', 'bc_name'];
+        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'tbl_blog.bc_id', 'tbl_blog.bg_tag', 'bmc_name', 'bsc_name', 'bc_name'];
         $data = DB::table('tbl_blog')
             ->select($select)
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
@@ -127,11 +127,27 @@ class BlogController extends Controller
                 }
             }
             $matchThese .= " limit 4";
-            $blog = DB::select("select pd_id,pd_name,pd_price,pd_sprice,pd_description,pd_image from tbl_product $matchThese");
-            foreach ($blog as $kk => $vv) {
-                $blog[$kk]->pd_image = url('/blog/' . $vv->pd_image);
+            $product = DB::select("select pd_id,pd_name,pd_price,pd_sprice,pd_description,pd_image,pd_tag from tbl_product $matchThese");
+            foreach ($product as $kk => $vv) {
+                $product[$kk]->pd_image = url('/files/' . $vv->pd_image);
             }
-            $data[$k]->product_relate = $blog;
+            $data[$k]->product_relate = $product;
+        }
+        foreach ($data as $k => $v) {
+            $sub_tag = explode(",", $v->bg_tag);
+            $matchThese = "where ";
+            foreach ($sub_tag as $k_t => $tag) {
+                $matchThese .= " bg_title like '%$tag%' or bg_tag like '%$tag%' ";
+                if (($k_t + 1) != count($sub_tag)) {
+                    $matchThese .= " or ";
+                }
+            }
+            $matchThese .= " limit 4";
+            $blog = DB::select("select bg_id,bg_title,bg_image,bg_tag from tbl_blog $matchThese");
+            foreach ($blog as $kk => $vv) {
+                $blog[$kk]->bg_image = url('/blog/' . $vv->bg_image);
+            }
+            $data[$k]->blog_relate = $blog;
         }
         $obj = ['data_object' => $data];
         return $obj;

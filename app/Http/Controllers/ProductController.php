@@ -182,7 +182,7 @@ class ProductController extends Controller
                 }
             }
             $matchThese .= " limit 4";
-            $blog = DB::select("select bg_id,bg_title,bg_image from tbl_blog $matchThese");
+            $blog = DB::select("select bg_id,bg_title,bg_image,bg_tag from tbl_blog $matchThese");
             foreach ($blog as $kk => $vv) {
                 $blog[$kk]->bg_image = url('/blog/' . $vv->bg_image);
             }
@@ -191,6 +191,22 @@ class ProductController extends Controller
                 ->select('tbl_category.cat_id', 'tbl_category.cat_name')
                 ->join('tbl_cat_product', 'tbl_cat_product.cat_id', '=', 'tbl_category.cat_id')
                 ->where('tbl_cat_product.pd_id', $v->pd_id)->get();
+        }
+        foreach ($data as $k => $v) {
+            $sub_tag = explode(",", $v->pd_tag);
+            $matchThese = "where ";
+            foreach ($sub_tag as $k_t => $tag) {
+                $matchThese .= " pd_name like '%$tag%' or pd_tag like '%$tag%' ";
+                if (($k_t + 1) != count($sub_tag)) {
+                    $matchThese .= " or ";
+                }
+            }
+            $matchThese .= " limit 4";
+            $product = DB::select("select pd_id,pd_name,pd_price,pd_sprice,pd_description,pd_image,pd_tag from tbl_product $matchThese");
+            foreach ($product as $kk => $vv) {
+                $product[$kk]->pd_image = url('/files/' . $vv->pd_image);
+            }
+            $data[$k]->product_relate = $product;
         }
         $obj = ['data_object' => $data];
         return $obj;
