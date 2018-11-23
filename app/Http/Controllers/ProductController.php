@@ -109,7 +109,7 @@ class ProductController extends Controller
             $file = $name;
         }
 
-        $cat = $data['cat_id'];
+        $cat = explode(",",$data['cat_id']);
         $category = [];
         foreach ($cat as $k => $v) {
             $category[]['cat_id'] = $v;
@@ -254,7 +254,7 @@ class ProductController extends Controller
             $file = $name;
         }
 
-        $cat = $data['cat_id'];
+        $cat = explode(",",$data['cat_id']);
         $category = [];
         foreach ($cat as $k => $v) {
             $category[]['cat_id'] = $v;
