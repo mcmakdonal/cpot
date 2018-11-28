@@ -15,7 +15,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $data = Product::list();
+        $data = Product::list($request->cat_id,$request->search);
         $obj = ['data_object' => $data];
         return $obj;
     }

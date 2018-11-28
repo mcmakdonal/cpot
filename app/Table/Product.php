@@ -7,10 +7,8 @@ use Illuminate\Support\ServiceProvider;
 
 class Product extends ServiceProvider
 {
-    public static function list()
+    public static function list($cat_id = "",$search = "")
     {
-        $cat_id = ($request->cat_id == "") ? "" : $request->cat_id;
-        $search = ($request->search == "") ? "" : $request->search;
         $matchThese = [];
         if ($cat_id != "") {
             $matchThese[] = ['tbl_cat_product.cat_id', '=', $cat_id];
