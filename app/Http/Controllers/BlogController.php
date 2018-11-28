@@ -15,7 +15,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'tbl_blog.bc_id', 'bmc_name', 'bsc_name', 'bc_name'];
+        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bg_ref', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'tbl_blog.bc_id', 'bmc_name', 'bsc_name', 'bc_name'];
         $data = DB::table('tbl_blog')
             ->select($select)
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
@@ -76,6 +76,7 @@ class BlogController extends Controller
             'bg_description' => $data['bg_description'],
             'bg_tag' => $data['bg_tag'],
             'bg_embed' => $data['bg_embed'],
+            'bg_ref' => (array_key_exists("bg_ref", $data)) ? $data['bg_ref'] : "",
             'bmc_id' => $data['bmc_id'],
             'bsc_id' => $data['bsc_id'],
             'bc_id' => $data['bc_id'],
@@ -108,7 +109,7 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'tbl_blog.bc_id', 'tbl_blog.bg_tag', 'bmc_name', 'bsc_name', 'bc_name'];
+        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bg_ref', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'tbl_blog.bc_id', 'tbl_blog.bg_tag', 'bmc_name', 'bsc_name', 'bc_name'];
         $data = DB::table('tbl_blog')
             ->select($select)
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
@@ -200,6 +201,7 @@ class BlogController extends Controller
             'bg_description' => $data['bg_description'],
             'bg_tag' => $data['bg_tag'],
             'bg_embed' => $data['bg_embed'],
+            'bg_ref' => (array_key_exists("bg_ref", $data)) ? $data['bg_ref'] : "",
             'bmc_id' => $data['bmc_id'],
             'bsc_id' => $data['bsc_id'],
             'bc_id' => $data['bc_id'],

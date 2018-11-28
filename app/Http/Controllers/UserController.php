@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Table\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Validator;
-use DB;
-use App\Table\User;
 
 class UserController extends Controller
 {
@@ -85,7 +84,7 @@ class UserController extends Controller
             'u_community' => $request->u_community,
             'u_lat' => $request->u_lat,
             'u_long' => $request->u_long,
-            'u_desc' => $request->u_desc
+            'u_desc' => $request->u_desc,
         );
 
         return User::insert($args);
@@ -99,7 +98,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = User::get_user("",$id);
+        $obj = ['data_object' => $user];
+        return $obj;
     }
 
     /**
@@ -122,7 +123,50 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // dd($request->data);
+        $validator = Validator::make($request->all(), [
+            'u_owner' => 'nullable',
+            'u_password' => 'nullable',
+            'u_phone' => 'nullable',
+            'u_store' => 'nullable',
+            'u_addr' => 'nullable',
+            'u_province' => 'nullable',
+            'u_district' => 'nullable',
+            'u_subdistrcit' => 'nullable',
+            'u_zipcode' => 'nullable',
+            'u_community' => 'nullable',
+            'u_lat' => 'nullable',
+            'u_long' => 'nullable',
+            'u_desc' => 'nullable',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+
+        $args = array(
+            'u_owner' => $request->u_owner,
+            'u_phone' => $request->u_phone,
+            'u_store' => $request->u_store,
+            'u_addr' => $request->u_addr,
+            'u_province' => $request->u_province,
+            'u_district' => $request->u_district,
+            'u_subdistrcit' => $request->u_subdistrcit,
+            'u_zipcode' => $request->u_zipcode,
+            'u_community' => $request->u_community,
+            'u_lat' => $request->u_lat,
+            'u_long' => $request->u_long,
+            'u_desc' => $request->u_desc,
+        );
+
+        if ($request->u_password != "") {
+            $user['u_password'] = Hash::make($request->u_password);
+        }
+
+        return User::update($args, $id);
     }
 
     /**
@@ -136,10 +180,11 @@ class UserController extends Controller
         //
     }
 
-    public function check_email(Request $request){
+    public function check_email(Request $request)
+    {
         $email = $request->email;
         $obj = [
-            'data_object' => User::check_email_exists($email)
+            'data_object' => User::check_email_exists($email),
         ];
         return $obj;
     }
@@ -171,7 +216,7 @@ class UserController extends Controller
             return [
                 'status' => true,
                 'message' => 'Success',
-                'data_object' => $user
+                'data_object' => $user,
             ];
         } else {
             return [

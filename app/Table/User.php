@@ -26,9 +26,14 @@ class User extends ServiceProvider
         return (count($data) > 0) ? $exists : $notexists;
     }
 
-    public static function get_user($email)
+    public static function get_user($email, $id = "")
     {
-        $matchThese[] = ['tbl_user.u_email', '=', $email];
+        if ($id == "") {
+            $matchThese[] = ['tbl_user.u_email', '=', $email];
+        } else {
+            $matchThese[] = ['tbl_user.u_id', '=', $id];
+        }
+
         $data = DB::table('tbl_user')
             ->select('*')
             ->where($matchThese)
@@ -50,6 +55,24 @@ class User extends ServiceProvider
             ];
         } else {
             DB::rollBack();
+            return [
+                'status' => false,
+                'message' => 'Fail',
+            ];
+        }
+    }
+
+    public static function update($args, $id)
+    {
+        DB::beginTransaction();
+        $status = DB::table('tbl_user')->where('u_id', $id)->update($args);
+        if ($status) {
+            DB::commit();
+            return [
+                'status' => true,
+                'message' => 'Success',
+            ];
+        } else {
             return [
                 'status' => false,
                 'message' => 'Fail',
