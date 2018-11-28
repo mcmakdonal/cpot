@@ -53,3 +53,13 @@ Route::get('/blog_sub_category/{bmc_id}', 'BlogCategoryController@blog_sub_list'
 Route::get('/blog_category/{bsc_id}', 'BlogCategoryController@blog_cat_list');
 
 //////// Blog ///////////////////////////////////
+
+//////// User /////////////////////////////////
+
+Route::post('/user/check_email', 'UserController@check_email');
+Route::post('/user/create', 'UserController@store');
+Route::post('/user/check_login', 'UserController@check_login');
+// Route::post('/blog/{id}/delete', 'BlogController@destroy');
+// Route::get('/blog/{id}/detail', 'BlogController@show');
+
+//////////////////////////////////////////////
