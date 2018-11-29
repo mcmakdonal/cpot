@@ -15,6 +15,11 @@ Route::get('/', function () {
     return view('login');
 });
 
+// test
+Route::get('/ajax', function () {
+    return view('ajax');
+});
+
 Route::get('/backend-login', function () {
     return view('login');
 });
