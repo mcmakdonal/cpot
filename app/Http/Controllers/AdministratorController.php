@@ -9,6 +9,12 @@ use Validator;
 
 class AdministratorController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('islogin', ['except' => [
+            'check_login'
+        ]]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -180,7 +186,9 @@ class AdministratorController extends Controller
         // dd($user);
 
         if (Hash::check($request->password, $user[0]->ad_password)) {
-            return redirect("/administrator")->with('status', 'บันทึกสำเร็จ');
+            return redirect("/administrator")
+            ->cookie('ad_id', $user[0]->ad_id, 14660)
+            ->cookie('ad_firstname', $user[0]->ad_firstname . " " . $user[0]->ad_lastname, 14660)->with('status', 'บันทึกสำเร็จ');
         } else {
             return redirect()->back()->withErrors(array('error' => 'Username or Password Incorrect'));
         }

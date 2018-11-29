@@ -12,13 +12,17 @@
 */
 
 Route::get('/', function () {
-    return view('master.master');
+    return view('login');
 });
 
 Route::get('/backend-login', function () {
     return view('login');
 });
 Route::post('/backend-login','AdministratorController@check_login');
+Route::get('/backend-logout', function () {
+    return redirect('/')->withCookie(Cookie::forget('ad_id'))
+    ->withCookie(Cookie::forget('ad_firstname'));
+});
 
 Route::resource('administrator','AdministratorController');
 

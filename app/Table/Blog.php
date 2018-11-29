@@ -8,7 +8,7 @@ use Illuminate\Support\ServiceProvider;
 class Blog extends ServiceProvider
 {
 
-    function list() {
+    public static function list() {
         $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bg_ref', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'tbl_blog.bc_id', 'bmc_name', 'bsc_name', 'bc_name'];
         $data = DB::table('tbl_blog')
             ->select($select)

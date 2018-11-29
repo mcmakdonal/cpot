@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class ProductMapController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('islogin');
+    }
+
     public function index()
     {
         $data = Product::list();
@@ -27,7 +32,6 @@ class ProductMapController extends Controller
 
     public function store(Request $request, $id)
     {
-        // dd($request->youtube);
         $args = [];
         foreach ($request->youtube as $k => $v) {
             $json = json_decode($v);

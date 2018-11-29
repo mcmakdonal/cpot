@@ -63,7 +63,7 @@
                                 </ul>
                             </li> --}}
                             <li class="{{ (strpos(url()->current(),'administrator') ) ? 'active' : '' }}"><a href="/administrator"><i class="ti-map-alt"></i> <span>Administrator</span></a></li>
-                            <li class="{{ (strpos(url()->current(),'product-match') ) ? 'active' : '' }}"><a href="/product-match"><i class="ti-map-alt"></i> <span>Product & Youtube</span></a></li>
+                            <li class="{{ (strpos(url()->current(),'product-match') ) ? 'active' : '' }}"><a href="/product-match"><i class="ti-map-alt"></i> <span>Product Match</span></a></li>
                         </ul>
                     </nav>
                 </div>
