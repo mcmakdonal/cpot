@@ -77,7 +77,7 @@ class ProductController extends Controller
             'pd_image' => $file,
         );
 
-        return Product::insert($args);
+        return Product::insert($args,$category);
     }
 
     /**
@@ -154,7 +154,7 @@ class ProductController extends Controller
             $args['pd_image'] = $file;
         }
 
-        return Product::update($args, $id);
+        return Product::update($args,$category, $id);
     }
 
     /**

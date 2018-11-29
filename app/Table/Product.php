@@ -42,7 +42,7 @@ class Product extends ServiceProvider
         return $data;
     }
 
-    public static function insert($args)
+    public static function insert($args,$category)
     {
         DB::beginTransaction();
         $status = DB::table('tbl_product')->insertGetId($args);
@@ -128,7 +128,7 @@ class Product extends ServiceProvider
         return $data;
     }
 
-    public static function update($args, $id)
+    public static function update($args,$category, $id)
     {
         DB::beginTransaction();
         $status = DB::table('tbl_product')->where('pd_id', $id)->update($args);
