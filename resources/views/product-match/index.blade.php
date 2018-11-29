@@ -8,7 +8,7 @@
                 <div class="card-body">
                     <h4 class="header-title">Product Matching</h4>
                     <div class="data-tables">
-                        <table id="dataTable" class="text-center">
+                        <table id="dataTable" class="">
                             <thead class="bg-light text-capitalize">
                                 <tr>
                                     <th>#</th>

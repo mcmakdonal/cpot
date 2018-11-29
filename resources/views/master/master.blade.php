@@ -15,8 +15,7 @@
     <link rel="stylesheet" href="/assets/css/metisMenu.css">
     <link rel="stylesheet" href="/assets/css/owl.carousel.min.css">
     <link rel="stylesheet" href="/assets/css/slicknav.min.css">
-    <!-- amcharts css -->
-    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <!-- srtdash css -->
     <!-- Start datatable css -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css">
@@ -46,7 +45,7 @@
         <div class="sidebar-menu">
             <div class="sidebar-header">
                 <div class="logo">
-                    <a href="index.html"><img src="/assets/images/icon/logo.png" alt="logo"></a>
+                    {{-- <a href="/"><img src="/assets/images/icon/logo.png" alt="logo"></a> --}}
                 </div>
             </div>
             <div class="main-menu">
@@ -62,8 +61,8 @@
                                     <li><a href="index3.html">SEO dashboard</a></li>
                                 </ul>
                             </li> --}}
-                            <li class="{{ (strpos(url()->current(),'administrator') ) ? 'active' : '' }}"><a href="/administrator"><i class="ti-map-alt"></i> <span>Administrator</span></a></li>
-                            <li class="{{ (strpos(url()->current(),'product-match') ) ? 'active' : '' }}"><a href="/product-match"><i class="ti-map-alt"></i> <span>Product Match</span></a></li>
+                            <li class="{{ (strpos(url()->current(),'administrator') ) ? 'active' : '' }}"><a href="/administrator"><i class="ti-user"></i> <span>Administrator</span></a></li>
+                            <li class="{{ (strpos(url()->current(),'product-match') ) ? 'active' : '' }}"><a href="/product-match"><i class="ti-layers-alt"></i> <span>Product Match</span></a></li>
                         </ul>
                     </nav>
                 </div>
@@ -171,7 +170,7 @@
     <script src="/assets/js/metisMenu.min.js"></script>
     <script src="/assets/js/jquery.slimscroll.min.js"></script>
     <script src="/assets/js/jquery.slicknav.min.js"></script>
-
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <!-- Start datatable js -->
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>

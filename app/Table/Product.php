@@ -53,9 +53,9 @@ class Product extends ServiceProvider
         foreach ($data as $k => $v) {
             $data[$k]->pd_image = url('/files/' . $v->pd_image);
 
-            // $data[$k]->youtube = DB::table('tbl_product_youtube')
-            //     ->select('my_title', 'my_href', 'my_image')
-            //     ->where([['record_status', '=', 'A'], ['pd_id', '=', $v->pd_id]])->get()->toArray();
+            $data[$k]->youtube = DB::table('tbl_product_youtube')
+                ->select('my_title', 'my_href', 'my_image')
+                ->where([['record_status', '=', 'A'], ['pd_id', '=', $v->pd_id]])->get()->toArray();
         }
 
         return $data;

@@ -4,34 +4,37 @@ $(document).ready(function () {
 });
 
 function destroy(src, id) {
-    $.ajax({
-        headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
-                "content"
-            )
-        },
-        url: src + "/" + id,
-        method: "delete",
-        beforeSend() {},
-        success: function (result) {
-            var obj = result;
-            if (obj.status) {
-                window.location.reload();
-            } else {
-                alert("error");
+    var r = confirm("Delete this content !");
+    if (r == true) {
+        $.ajax({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                    "content"
+                )
+            },
+            url: src + "/" + id,
+            method: "delete",
+            beforeSend() {},
+            success: function (result) {
+                var obj = result;
+                if (obj.status) {
+                    window.location.reload();
+                } else {
+                    swal("Warning !", "Delete not success", "error");
+                }
+            },
+            error(xhr, status, error) {
+                swal("Danger !", "Fail !", error + " Status : " + status, "error");
             }
-        },
-        error(xhr, status, error) {
-            alert("Fail !", error + " Status : " + status, "error");
-        }
-    });
+        });
+    }
 }
 
 function select_youtube(e) {
     var data = JSON.parse($(e).attr('data'));
     var cyoutube = $(".cyoutube").length;
     if (parseInt(cyoutube) == 4 || parseInt(cyoutube) > 3) {
-        alert("Maximium");
+        swal("Info !", "Maximum Vdo Selected", "warning");
         return;
     }
     var id = uuidv4();
@@ -46,7 +49,7 @@ function select_youtube(e) {
     html += '</div>';
 
     $("#html-block").append(html);
-    $(e).attr('disabled','disabled');
+    $(e).attr('disabled', 'disabled');
 }
 
 function uuidv4() {

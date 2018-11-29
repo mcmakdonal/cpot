@@ -12,18 +12,20 @@
 */
 
 Route::get('/', function () {
-    return view('login');
+    if (!(\Cookie::get('ad_id') !== null)) {
+        return view('login');
+    } else{
+        return redirect('/administrator');
+    }
 });
-
-// test
-Route::get('/ajax', function () {
-    return view('ajax');
-});
-//
 
 // login module //
 Route::get('/backend-login', function () {
-    return view('login');
+    if (!(\Cookie::get('ad_id') !== null)) {
+        return view('login');
+    } else{
+        return redirect('/administrator');
+    }
 });
 Route::post('/backend-login','AdministratorController@check_login');
 Route::get('/backend-logout', function () {
@@ -41,3 +43,9 @@ Route::get('/product-match','ProductMapController@index');
 Route::get('/product-match/{id}/matching','ProductMapController@matching');
 Route::post('/product-match/{id}','ProductMapController@store');
 // product match module //
+
+// test
+Route::get('/ajax', function () {
+    return view('ajax');
+});
+//
