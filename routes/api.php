@@ -17,11 +17,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-///////// Category /////////////////////////////////
+///////// Product Category /////////////////////////////////
 Route::get('/category', 'CategoryController@list');
 Route::get('/main_category', 'CategoryController@main_list');
 Route::get('/sub_category/{mcat_id}', 'CategoryController@sub_list');
-///////// Category /////////////////////////////////
+///////// Product Category /////////////////////////////////
 
 //////// Product ///////////////////////////////////
 
@@ -38,7 +38,7 @@ Route::get('/product/{id}/detail', 'ProductController@show');
 
 //////// Blog ///////////////////////////////////
 
-Route::get('/blog', 'BlogController@index');
+Route::post('/blog', 'BlogController@index');
 Route::post('/blog/create', 'BlogController@store');
 Route::post('/blog/{id}/update', 'BlogController@update');
 Route::post('/blog/{id}/delete', 'BlogController@destroy');
@@ -50,7 +50,6 @@ Route::get('/blog/{id}/detail', 'BlogController@show');
 
 Route::get('/blog_main_category', 'BlogCategoryController@blog_main_list');
 Route::get('/blog_sub_category/{bmc_id}', 'BlogCategoryController@blog_sub_list');
-Route::get('/blog_category/{bsc_id}', 'BlogCategoryController@blog_cat_list');
 
 //////// Blog ///////////////////////////////////
 

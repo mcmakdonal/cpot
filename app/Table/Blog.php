@@ -8,13 +8,27 @@ use Illuminate\Support\ServiceProvider;
 class Blog extends ServiceProvider
 {
 
-    public static function list() {
-        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bg_ref', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'tbl_blog.bc_id', 'bmc_name', 'bsc_name', 'bc_name'];
+    public static function lists($search = "", $bmc_id = "", $bsc_id = "")
+    {
+        $matchThese = [];
+        $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
+        if ($bmc_id != "") {
+            $matchThese[] = ['tbl_blog.bmc_id', '=', $bmc_id];
+        }
+        if ($bsc_id != "") {
+            $matchThese[] = ['tbl_blog.bsc_id', '=', $bsc_id];
+        }
+        if ($search != "") {
+            $matchThese[] = ['tbl_blog.bg_title', 'like', "%$search%"];
+            $matchThese[] = ['tbl_blog.bg_tag', 'like', "%$search%"];
+        }
+
+        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bg_ref', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'bmc_name', 'bsc_name'];
         $data = DB::table('tbl_blog')
             ->select($select)
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
-            ->join('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
-            ->leftJoin('tbl_blog_category', 'tbl_blog_category.bc_id', '=', 'tbl_blog.bc_id')
+            ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
+            ->where($matchThese)
             ->groupBy($select)
             ->orderBy('bg_id', 'desc')
             ->get();
@@ -65,20 +79,23 @@ class Blog extends ServiceProvider
 
     public static function detail($id)
     {
-        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bg_ref', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'tbl_blog.bc_id', 'tbl_blog.bg_tag', 'bmc_name', 'bsc_name', 'bc_name'];
+        $matchThese = [];
+        $matchThese[] = ['tbl_blog.bg_id', '=', $id];
+        $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
+
+        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bg_ref', 'tbl_blog.bg_tag', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'bmc_name', 'bsc_name'];
         $data = DB::table('tbl_blog')
             ->select($select)
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
-            ->join('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
-            ->leftJoin('tbl_blog_category', 'tbl_blog_category.bc_id', '=', 'tbl_blog.bc_id')
+            ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
             ->groupBy($select)
-            ->where('bg_id', $id)->get();
+            ->where($matchThese)->get();
         foreach ($data as $k => $v) {
             $data[$k]->bg_image = url('/blog/' . $v->bg_image);
             $sub_tag = explode(",", $v->bg_tag);
-            $matchThese = "where ";
+            $matchThese = "where (record_status = 'A') AND ";
             foreach ($sub_tag as $k_t => $tag) {
-                $matchThese .= " pd_name like '%$tag%' or pd_tag like '%$tag%' ";
+                $matchThese .= " (pd_name like '%$tag%' or pd_tag like '%$tag%') ";
                 if (($k_t + 1) != count($sub_tag)) {
                     $matchThese .= " or ";
                 }
@@ -89,12 +106,10 @@ class Blog extends ServiceProvider
                 $product[$kk]->pd_image = url('/files/' . $vv->pd_image);
             }
             $data[$k]->product_relate = $product;
-        }
-        foreach ($data as $k => $v) {
-            $sub_tag = explode(",", $v->bg_tag);
-            $matchThese = "where ";
+
+            $matchThese = "where (record_status = 'A') AND ";
             foreach ($sub_tag as $k_t => $tag) {
-                $matchThese .= " bg_title like '%$tag%' or bg_tag like '%$tag%' ";
+                $matchThese .= " (bg_title like '%$tag%' or bg_tag like '%$tag%') ";
                 if (($k_t + 1) != count($sub_tag)) {
                     $matchThese .= " or ";
                 }
@@ -106,12 +121,19 @@ class Blog extends ServiceProvider
             }
             $data[$k]->blog_relate = $blog;
         }
+
+        return $data;
     }
 
     public function delete($id)
     {
         DB::beginTransaction();
-        $status = DB::table('tbl_blog')->where('bg_id', '=', $id)->delete();
+        $args = [
+            'update_date' => date('Y-m-d H:i:s'),
+            'update_by' => 1,
+            'record_status' => 'I',
+        ];
+        $status = DB::table('tbl_blog')->where('bg_id', $id)->update($args);
         if ($status) {
             DB::commit();
             return [

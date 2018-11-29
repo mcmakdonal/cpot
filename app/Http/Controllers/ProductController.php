@@ -15,7 +15,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $data = Product::list($request->cat_id,$request->search);
+        $data = Product::lists($request->search,$request->mcat_id,$request->scat_id);
         $obj = ['data_object' => $data];
         return $obj;
     }
@@ -60,12 +60,6 @@ class ProductController extends Controller
             $file = $name;
         }
 
-        $cat = explode(",", $data['cat_id']);
-        $category = [];
-        foreach ($cat as $k => $v) {
-            $category[]['cat_id'] = $v;
-        }
-
         $args = array(
             'pd_name' => $data['pd_name'],
             'pd_price' => $data['pd_price'],
@@ -75,6 +69,13 @@ class ProductController extends Controller
             'pd_tag' => $data['pd_tag'],
             'pd_ref' => $data['pd_ref'],
             'pd_image' => $file,
+            'mcat_id' => $data['mcat_id'],
+            'scat_id' => $data['scat_id'],
+            'create_date' => date('Y-m-d H:i:s'),
+            'create_by' => 1,
+            'update_date' => date('Y-m-d H:i:s'),
+            'update_by' => 1,
+            'record_status' => 'A',
         );
 
         return Product::insert($args,$category);
@@ -135,12 +136,6 @@ class ProductController extends Controller
             $file = $name;
         }
 
-        $cat = explode(",", $data['cat_id']);
-        $category = [];
-        foreach ($cat as $k => $v) {
-            $category[]['cat_id'] = $v;
-        }
-
         $args = array(
             'pd_name' => $data['pd_name'],
             'pd_price' => $data['pd_price'],
@@ -149,12 +144,17 @@ class ProductController extends Controller
             'pd_rating' => $data['pd_rating'],
             'pd_tag' => $data['pd_tag'],
             'pd_ref' => $data['pd_ref'],
+            'mcat_id' => $data['mcat_id'],
+            'scat_id' => $data['scat_id'],
+            'update_date' => date('Y-m-d H:i:s'),
+            'update_by' => 1,
+            'record_status' => 'A'
         );
         if ($file != "") {
             $args['pd_image'] = $file;
         }
 
-        return Product::update($args,$category, $id);
+        return Product::update($args, $id);
     }
 
     /**

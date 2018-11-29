@@ -19,11 +19,4 @@ class BlogCategoryController extends Controller
         $obj = ['data_object' => $data];
         return $obj;
     }
-
-    public function blog_cat_list($bsc_id)
-    {
-        $data = DB::table('tbl_blog_category')->where('bsc_id',$bsc_id)->get();
-        $obj = ['data_object' => $data];
-        return $obj;
-    }
 }

@@ -13,9 +13,9 @@ class BlogController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $obj = ['data_object' => Blog::list()];
+        $obj = ['data_object' => Blog::lists($request->search, $request->bmc_id, $request->bsc_id)];
         return $obj;
     }
 
@@ -37,7 +37,6 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->data);
         $validator = Validator::make($request->all(), [
             'data' => 'required',
             'file' => 'required',
@@ -67,8 +66,12 @@ class BlogController extends Controller
             'bg_ref' => (array_key_exists("bg_ref", $data)) ? $data['bg_ref'] : "",
             'bmc_id' => $data['bmc_id'],
             'bsc_id' => $data['bsc_id'],
-            'bc_id' => $data['bc_id'],
             'bg_image' => $file,
+            'create_date' => date('Y-m-d H:i:s'),
+            'create_by' => 1,
+            'update_date' => date('Y-m-d H:i:s'),
+            'update_by' => 1,
+            'record_status' => 'A',
         );
 
         return Blog::insert($args);
@@ -107,7 +110,6 @@ class BlogController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request);
         $validator = Validator::make($request->all(), [
             'data' => 'required',
             'file' => 'nullable',
@@ -137,7 +139,9 @@ class BlogController extends Controller
             'bg_ref' => (array_key_exists("bg_ref", $data)) ? $data['bg_ref'] : "",
             'bmc_id' => $data['bmc_id'],
             'bsc_id' => $data['bsc_id'],
-            'bc_id' => $data['bc_id'],
+            'update_date' => date('Y-m-d H:i:s'),
+            'update_by' => 1,
+            'record_status' => 'A',
         );
         if ($file != "") {
             $args['bg_image'] = $file;

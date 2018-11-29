@@ -19,7 +19,9 @@ Route::get('/', function () {
 Route::get('/ajax', function () {
     return view('ajax');
 });
+//
 
+// login module //
 Route::get('/backend-login', function () {
     return view('login');
 });
@@ -28,9 +30,14 @@ Route::get('/backend-logout', function () {
     return redirect('/')->withCookie(Cookie::forget('ad_id'))
     ->withCookie(Cookie::forget('ad_firstname'));
 });
+// login module //
 
+// admin module //
 Route::resource('administrator','AdministratorController');
+// admin module //
 
+// product match module //
 Route::get('/product-match','ProductMapController@index');
 Route::get('/product-match/{id}/matching','ProductMapController@matching');
 Route::post('/product-match/{id}','ProductMapController@store');
+// product match module //
