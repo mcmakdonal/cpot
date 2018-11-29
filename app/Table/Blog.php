@@ -107,7 +107,7 @@ class Blog extends ServiceProvider
             }
             $data[$k]->product_relate = $product;
 
-            $matchThese = "where (record_status = 'A') AND ";
+            $matchThese = "where (record_status = 'A') AND (bg_id != '$id') AND ";
             foreach ($sub_tag as $k_t => $tag) {
                 $matchThese .= " (bg_title like '%$tag%' or bg_tag like '%$tag%') ";
                 if (($k_t + 1) != count($sub_tag)) {
