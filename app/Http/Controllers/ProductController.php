@@ -78,7 +78,7 @@ class ProductController extends Controller
             'record_status' => 'A',
         );
 
-        return Product::insert($args,$category);
+        return Product::insert($args);
     }
 
     /**
