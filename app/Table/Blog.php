@@ -125,7 +125,7 @@ class Blog extends ServiceProvider
         return $data;
     }
 
-    public function delete($id)
+    public static function delete($id)
     {
         DB::beginTransaction();
         $args = [
