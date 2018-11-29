@@ -8,7 +8,7 @@ use Illuminate\Support\ServiceProvider;
 class Blog extends ServiceProvider
 {
 
-    public static function lists($search = "", $bmc_id = "", $bsc_id = "")
+    public static function lists($search = "", $bmc_id = "", $bsc_id = "", $search_tag = ['title', 'tag'])
     {
         $matchThese = [];
         $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
@@ -19,8 +19,12 @@ class Blog extends ServiceProvider
             $matchThese[] = ['tbl_blog.bsc_id', '=', $bsc_id];
         }
         if ($search != "") {
-            $matchThese[] = ['tbl_blog.bg_title', 'like', "%$search%"];
-            $matchThese[] = ['tbl_blog.bg_tag', 'like', "%$search%"];
+            if (in_array("tag", $search_tag)) {
+                $matchThese[] = ['tbl_blog.bg_tag', 'like', "%$search%"];
+            }
+            if (in_array("title", $search_tag)) {
+                $matchThese[] = ['tbl_blog.bg_title', 'like', "%$search%"];
+            }
         }
 
         $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bg_ref', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'bmc_name', 'bsc_name'];

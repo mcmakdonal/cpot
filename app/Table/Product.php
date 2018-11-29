@@ -7,7 +7,7 @@ use Illuminate\Support\ServiceProvider;
 
 class Product extends ServiceProvider
 {
-    public static function lists($search = "", $mcat_id = "", $scat_id = "")
+    public static function lists($search = "", $mcat_id = "", $scat_id = "", $search_tag = ['title', 'tag'])
     {
         $matchThese = [];
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
@@ -18,8 +18,12 @@ class Product extends ServiceProvider
             $matchThese[] = ['tbl_sub_category.scat_id', '=', $scat_id];
         }
         if ($search != "") {
-            $matchThese[] = ['tbl_product.pd_name', 'like', "%$search%"];
-            $matchThese[] = ['tbl_product.pd_tag', 'like', "%$search%"];
+            if (in_array("tag", $search_tag)) {
+                $matchThese[] = ['tbl_product.pd_tag', 'like', "%$search%"];
+            }
+            if (in_array("title", $search_tag)) {
+                $matchThese[] = ['tbl_product.pd_name', 'like', "%$search%"];
+            }
         }
 
         $select = [
@@ -49,9 +53,9 @@ class Product extends ServiceProvider
         foreach ($data as $k => $v) {
             $data[$k]->pd_image = url('/files/' . $v->pd_image);
 
-            $data[$k]->youtube = DB::table('tbl_product_youtube')
-                ->select('my_title', 'my_href', 'my_image')
-                ->where([['record_status', '=', 'A'], ['pd_id', '=', $v->pd_id]])->get()->toArray();
+            // $data[$k]->youtube = DB::table('tbl_product_youtube')
+            //     ->select('my_title', 'my_href', 'my_image')
+            //     ->where([['record_status', '=', 'A'], ['pd_id', '=', $v->pd_id]])->get()->toArray();
         }
 
         return $data;
@@ -260,6 +264,34 @@ class Product extends ServiceProvider
         $data = DB::table('tbl_product_youtube')
             ->select('*')
             ->where('pd_id', $id)
+            ->get()->toArray();
+
+        return $data;
+    }
+
+    public static function lists_youtube($search, $search_tag = ['title', 'tag'])
+    {
+        $matchThese = [];
+        if ($search != "") {
+            if (in_array("tag", $search_tag)) {
+                $matchThese[] = ['tbl_product_youtube.my_bytag', 'like', "%$search%"];
+            }
+            if (in_array("title", $search_tag)) {
+                $matchThese[] = ['tbl_product_youtube.my_title', 'like', "%$search%"];
+            }
+        }
+        $select = [
+            'my_id',
+            'my_title',
+            'my_href',
+            'my_bytag',
+            'my_image',
+        ];
+        $data = DB::table('tbl_product_youtube')
+            ->select($select)
+            ->where($matchThese)
+            ->groupBy($select)
+            ->orderBy('tbl_product_youtube.my_id', 'desc')
             ->get()->toArray();
 
         return $data;

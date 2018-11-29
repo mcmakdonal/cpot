@@ -63,3 +63,8 @@ Route::post('/user/{id}/update', 'UserController@update');
 Route::get('/user/{id}/detail', 'UserController@show');
 
 //////////////////////////////////////////////
+
+/// Search Common ///
+Route::post('/search_title_all','IndexController@search_title_all');
+Route::post('/search_tag_all','IndexController@search_tag_all');
+/// Search Common ///
