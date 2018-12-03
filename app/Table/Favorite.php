@@ -55,7 +55,7 @@ class Favorite extends ServiceProvider
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
 
         $tbl_favorite_product = DB::table('tbl_favorite_product')
-            ->select('pd_id', 'pd_name', 'pd_description', 'pd_image')
+            ->select('tbl_product.pd_id', 'tbl_product.pd_name', 'tbl_product.pd_description', 'tbl_product.pd_image')
             ->join('tbl_product', 'tbl_product.pd_id', '=', 'tbl_favorite_product.pd_id')
             ->where($matchThese)
             ->orderBy('tbl_favorite_product.pd_id', 'desc')
@@ -75,7 +75,7 @@ class Favorite extends ServiceProvider
         $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
 
         $tbl_favorite_blog = DB::table('tbl_favorite_blog')
-            ->select('bg_id', 'bg_title', 'bg_image', 'bg_description')
+            ->select('tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_image', 'tbl_blog.bg_description')
             ->join('tbl_blog', 'tbl_blog.bg_id', '=', 'tbl_favorite_blog.bg_id')
             ->where($matchThese)
             ->orderBy('tbl_favorite_blog.bg_id', 'desc')
