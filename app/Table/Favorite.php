@@ -63,6 +63,7 @@ class Favorite extends ServiceProvider
 
         foreach ($tbl_favorite_product as $k => $v) {
             $tbl_favorite_product[$k]->pd_image = url('/files/' . $v->pd_image);
+            $tbl_favorite_product[$k]->type = "product";
         }
 
         return $tbl_favorite_product;
@@ -83,6 +84,7 @@ class Favorite extends ServiceProvider
 
         foreach ($tbl_favorite_blog as $k => $v) {
             $tbl_favorite_blog[$k]->bg_image = url('/blog/' . $v->bg_image);
+            $tbl_favorite_blog[$k]->type = "blog";
         }
 
         return $tbl_favorite_blog;
