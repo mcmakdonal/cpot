@@ -129,12 +129,12 @@ class Blog extends ServiceProvider
         return $data;
     }
 
-    public static function delete($id)
+    public static function delete($id,$u_id)
     {
         DB::beginTransaction();
         $args = [
             'update_date' => date('Y-m-d H:i:s'),
-            'update_by' => 1,
+            'update_by' => $u_id,
             'record_status' => 'I',
         ];
         $status = DB::table('tbl_blog')->where('bg_id', $id)->update($args);

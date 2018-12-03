@@ -48,4 +48,6 @@ Route::post('/product-match/{id}','ProductMapController@store');
 Route::get('/ajax', function () {
     return view('ajax');
 });
+Route::get('/jwt','IndexController@jwt');
+Route::get('/jwtdecode','IndexController@jwtdecode');
 //

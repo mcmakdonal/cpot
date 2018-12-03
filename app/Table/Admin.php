@@ -27,7 +27,7 @@ class Admin extends ServiceProvider
         return (count($data) > 0) ? $exists : $notexists;
     }
 
-    public static function list() {
+    public static function lists() {
         $matchThese[] = ['record_status', '=', 'A'];
         $data = DB::table('tbl_administrator')
             ->select('*')

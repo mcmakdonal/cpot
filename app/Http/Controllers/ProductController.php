@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\JwtService;
+use App\Table\Favorite;
 use App\Table\Product;
 use Illuminate\Http\Request;
 use Validator;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('Jwt', ['except' => [
+            'index', 'show',
+        ]]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +23,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $data = Product::lists($request->search,$request->mcat_id,$request->scat_id);
+        $data = Product::lists($request->search, $request->mcat_id, $request->scat_id);
         $obj = ['data_object' => $data];
         return $obj;
     }
@@ -38,7 +46,6 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->data);
         $validator = Validator::make($request->all(), [
             'data' => 'required',
             'file' => 'required',
@@ -51,6 +58,12 @@ class ProductController extends Controller
             ];
         }
 
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
+
         $file = "";
         $data = json_decode($request->data, true);
         if ($request->hasfile('file')) {
@@ -60,23 +73,22 @@ class ProductController extends Controller
             $file = $name;
         }
 
-        $args = array(
-            'pd_name' => $data['pd_name'],
-            'pd_price' => $data['pd_price'],
-            'pd_sprice' => $data['pd_sprice'],
-            'pd_description' => $data['pd_description'],
-            'pd_rating' => $data['pd_rating'],
-            'pd_tag' => $data['pd_tag'],
-            'pd_ref' => $data['pd_ref'],
+        $args = [];
+        $accept = ['pd_name', 'pd_price', 'pd_sprice', 'pd_description', 'pd_rating', 'pd_tag', 'pd_ref', 'mcat_id', 'scat_id'];
+        foreach ($data as $key => $value) {
+            if (in_array($key, $accept)) {
+                $args[$key] = $value;
+            }
+        }
+
+        $args = array_merge($args, [
             'pd_image' => $file,
-            'mcat_id' => $data['mcat_id'],
-            'scat_id' => $data['scat_id'],
             'create_date' => date('Y-m-d H:i:s'),
-            'create_by' => 1,
+            'create_by' => $u_id,
             'update_date' => date('Y-m-d H:i:s'),
-            'update_by' => 1,
+            'update_by' => $u_id,
             'record_status' => 'A',
-        );
+        ]);
 
         return Product::insert($args);
     }
@@ -87,10 +99,22 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        $favorite = false;
+        if ($request->header('Authorization') != "") {
+            $result = JwtService::de_auth($request);
+            if (gettype($result) != "array") {
+                die();
+            }
+            $u_id = $result['u_id'];
+            $favorite = Favorite::is_like("P", $id, $u_id);
+        }
         $data = Product::detail($id);
-        $obj = ['data_object' => $data];
+        $obj = [
+            'data_object' => $data,
+            'favorite' => $favorite,
+        ];
         return $obj;
     }
 
@@ -114,7 +138,6 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request);
         $validator = Validator::make($request->all(), [
             'data' => 'required',
             'file' => 'nullable',
@@ -127,6 +150,12 @@ class ProductController extends Controller
             ];
         }
 
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
+
         $file = "";
         $data = json_decode($request->data, true);
         if ($request->hasfile('file')) {
@@ -136,23 +165,22 @@ class ProductController extends Controller
             $file = $name;
         }
 
-        $args = array(
-            'pd_name' => $data['pd_name'],
-            'pd_price' => $data['pd_price'],
-            'pd_sprice' => $data['pd_sprice'],
-            'pd_description' => $data['pd_description'],
-            'pd_rating' => $data['pd_rating'],
-            'pd_tag' => $data['pd_tag'],
-            'pd_ref' => $data['pd_ref'],
-            'mcat_id' => $data['mcat_id'],
-            'scat_id' => $data['scat_id'],
-            'update_date' => date('Y-m-d H:i:s'),
-            'update_by' => 1,
-            'record_status' => 'A'
-        );
+        $args = [];
+        $accept = ['pd_name', 'pd_price', 'pd_sprice', 'pd_description', 'pd_rating', 'pd_tag', 'pd_ref', 'mcat_id', 'scat_id'];
+        foreach ($data as $key => $value) {
+            if (in_array($key, $accept)) {
+                $args[$key] = $value;
+            }
+        }
+
         if ($file != "") {
             $args['pd_image'] = $file;
         }
+
+        $args = array_merge($args, [
+            'update_date' => date('Y-m-d H:i:s'),
+            'update_by' => $u_id,
+        ]);
 
         return Product::update($args, $id);
     }
@@ -163,8 +191,13 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
         if ($id == "" && $id == null) {
             return [
                 'status' => false,
@@ -172,6 +205,6 @@ class ProductController extends Controller
             ];
         }
 
-        return Product::delete($id);
+        return Product::delete($id, $u_id);
     }
 }

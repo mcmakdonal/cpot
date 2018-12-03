@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\JwtService;
 use App\Table\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -9,6 +10,12 @@ use Validator;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('Jwt', ['except' => [
+            'store', 'check_email', 'check_login',
+        ]]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -37,7 +44,6 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->data);
         $validator = Validator::make($request->all(), [
             'u_identity' => 'required',
             'u_owner' => 'required',
@@ -69,23 +75,27 @@ class UserController extends Controller
             return $obj;
         }
 
-        $args = array(
-            'u_identity' => $request->u_identity,
-            'u_owner' => $request->u_owner,
-            'u_email' => $request->u_email,
-            'u_password' => Hash::make($request->u_password),
-            'u_phone' => $request->u_phone,
-            'u_store' => $request->u_store,
-            'u_addr' => $request->u_addr,
-            'u_province' => $request->u_province,
-            'u_district' => $request->u_district,
-            'u_subdistrcit' => $request->u_subdistrcit,
-            'u_zipcode' => $request->u_zipcode,
-            'u_community' => $request->u_community,
-            'u_lat' => $request->u_lat,
-            'u_long' => $request->u_long,
-            'u_desc' => $request->u_desc,
-        );
+        $args = [];
+        $ignore = [];
+        $all_request = $request->all();
+        foreach ($request->all() as $key => $value) {
+            if (!in_array($key, $ignore)) {
+                if ($key == "u_password") {
+                    $value = Hash::make($value);
+                    $args[$key] = $value;
+                } else {
+                    $args[$key] = $value;
+                }
+            }
+        }
+
+        $args = array_merge($args, [
+            'create_date' => date('Y-m-d H:i:s'),
+            'create_by' => 1,
+            'update_date' => date('Y-m-d H:i:s'),
+            'update_by' => 1,
+            'record_status' => 'A',
+        ]);
 
         return User::insert($args);
     }
@@ -96,9 +106,14 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        $user = User::get_user("",$id);
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
+        $user = User::get_user("", $u_id);
         $obj = ['data_object' => $user];
         return $obj;
     }
@@ -121,9 +136,13 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id = "")
     {
-        // dd($request->data);
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
         $validator = Validator::make($request->all(), [
             'u_owner' => 'nullable',
             'u_password' => 'nullable',
@@ -147,26 +166,23 @@ class UserController extends Controller
             ];
         }
 
-        $args = array(
-            'u_owner' => $request->u_owner,
-            'u_phone' => $request->u_phone,
-            'u_store' => $request->u_store,
-            'u_addr' => $request->u_addr,
-            'u_province' => $request->u_province,
-            'u_district' => $request->u_district,
-            'u_subdistrcit' => $request->u_subdistrcit,
-            'u_zipcode' => $request->u_zipcode,
-            'u_community' => $request->u_community,
-            'u_lat' => $request->u_lat,
-            'u_long' => $request->u_long,
-            'u_desc' => $request->u_desc,
-        );
-
-        if ($request->u_password != "") {
-            $user['u_password'] = Hash::make($request->u_password);
+        $args = [];
+        $ignore = ['u_identity', 'u_email'];
+        $all_request = $request->all();
+        foreach ($request->all() as $key => $value) {
+            if (!in_array($key, $ignore)) {
+                if ($key == "u_password") {
+                    $value = Hash::make($value);
+                    $args[$key] = $value;
+                } else {
+                    $args[$key] = $value;
+                }
+            }
         }
 
-        return User::update($args, $id);
+        $args = array_merge($args, ['update_date' => date('Y-m-d H:i:s'), 'update_by' => $u_id]);
+
+        return User::update($args, $u_id);
     }
 
     /**
@@ -175,9 +191,20 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
+        if ($u_id == "" && $u_id == null) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+        return User::delete($u_id);
     }
 
     public function check_email(Request $request)
@@ -217,6 +244,7 @@ class UserController extends Controller
                 'status' => true,
                 'message' => 'Success',
                 'data_object' => $user,
+                'token' => JwtService::auth(['u_id' => $user[0]->u_id]),
             ];
         } else {
             return [

@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\JwtService;
 use App\Table\Blog;
+use App\Table\Favorite;
 use Illuminate\Http\Request;
 use Validator;
 
 class BlogController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('Jwt', ['except' => [
+            'index', 'show',
+        ]]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -49,6 +57,12 @@ class BlogController extends Controller
             ];
         }
 
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
+
         $file = "";
         $data = json_decode($request->data, true);
         if ($request->hasfile('file')) {
@@ -58,21 +72,22 @@ class BlogController extends Controller
             $file = $name;
         }
 
-        $args = array(
-            'bg_title' => $data['bg_title'],
-            'bg_description' => $data['bg_description'],
-            'bg_tag' => $data['bg_tag'],
-            'bg_embed' => $data['bg_embed'],
-            'bg_ref' => (array_key_exists("bg_ref", $data)) ? $data['bg_ref'] : "",
-            'bmc_id' => $data['bmc_id'],
-            'bsc_id' => $data['bsc_id'],
+        $args = [];
+        $accept = ['bg_title', 'bg_description', 'bg_tag', 'bg_embed', 'bg_ref', 'bmc_id', 'bsc_id'];
+        foreach ($data as $key => $value) {
+            if (in_array($key, $accept)) {
+                $args[$key] = $value;
+            }
+        }
+
+        $args = array_merge($args, [
             'bg_image' => $file,
             'create_date' => date('Y-m-d H:i:s'),
-            'create_by' => 1,
+            'create_by' => $u_id,
             'update_date' => date('Y-m-d H:i:s'),
-            'update_by' => 1,
+            'update_by' => $u_id,
             'record_status' => 'A',
-        );
+        ]);
 
         return Blog::insert($args);
     }
@@ -83,10 +98,19 @@ class BlogController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        $favorite = false;
+        if ($request->header('Authorization') != "") {
+            $result = JwtService::de_auth($request);
+            if (gettype($result) != "array") {
+                die();
+            }
+            $u_id = $result['u_id'];
+            $favorite = Favorite::is_like("P", $id, $u_id);
+        }
         $data = Blog::detail($id);
-        $obj = ['data_object' => $data];
+        $obj = ['data_object' => $data, 'favorite' => $favorite];
         return $obj;
     }
 
@@ -131,21 +155,28 @@ class BlogController extends Controller
             $file = $name;
         }
 
-        $args = array(
-            'bg_title' => $data['bg_title'],
-            'bg_description' => $data['bg_description'],
-            'bg_tag' => $data['bg_tag'],
-            'bg_embed' => $data['bg_embed'],
-            'bg_ref' => (array_key_exists("bg_ref", $data)) ? $data['bg_ref'] : "",
-            'bmc_id' => $data['bmc_id'],
-            'bsc_id' => $data['bsc_id'],
-            'update_date' => date('Y-m-d H:i:s'),
-            'update_by' => 1,
-            'record_status' => 'A',
-        );
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
+
+        $args = [];
+        $accept = ['bg_title', 'bg_description', 'bg_tag', 'bg_embed', 'bg_ref', 'bmc_id', 'bsc_id'];
+        foreach ($data as $key => $value) {
+            if (in_array($key, $accept)) {
+                $args[$key] = $value;
+            }
+        }
+
         if ($file != "") {
             $args['bg_image'] = $file;
         }
+
+        $args = array_merge($args, [
+            'update_date' => date('Y-m-d H:i:s'),
+            'update_by' => $u_id,
+        ]);
 
         return Blog::update($args, $id);
     }
@@ -156,14 +187,19 @@ class BlogController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
         if ($id == "" && $id == null) {
             return [
                 'status' => false,
                 'message' => 'Please fill all data',
             ];
         }
-        return Blog::delete($id);
+        return Blog::delete($id, $u_id);
     }
 }

@@ -22,7 +22,7 @@ class AdministratorController extends Controller
      */
     public function index()
     {
-        $data = Admin::list();
+        $data = Admin::lists();
         return view('administrator.index', ['data' => $data]);
     }
 
@@ -66,9 +66,9 @@ class AdministratorController extends Controller
             'ad_username' => $request->ad_username,
             'ad_password' => Hash::make($request->ad_password),
             'create_date' => date('Y-m-d H:i:s'),
-            'create_by' => 1,
+            'create_by' => \Cookie::get('ad_id'),
             'update_date' => date('Y-m-d H:i:s'),
-            'update_by' => 1,
+            'update_by' => \Cookie::get('ad_id'),
             'record_status' => 'A',
         ];
 
@@ -132,8 +132,7 @@ class AdministratorController extends Controller
             'ad_firstname' => $request->ad_firstname,
             'ad_lastname' => $request->ad_lastname,
             'update_date' => date('Y-m-d H:i:s'),
-            'update_by' => 1,
-            'record_status' => 'A',
+            'update_by' => \Cookie::get('ad_id')
         ];
 
         if ($request->ad_password != "") {
@@ -156,7 +155,7 @@ class AdministratorController extends Controller
      */
     public function destroy($id)
     {
-        if ($id === '1') {
+        if ($id === '1' || \Cookie::get('ad_id') == $id) {
             return response()->json([
                 'status' => false,
             ]);
@@ -183,7 +182,6 @@ class AdministratorController extends Controller
                 'message' => 'Not found Username',
             ]);
         }
-        // dd($user);
 
         if (Hash::check($request->password, $user[0]->ad_password)) {
             return redirect("/administrator")

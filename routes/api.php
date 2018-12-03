@@ -58,9 +58,9 @@ Route::get('/blog_sub_category/{bmc_id}', 'BlogCategoryController@blog_sub_list'
 Route::post('/user/check_email', 'UserController@check_email');
 Route::post('/user/create', 'UserController@store');
 Route::post('/user/check_login', 'UserController@check_login');
-Route::post('/user/{id}/update', 'UserController@update');
-// Route::post('/blog/{id}/delete', 'BlogController@destroy');
-Route::get('/user/{id}/detail', 'UserController@show');
+Route::post('/user/update', 'UserController@update');
+Route::post('/user/delete', 'UserController@destroy');
+Route::get('/user/detail', 'UserController@show');
 
 //////////////////////////////////////////////
 
@@ -68,3 +68,18 @@ Route::get('/user/{id}/detail', 'UserController@show');
 Route::post('/search_title_all','IndexController@search_title_all');
 Route::post('/search_tag_all','IndexController@search_tag_all');
 /// Search Common ///
+
+// Favorite //
+Route::get('/favorite','FavoriteController@favorite');
+Route::get('/favorite-all','FavoriteController@favorite_all');
+Route::get('/favorite-product','FavoriteController@favorite_product');
+Route::get('/favorite-blog','FavoriteController@favorite_blog');
+
+Route::post('/favorite/like','FavoriteController@favorite_like');
+Route::post('/favorite/unlike','FavoriteController@favorite_unlike');
+// Favorite //
+
+// Access Denind //
+Route::get('/jwt','IndexController@jwt');
+Route::get('/jwtdecode','IndexController@jwtdecode');
+// Access Denind //

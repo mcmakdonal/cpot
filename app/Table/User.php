@@ -9,6 +9,8 @@ class User extends ServiceProvider
 {
     public static function check_email_exists($email)
     {
+        $matchThese = [];
+        $matchThese[] = ['tbl_user.record_status', '=', 'A'];
         $matchThese[] = ['tbl_user.u_email', '=', $email];
         $data = DB::table('tbl_user')
             ->select('u_id')
@@ -28,6 +30,8 @@ class User extends ServiceProvider
 
     public static function get_user($email, $id = "")
     {
+        $matchThese = [];
+        $matchThese[] = ['tbl_user.record_status', '=', 'A'];
         if ($id == "") {
             $matchThese[] = ['tbl_user.u_email', '=', $email];
         } else {
@@ -73,6 +77,30 @@ class User extends ServiceProvider
                 'message' => 'Success',
             ];
         } else {
+            return [
+                'status' => false,
+                'message' => 'Fail',
+            ];
+        }
+    }
+
+    public static function delete($id)
+    {
+        DB::beginTransaction();
+        $args = [
+            'update_date' => date('Y-m-d H:i:s'),
+            'update_by' => $id,
+            'record_status' => 'I',
+        ];
+        $status = DB::table('tbl_user')->where('u_id', $id)->update($args);
+        if ($status) {
+            DB::commit();
+            return [
+                'status' => true,
+                'message' => 'Success',
+            ];
+        } else {
+            DB::rollBack();
             return [
                 'status' => false,
                 'message' => 'Fail',
