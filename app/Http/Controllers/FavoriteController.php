@@ -92,16 +92,16 @@ class FavoriteController extends Controller
         $type = strtoupper($request->type);
         $id = $request->id;
 
-        if ($type !== "P" || $type !== "B") {
+        if ($type === "P" || $type === "B") {
+            $result = Favorite::insert($type, $id, $u_id);
+
+            return $result;
+        } else {
             return [
                 'status' => false,
                 'message' => 'type not macth',
             ];
         }
-
-        $result = Favorite::insert($type, $id, $u_id);
-
-        return $result;
     }
 
     public function favorite_unlike(Request $request)
@@ -136,7 +136,5 @@ class FavoriteController extends Controller
                 'message' => 'type not macth',
             ];
         }
-
-
     }
 }
