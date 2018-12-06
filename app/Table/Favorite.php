@@ -11,16 +11,24 @@ class Favorite extends ServiceProvider
     public static function count_all($u_id)
     {
         $matchThese = [];
-        $matchThese[] = ['u_id', '=', $u_id];
-        $matchThese[] = ['record_status', '=', 'A'];
+        $matchThese[] = ['tbl_favorite_product.u_id', '=', $u_id];
+        $matchThese[] = ['tbl_favorite_product.record_status', '=', 'A'];
+        $matchThese[] = ['tbl_product.record_status', '=', 'A'];
 
         $tbl_favorite_product = DB::table('tbl_favorite_product')
             ->select('u_id')
+            ->join('tbl_product', 'tbl_product.pd_id', '=', 'tbl_favorite_product.pd_id')
             ->where($matchThese)
             ->count();
 
+        $matchThese = [];
+        $matchThese[] = ['tbl_favorite_blog.u_id', '=', $u_id];
+        $matchThese[] = ['tbl_favorite_blog.record_status', '=', 'A'];
+        $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
+
         $tbl_favorite_blog = DB::table('tbl_favorite_blog')
-            ->select('u_id')
+            ->select('tbl_favorite_blog.u_id')
+            ->join('tbl_blog', 'tbl_blog.bg_id', '=', 'tbl_favorite_blog.bg_id')
             ->where($matchThese)
             ->count();
 
@@ -28,7 +36,7 @@ class Favorite extends ServiceProvider
             'status' => true,
             'message' => 'Success',
             'data_object' => [
-                'total' => $tbl_favorite_product + $tbl_favorite_blog,
+                'total' => (int) $tbl_favorite_product + (int) $tbl_favorite_blog,
             ],
         ];
     }
@@ -52,6 +60,7 @@ class Favorite extends ServiceProvider
     {
         $matchThese = [];
         $matchThese[] = ['tbl_favorite_product.u_id', '=', $u_id];
+        $matchThese[] = ['tbl_favorite_product.record_status', '=', 'A'];
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
 
         $tbl_favorite_product = DB::table('tbl_favorite_product')
@@ -73,6 +82,7 @@ class Favorite extends ServiceProvider
     {
         $matchThese = [];
         $matchThese[] = ['tbl_favorite_blog.u_id', '=', $u_id];
+        $matchThese[] = ['tbl_favorite_blog.record_status', '=', 'A'];
         $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
 
         $tbl_favorite_blog = DB::table('tbl_favorite_blog')
