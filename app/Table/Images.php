@@ -74,6 +74,15 @@ class Images extends ServiceProvider
     public static function delete($id)
     {
         DB::beginTransaction();
+
+        $count = self::lists($type, "A");
+        if (count($count) == 1) {
+            return [
+                'status' => false,
+                'message' => 'Fail Because minimun active is 1',
+            ];
+        }
+
         $args = [
             'update_date' => date('Y-m-d H:i:s'),
             'update_by' => 1,
