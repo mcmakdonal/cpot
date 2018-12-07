@@ -20,7 +20,7 @@ function destroy(src, id) {
                 if (obj.status) {
                     window.location.reload();
                 } else {
-                    swal("Warning !", "Delete not success", "error");
+                    swal("Warning !", obj.message, "error");
                 }
             },
             error(xhr, status, error) {

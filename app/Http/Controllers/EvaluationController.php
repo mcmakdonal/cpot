@@ -148,7 +148,7 @@ class EvaluationController extends Controller
      */
     public function destroy($id)
     {
-        if ($id === '1' || $id != null) {
+        if ($id == '' || $id == null) {
             return response()->json([
                 'status' => false,
             ]);

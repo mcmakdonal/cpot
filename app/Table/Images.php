@@ -76,7 +76,7 @@ class Images extends ServiceProvider
         DB::beginTransaction();
         $matchThese[] = ['id', '=', $id];
         $data = DB::table('tbl_images_mobile')
-            ->select('id')
+            ->select('id','type')
             ->where($matchThese)
             ->orderBy('id', 'desc')
             ->get()->toArray();
