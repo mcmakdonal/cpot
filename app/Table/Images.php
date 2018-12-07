@@ -74,7 +74,15 @@ class Images extends ServiceProvider
     public static function delete($id)
     {
         DB::beginTransaction();
+        $matchThese[] = ['id', '=', $id];
+        $data = DB::table('tbl_images_mobile')
+            ->select('id')
+            ->where($matchThese)
+            ->orderBy('id', 'desc')
+            ->get()->toArray();
 
+        $type = $data[0]->type;
+            
         $count = self::lists($type, "A");
         if (count($count) == 1) {
             return [
