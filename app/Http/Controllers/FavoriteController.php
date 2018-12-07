@@ -28,8 +28,27 @@ class FavoriteController extends Controller
             die();
         }
         $u_id = $result['u_id'];
+        $type = $request->type;
+        $data = [];
+        if ($type == "pd") {
+            $data = Favorite::lists_product($u_id);
+        } elseif ($type == "bg") {
+            $data = Favorite::lists_blog($u_id);
+        } elseif ($type == "yt") {
+            $data = Favorite::lists_youtube($u_id);
+        } else {
+            $data = Favorite::lists_all($u_id);
+            return $data;
+        }
 
-        return Favorite::lists_all($u_id);
+        return [
+            'status' => true,
+            'message' => 'Success',
+            'data_object' => [
+                'total' => count($data),
+                'items' => $data,
+            ],
+        ];
     }
 
     public function favorite_product(Request $request)
@@ -89,12 +108,11 @@ class FavoriteController extends Controller
             die();
         }
         $u_id = $result['u_id'];
-        $type = strtoupper($request->type);
+        $type = strtolower($request->type);
         $id = $request->id;
 
-        if ($type === "P" || $type === "B") {
+        if ($type === "pd" || $type === "bg" || $type === "yt") {
             $result = Favorite::insert($type, $id, $u_id);
-
             return $result;
         } else {
             return [
@@ -123,10 +141,10 @@ class FavoriteController extends Controller
             die();
         }
         $u_id = $result['u_id'];
-        $type = strtoupper($request->type);
+        $type = strtolower($request->type);
         $id = $request->id;
 
-        if ($type === "P" || $type === "B") {
+        if ($type === "pd" || $type === "bg" || $type === "yt") {
             $result = Favorite::delete($type, $id, $u_id);
 
             return $result;

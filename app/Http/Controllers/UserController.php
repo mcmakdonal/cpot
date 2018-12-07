@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\JwtService;
+use App\Table\Send_mail;
 use App\Table\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('Jwt', ['except' => [
-            'store', 'check_email', 'check_login',
+            'store', 'check_email', 'check_login', 'register_facebook','forget_password'
         ]]);
     }
     /**
@@ -45,21 +46,11 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'u_identity' => 'required',
-            'u_owner' => 'required',
+            'u_fullname' => 'required',
+            'u_profile' => 'required',
             'u_email' => 'required',
-            'u_password' => 'required',
             'u_phone' => 'required',
-            'u_store' => 'required',
-            'u_addr' => 'required',
-            'u_province' => 'required',
-            'u_district' => 'required',
-            'u_subdistrcit' => 'required',
-            'u_zipcode' => 'required',
-            'u_community' => 'nullable',
-            'u_lat' => 'nullable',
-            'u_long' => 'nullable',
-            'u_desc' => 'nullable',
+            'u_password' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -76,10 +67,9 @@ class UserController extends Controller
         }
 
         $args = [];
-        $ignore = [];
-        $all_request = $request->all();
+        $accept = ['u_fullname', 'u_profile', 'u_email', 'u_phone', 'u_password'];
         foreach ($request->all() as $key => $value) {
-            if (!in_array($key, $ignore)) {
+            if (in_array($key, $accept)) {
                 if ($key == "u_password") {
                     $value = Hash::make($value);
                     $args[$key] = $value;
@@ -144,19 +134,10 @@ class UserController extends Controller
         }
         $u_id = $result['u_id'];
         $validator = Validator::make($request->all(), [
-            'u_owner' => 'nullable',
-            'u_password' => 'nullable',
+            'u_fullname' => 'nullable',
+            'u_profile' => 'nullable',
             'u_phone' => 'nullable',
-            'u_store' => 'nullable',
-            'u_addr' => 'nullable',
-            'u_province' => 'nullable',
-            'u_district' => 'nullable',
-            'u_subdistrcit' => 'nullable',
-            'u_zipcode' => 'nullable',
-            'u_community' => 'nullable',
-            'u_lat' => 'nullable',
-            'u_long' => 'nullable',
-            'u_desc' => 'nullable',
+            'u_password' => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -167,10 +148,9 @@ class UserController extends Controller
         }
 
         $args = [];
-        $ignore = ['u_identity', 'u_email'];
-        $all_request = $request->all();
+        $accept = ['u_fullname', 'u_profile', 'u_phone', 'u_password'];
         foreach ($request->all() as $key => $value) {
-            if (!in_array($key, $ignore)) {
+            if (in_array($key, $accept)) {
                 if ($key == "u_password") {
                     $value = Hash::make($value);
                     $args[$key] = $value;
@@ -209,6 +189,17 @@ class UserController extends Controller
 
     public function check_email(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|max:250',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+
         $email = $request->email;
         $obj = [
             'data_object' => User::check_email_exists($email),
@@ -252,5 +243,101 @@ class UserController extends Controller
                 'message' => 'Username or Password Incorrect',
             ];
         }
+    }
+
+    public function forget_password(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+
+        $user = User::get_user($request->email);
+        if (count($user) === 0) {
+            return [
+                'status' => false,
+                'message' => 'Email Not Found !',
+            ];
+        } elseif ($user[0]->fb_id != "") {
+            return [
+                'status' => false,
+                'message' => 'This User Login With Facebook Account !',
+            ];
+        } else {
+            $u_id = $user[0]->u_id;
+            $to_name = $user[0]->u_fullname;
+            $to_email = $user[0]->u_email;
+            $password = User::generate_random_letters(8);
+            $args = [
+                'u_password' => Hash::make($password),
+                'update_date' => date('Y-m-d H:i:s'),
+                'update_by' => $u_id,
+            ];
+            $result = User::update($args, $u_id);
+            if ($result['status']) {
+                $message = "This is a new password for login : $password";
+                return Send_mail::send_mail($to_name, $to_email, $message);
+            } else {
+                return [
+                    'status' => false,
+                    'message' => 'Update Password not success Please contact Administrator !',
+                ];
+            }
+        }
+    }
+
+    public function register_facebook(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'fb_id' => 'required',
+            'u_fullname' => 'required',
+            'u_profile' => 'required',
+            'u_email' => 'required',
+            'u_phone' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+
+        $check = User::check_email_exists($request->u_email);
+        if ($check['status']) {
+            $obj = [
+                'data_object' => $check,
+                'token' => JwtService::auth(['u_id' => $check['user_data'][0]->u_id]),
+            ];
+            return $obj;
+        }
+
+        $args = [];
+        $accept = ['fb_id', 'u_fullname', 'u_profile', 'u_email', 'u_phone'];
+        foreach ($request->all() as $key => $value) {
+            if (in_array($key, $accept)) {
+                $args[$key] = $value;
+            }
+        }
+
+        $args = array_merge($args, [
+            'create_date' => date('Y-m-d H:i:s'),
+            'create_by' => 1,
+            'update_date' => date('Y-m-d H:i:s'),
+            'update_by' => 1,
+            'record_status' => 'A',
+        ]);
+
+        $user = User::insert($args);
+        return [
+            'data_object' => $user,
+            'token' => JwtService::auth(['u_id' => $user['id']]),
+        ];
     }
 }

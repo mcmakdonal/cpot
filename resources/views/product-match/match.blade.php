@@ -44,7 +44,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">Description : </label>
-                    <textarea class="form-control" readonly="">{{ $data[0]->pd_description }}</textarea>
+                    <textarea class="form-control" readonly="" rows="5" style="resize: vertical">{{ $data[0]->pd_description }}</textarea>
                 </div>
             </div>
             <div class="row">
@@ -54,49 +54,58 @@
                     <h5> Key Seach : {{ $data[0]->pd_tag }}
                 </div>
 
-                @foreach($youtube->items as $k => $v)
-                <div class="col-lg-3 col-md-3 mt-5">
+                @foreach($youtube as $k => $v)
+                <div class="col-lg-4 col-md-4 mt-3 d-flex align-items-stretch">
                     <div class="card card-bordered">
                         <img class="card-img-top img-fluid" src="{{ $v->snippet->thumbnails->medium->url }}" alt="image">
                         <div class="card-body">
                             <h5 class="title">{{ $v->snippet->title }}</h5>
-                            {{--
-                            <p class="card-text">{{ $v->snippet->description }}</p> --}}
+                            <p class="card-text">{{ $v->snippet->description }}</p>
                              @php 
-                             $json = [ 'my_title' => $v->snippet->title, 'my_href' => $v->id->videoId,'my_image' => $v->snippet->thumbnails->medium->url ]; 
+                             $json = [ 'my_title' => $v->snippet->title, 'my_href' => $v->id->videoId,'my_image' => $v->snippet->thumbnails->medium->url,'my_desc' => $v->snippet->description ]; 
                             @endphp
                             <button type="button" onclick="select_youtube(this)" class="btn btn-primary" data="{{ json_encode($json,JSON_UNESCAPED_UNICODE) }}">Select</button>
                         </div>
                     </div>
                 </div>
                 @endforeach
+            </div>
 
+            <div class="row mt-1 mb-1">
                 <div class="col-lg-12 col-md-12 col-xs-12">
                     <hr />
-                    <h3> Matching (limit 4) </h3>
+                    <h3> Select Items : </h3>
                     <hr />
-                    <div id="html-block">
-                        @foreach($select as $k => $v)
-                            @php
-                                $uniq = uniqid();
-                                $json = [
-                                    'my_title' => $v->my_title,
-                                    'my_href' => $v->my_href,
-                                    'my_image' => $v->my_image
-                                ]
-                            @endphp
-                            <div class="form-group cyoutube" id="{{ $uniq }}">
-                                <div class="row">
-                                    <h4 class="col-1 m-auto">No.{{ $k + 1 }} </h4>
-                                    <input class="form-control col-9" type="text" value="{{ $v->my_title }}" readonly="">
-                                    <button onclick="youtube_remove(this)" data="{{ $uniq }}" class="col-2 btn btn-danger">Delete</button>
-                                    <textarea class="form-control d-none" name="youtube[]" readonly="">{{ json_encode($json,JSON_UNESCAPED_UNICODE) }}</textarea>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
                 </div>
             </div>
+
+            <div class="form-row mt-10" id="html-block">
+                @foreach($select as $k => $v)
+                    @php
+                        $class = uniqid();
+                        $json = [
+                            'my_title' => $v->my_title,
+                            'my_href' => $v->my_href,
+                            'my_image' => $v->my_image,
+                            'my_desc' => $v->my_desc
+                        ]
+                    @endphp
+                    <div class="col-md-11 mb-3 cyoutube {{ $class }}">
+                        <label class="sr-only" for=""></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">{{$k + 1}}.</div>
+                            </div>
+                            <input type="text" class="form-control" type="text" value="{{ $v->my_title }}" readonly="">
+                        </div>
+                    </div>
+                    <div class="col-md-1 mb-3 {{ $class }}">
+                        <button type="button" data="{{ $class }}" onclick="remove_block(this)" class="btn btn-wanring"><span class="ti-trash"></span></button>
+                        <textarea class="form-control d-none" name="youtube[]" readonly="">{{ json_encode($json,JSON_UNESCAPED_UNICODE) }}</textarea>
+                    </div>
+                @endforeach
+            </div>
+
             <div class="form-group">
                 <hr />
                 <button type="submit" class="btn btn-success">Update</button>

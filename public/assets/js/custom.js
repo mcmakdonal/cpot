@@ -32,18 +32,14 @@ function destroy(src, id) {
 
 function select_youtube(e) {
     var data = JSON.parse($(e).attr('data'));
-    var cyoutube = $(".cyoutube").length;
-    if (parseInt(cyoutube) == 4 || parseInt(cyoutube) > 3) {
-        swal("Info !", "Maximum Vdo Selected", "warning");
-        return;
-    }
-    var id = uuidv4();
+    var cyoutube = $(".cyoutube").length + 1;
+    var class_uq = uuidv4();
     var html = '';
-    html += '<div class="form-group cyoutube" id="' + id + '">';
-    html += '<div class="row">';
-    html += '<h4 class="col-1 m-auto">No.' + (cyoutube + 1) + ' </h4>';
-    html += '<input class="form-control col-9" type="text" value="' + data.my_title + '" readonly>';
-    html += '<button onclick="youtube_remove(this)" data="' + id + '" class="col-2 btn btn-danger">Delete</button>';
+    html += '<div class="col-md-11 mb-3 cyoutube ' + class_uq + '"><label class="sr-only" for=""></label><div class="input-group"><div class="input-group-prepend"><div class="input-group-text">' + cyoutube + '.</div></div><input type="text" class="form-control" readonly value="' + data.my_title + '"></div></div>';
+    html += '<div class="col-md-1 mb-3 ' + class_uq + '"><button type="button" data="' + class_uq + '" onclick="remove_block(this)" class="btn btn-wanring"><span class="ti-trash"></span></button></div>';
+    $("#q_target").append(html);
+
+
     html += '<textarea class="form-control d-none" name="youtube[]" readonly="">' + JSON.stringify(data) + '</textarea>';
     html += '</div>';
     html += '</div>';
@@ -60,7 +56,89 @@ function uuidv4() {
     });
 }
 
-function youtube_remove(e) {
+function remove_block(e) {
     var id = $(e).attr('data');
-    $("#" + id).remove();
+    $("." + id).remove();
+
+    // if ($(".question").length > 0) {
+    $('.input-group .input-group-prepend .input-group-text').each(function (index) {
+        var $this = $(this);
+        $this.text(index + 1 + ".");
+    });
+    // }
+}
+
+///////////////////////////
+
+function add_question() {
+    var question = $(".question").length + 1;
+    var class_uq = uuidv4();
+    var html = '<div class="col-md-11 mb-3 question ' + class_uq + '"><label class="sr-only" for="">Question</label><div class="input-group"><div class="input-group-prepend"><div class="input-group-text">' + question + '.</div></div><input type="text" class="form-control" name="question[]" placeholder="Question" required></div></div>';
+    html += '<div class="col-md-1 mb-3 ' + class_uq + '"><button type="button" data="' + class_uq + '" onclick="remove_block(this)" class="btn btn-wanring"><span class="ti-trash"></span></button></div>';
+    $("#q_target").append(html);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$("input[name^=file]").change(function () {
+    if (this.files && this.files[0]) {
+        var reader = new FileReader();
+        reader.readAsDataURL(this.files[0]);
+        $('.custom-file-label').html(this.files[0].name);
+    }
+});
+
+function func_active(src, id) {
+    $.ajax({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                "content"
+            )
+        },
+        url: src,
+        method: "post",
+        data: {
+            id: id
+        },
+        beforeSend() {},
+        success: function (result) {
+            var obj = result;
+            if (obj.status) {
+                window.location.reload();
+            } else {
+                swal("Warning !", obj.message, "error");
+            }
+        },
+        error(xhr, status, error) {
+            swal("Danger !", "Fail !", error + " Status : " + status, "error");
+        }
+    });
+}
+
+function func_unactive(src, id, type = "") {
+    $.ajax({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                "content"
+            )
+        },
+        url: src,
+        method: "post",
+        data: {
+            id: id,
+            type: type
+        },
+        beforeSend() {},
+        success: function (result) {
+            var obj = result;
+            if (obj.status) {
+                window.location.reload();
+            } else {
+                swal("Warning !", obj.message, "error");
+            }
+        },
+        error(xhr, status, error) {
+            swal("Danger !", "Fail !", error + " Status : " + status, "error");
+        }
+    });
 }

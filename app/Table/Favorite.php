@@ -11,24 +11,35 @@ class Favorite extends ServiceProvider
     public static function count_all($u_id)
     {
         $matchThese = [];
-        $matchThese[] = ['tbl_favorite_product.u_id', '=', $u_id];
-        $matchThese[] = ['tbl_favorite_product.record_status', '=', 'A'];
+        $matchThese[] = ['tbl_favorite.u_id', '=', $u_id];
+        $matchThese[] = ['tbl_favorite.type', '=', 'pd'];
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
 
-        $tbl_favorite_product = DB::table('tbl_favorite_product')
-            ->select('u_id')
-            ->join('tbl_product', 'tbl_product.pd_id', '=', 'tbl_favorite_product.pd_id')
+        $tbl_product = DB::table('tbl_favorite')
+            ->select('tbl_favorite.u_id')
+            ->join('tbl_product', 'tbl_product.pd_id', '=', 'tbl_favorite.id')
             ->where($matchThese)
             ->count();
 
         $matchThese = [];
-        $matchThese[] = ['tbl_favorite_blog.u_id', '=', $u_id];
-        $matchThese[] = ['tbl_favorite_blog.record_status', '=', 'A'];
+        $matchThese[] = ['tbl_favorite.u_id', '=', $u_id];
+        $matchThese[] = ['tbl_favorite.type', '=', 'bg'];
         $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
 
-        $tbl_favorite_blog = DB::table('tbl_favorite_blog')
-            ->select('tbl_favorite_blog.u_id')
-            ->join('tbl_blog', 'tbl_blog.bg_id', '=', 'tbl_favorite_blog.bg_id')
+        $tbl_blog = DB::table('tbl_favorite')
+            ->select('tbl_favorite.u_id')
+            ->join('tbl_blog', 'tbl_blog.bg_id', '=', 'tbl_favorite.id')
+            ->where($matchThese)
+            ->count();
+
+        $matchThese = [];
+        $matchThese[] = ['tbl_favorite.u_id', '=', $u_id];
+        $matchThese[] = ['tbl_favorite.type', '=', 'yt'];
+        $matchThese[] = ['tbl_youtube.record_status', '=', 'A'];
+
+        $tbl_youtube = DB::table('tbl_favorite')
+            ->select('tbl_favorite.u_id')
+            ->join('tbl_youtube', 'tbl_youtube.my_id', '=', 'tbl_favorite.id')
             ->where($matchThese)
             ->count();
 
@@ -36,7 +47,7 @@ class Favorite extends ServiceProvider
             'status' => true,
             'message' => 'Success',
             'data_object' => [
-                'total' => (int) $tbl_favorite_product + (int) $tbl_favorite_blog,
+                'total' => (int) $tbl_product + (int) $tbl_blog + (int) $tbl_youtube,
             ],
         ];
     }
@@ -45,13 +56,14 @@ class Favorite extends ServiceProvider
     {
         $blog = Favorite::lists_blog($u_id);
         $product = Favorite::lists_product($u_id);
+        $youtube = Favorite::lists_youtube($u_id);
 
         return [
             'status' => true,
             'message' => 'Success',
             'data_object' => [
-                'total' => count($blog) + count($product),
-                'items' => array_merge($product, $blog),
+                'total' => count($blog) + count($product) + count($youtube),
+                'items' => array_merge($product, $blog, $youtube),
             ],
         ];
     }
@@ -59,45 +71,66 @@ class Favorite extends ServiceProvider
     public static function lists_product($u_id)
     {
         $matchThese = [];
-        $matchThese[] = ['tbl_favorite_product.u_id', '=', $u_id];
-        $matchThese[] = ['tbl_favorite_product.record_status', '=', 'A'];
+        $matchThese[] = ['tbl_favorite.u_id', '=', $u_id];
+        $matchThese[] = ['tbl_favorite.type', '=', 'pd'];
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
 
-        $tbl_favorite_product = DB::table('tbl_favorite_product')
+        $tbl_favorite = DB::table('tbl_favorite')
             ->select('tbl_product.pd_id', 'tbl_product.pd_name', 'tbl_product.pd_description', 'tbl_product.pd_image')
-            ->join('tbl_product', 'tbl_product.pd_id', '=', 'tbl_favorite_product.pd_id')
+            ->join('tbl_product', 'tbl_product.pd_id', '=', 'tbl_favorite.id')
             ->where($matchThese)
-            ->orderBy('tbl_favorite_product.pd_id', 'desc')
+            ->orderBy('tbl_favorite.id', 'desc')
             ->get()->toArray();
 
-        foreach ($tbl_favorite_product as $k => $v) {
-            $tbl_favorite_product[$k]->pd_image = url('/files/' . $v->pd_image);
-            $tbl_favorite_product[$k]->type = "product";
+        foreach ($tbl_favorite as $k => $v) {
+            $tbl_favorite[$k]->pd_image = url('/files/' . $v->pd_image);
+            $tbl_favorite[$k]->type = "product";
         }
 
-        return $tbl_favorite_product;
+        return $tbl_favorite;
     }
 
     public static function lists_blog($u_id)
     {
         $matchThese = [];
-        $matchThese[] = ['tbl_favorite_blog.u_id', '=', $u_id];
-        $matchThese[] = ['tbl_favorite_blog.record_status', '=', 'A'];
+        $matchThese[] = ['tbl_favorite.u_id', '=', $u_id];
+        $matchThese[] = ['tbl_favorite.type', '=', 'bg'];
         $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
 
-        $tbl_favorite_blog = DB::table('tbl_favorite_blog')
+        $tbl_favorite = DB::table('tbl_favorite')
             ->select('tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_image', 'tbl_blog.bg_description')
-            ->join('tbl_blog', 'tbl_blog.bg_id', '=', 'tbl_favorite_blog.bg_id')
+            ->join('tbl_blog', 'tbl_blog.bg_id', '=', 'tbl_favorite.id')
             ->where($matchThese)
-            ->orderBy('tbl_favorite_blog.bg_id', 'desc')
+            ->orderBy('tbl_favorite.id', 'desc')
             ->get()->toArray();
 
-        foreach ($tbl_favorite_blog as $k => $v) {
-            $tbl_favorite_blog[$k]->bg_image = url('/blog/' . $v->bg_image);
-            $tbl_favorite_blog[$k]->type = "blog";
+        foreach ($tbl_favorite as $k => $v) {
+            $tbl_favorite[$k]->bg_image = url('/blog/' . $v->bg_image);
+            $tbl_favorite[$k]->type = "blog";
         }
 
-        return $tbl_favorite_blog;
+        return $tbl_favorite;
+    }
+
+    public static function lists_youtube($u_id)
+    {
+        $matchThese = [];
+        $matchThese[] = ['tbl_favorite.u_id', '=', $u_id];
+        $matchThese[] = ['tbl_favorite.type', '=', 'yt'];
+        $matchThese[] = ['tbl_youtube.record_status', '=', 'A'];
+
+        $tbl_favorite = DB::table('tbl_favorite')
+            ->select('tbl_youtube.my_id', 'tbl_youtube.my_title', 'tbl_youtube.my_desc', 'tbl_youtube.my_href', 'tbl_youtube.my_bytag', 'tbl_youtube.my_image')
+            ->join('tbl_youtube', 'tbl_youtube.my_id', '=', 'tbl_favorite.id')
+            ->where($matchThese)
+            ->orderBy('tbl_favorite.id', 'desc')
+            ->get()->toArray();
+
+        foreach ($tbl_favorite as $k => $v) {
+            $tbl_favorite[$k]->type = "youtube";
+        }
+
+        return $tbl_favorite;
     }
 
     public static function is_like($type = "P", $id, $u_id)
@@ -130,108 +163,62 @@ class Favorite extends ServiceProvider
         }
     }
 
-    // @param type  : p = product | b = blog
-
-    public static function insert($type = "P", $id, $u_id)
+    // @param type  : pd = product | bg = blog | yt = youtube
+    public static function insert($type = "pd", $id, $u_id)
     {
         DB::beginTransaction();
-        if ($type === "P") {
-            $matchThese = [];
-            $matchThese[] = ['u_id', '=', $u_id];
-            $matchThese[] = ['pd_id', '=', $id];
-            $matchThese[] = ['record_status', '=', 'A'];
-            $tbl_favorite_product = DB::table('tbl_favorite_product')
-                ->select('u_id')
-                ->where($matchThese)
-                ->count();
+        $matchThese = [];
+        $matchThese[] = ['id', '=', $id];
+        $matchThese[] = ['type', '=', $type];
+        $matchThese[] = ['u_id', '=', $u_id];
+        $tbl_favorite = DB::table('tbl_favorite')
+            ->select('u_id')
+            ->where($matchThese)
+            ->count();
 
-            if ($tbl_favorite_product > 0) {
-                return [
-                    'status' => false,
-                    'message' => 'is Favorite now !',
-                ];
-            } else {
-                $args = [
-                    'pd_id' => $id,
-                    'u_id' => $u_id,
-                    'create_date' => date('Y-m-d H:i:s'),
-                    'create_by' => $u_id,
-                    'update_date' => date('Y-m-d H:i:s'),
-                    'update_by' => $u_id,
-                    'record_status' => 'A',
-                ];
-                $status = DB::table('tbl_favorite_product')->insert($args);
-                if ($status) {
-                    DB::commit();
-                    return [
-                        'status' => true,
-                        'message' => 'Success',
-                    ];
-                } else {
-                    DB::rollBack();
-                    return [
-                        'status' => false,
-                        'message' => 'Fail',
-                    ];
-                }
-            }
+        if ($tbl_favorite > 0) {
+            return [
+                'status' => false,
+                'message' => 'is Favorite now !',
+            ];
         } else {
-            $matchThese = [];
-            $matchThese[] = ['u_id', '=', $u_id];
-            $matchThese[] = ['bg_id', '=', $id];
-            $matchThese[] = ['record_status', '=', 'A'];
-            $tbl_favorite_product = DB::table('tbl_favorite_blog')
-                ->select('u_id')
-                ->where($matchThese)
-                ->count();
-
-            if ($tbl_favorite_product > 0) {
+            $args = [
+                'id' => $id,
+                'type' => $type,
+                'u_id' => $u_id,
+                'create_date' => date('Y-m-d H:i:s'),
+                'create_by' => $u_id,
+                'update_date' => date('Y-m-d H:i:s'),
+                'update_by' => $u_id,
+                'record_status' => 'A',
+            ];
+            $status = DB::table('tbl_favorite')->insert($args);
+            if ($status) {
+                DB::commit();
                 return [
-                    'status' => false,
-                    'message' => 'is Favorite now !',
+                    'status' => true,
+                    'message' => 'Success',
                 ];
             } else {
-                $args = [
-                    'bg_id' => $id,
-                    'u_id' => $u_id,
-                    'create_date' => date('Y-m-d H:i:s'),
-                    'create_by' => $u_id,
-                    'update_date' => date('Y-m-d H:i:s'),
-                    'update_by' => $u_id,
-                    'record_status' => 'A',
+                DB::rollBack();
+                return [
+                    'status' => false,
+                    'message' => 'Fail',
                 ];
-                $status = DB::table('tbl_favorite_blog')->insert($args);
-                if ($status) {
-                    DB::commit();
-                    return [
-                        'status' => true,
-                        'message' => 'Success',
-                    ];
-                } else {
-                    DB::rollBack();
-                    return [
-                        'status' => false,
-                        'message' => 'Fail',
-                    ];
-                }
             }
         }
+
     }
 
-    public static function delete($type = "P", $id, $u_id)
+    public static function delete($type = "pd", $id, $u_id)
     {
         DB::beginTransaction();
-        $args = [
-            'update_date' => date('Y-m-d H:i:s'),
-            'update_by' => $u_id,
-            'record_status' => 'I',
-        ];
-        $status = false;
-        if ($type === "P") {
-            $status = DB::table('tbl_favorite_product')->where('pd_id', $id)->update($args);
-        } else {
-            $status = DB::table('tbl_favorite_blog')->where('bg_id', $id)->update($args);
-        }
+        $matchThese = [];
+        $matchThese[] = ['id', '=', $id];
+        $matchThese[] = ['type', '=', $type];
+        $matchThese[] = ['u_id', '=', $u_id];
+
+        $status = DB::table('tbl_favorite')->where($matchThese)->delete();
         if ($status) {
             DB::commit();
             return [

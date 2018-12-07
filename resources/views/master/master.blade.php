@@ -3,10 +3,10 @@
 
 <head>
     <title>Mculture - Mobile @yield('title')</title>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="csrf-token" content="{{ csrf_token() }}">
-	<meta property="og:url"  content="{{ url('/') }}" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta property="og:url" content="{{ url('/') }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="/assets/images/icon/favicon.ico">
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
@@ -18,9 +18,9 @@
     <!-- srtdash css -->
     <!-- Start datatable css -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css">
-    {{-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.min.css"> --}}
-    {{-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.jqueryui.min.css"> --}}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css"> {{--
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.min.css"> --}} {{--
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.jqueryui.min.css"> --}}
     <!-- style css -->
     <link rel="stylesheet" href="/assets/css/typography.css">
     <link rel="stylesheet" href="/assets/css/default-css.css">
@@ -63,6 +63,17 @@
                             </li> --}}
                             <li class="{{ (strpos(url()->current(),'administrator') ) ? 'active' : '' }}"><a href="/administrator"><i class="ti-user"></i> <span>Administrator</span></a></li>
                             <li class="{{ (strpos(url()->current(),'product-match') ) ? 'active' : '' }}"><a href="/product-match"><i class="ti-layers-alt"></i> <span>Product Match</span></a></li>
+                            <li class="{{ (strpos(url()->current(),'evaluation') ) ? 'active' : '' }}"><a href="/evaluation"><i class="ti-comment-alt"></i> <span>Evaluation</span></a></li>
+                            <li class="{{ (strpos(url()->current(),'ads') ) ? 'active' : '' }}"><a href="/ads"><i class="ti-blackboard"></i> <span>Ads</span></a></li>
+                            <li class="{{ (strpos(url()->current(),'background') ) ? 'active' : '' }}"><a href="/background"><i class="ti-panel"></i> <span>Background</span></a></li>
+                            <li class="{{ (strpos(url()->current(),'report') ) ? 'active' : '' }}">
+                                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-files"></i><span>Report</span></a>
+                                <ul class="collapse">
+                                    <li><a href="index.html">ICO dashboard</a></li>
+                                    <li><a href="index2.html">Ecommerce dashboard</a></li>
+                                    <li><a href="index3.html">SEO dashboard</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </nav>
                 </div>
@@ -176,8 +187,9 @@
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
     <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
-    {{-- <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script> --}}
-    {{-- <script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js"></script> --}}
+    {{--
+    <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script> --}} {{--
+    <script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js"></script> --}}
 
     <!-- others plugins -->
     <script src="/assets/js/plugins.js"></script>

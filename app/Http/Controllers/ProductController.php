@@ -74,7 +74,10 @@ class ProductController extends Controller
         }
 
         $args = [];
-        $accept = ['pd_name', 'pd_price', 'pd_sprice', 'pd_description', 'pd_rating', 'pd_tag', 'pd_ref', 'mcat_id', 'scat_id'];
+        $accept = [
+            'pd_name', 'pd_price', 'pd_sprice', 'pd_description', 'pd_rating', 'pd_tag', 'pd_ref', 'mcat_id', 'scat_id',
+            'pd_store', 'pd_province', 'pd_history', 'pd_featured', 'pd_detail', 'pd_benefits',
+        ];
         foreach ($data as $key => $value) {
             if (in_array($key, $accept)) {
                 $args[$key] = $value;
@@ -166,7 +169,10 @@ class ProductController extends Controller
         }
 
         $args = [];
-        $accept = ['pd_name', 'pd_price', 'pd_sprice', 'pd_description', 'pd_rating', 'pd_tag', 'pd_ref', 'mcat_id', 'scat_id'];
+        $accept = [
+            'pd_name', 'pd_price', 'pd_sprice', 'pd_description', 'pd_rating', 'pd_tag', 'pd_ref', 'mcat_id', 'scat_id',
+            'pd_store', 'pd_province', 'pd_history', 'pd_featured', 'pd_detail', 'pd_benefits',
+        ];
         foreach ($data as $key => $value) {
             if (in_array($key, $accept)) {
                 $args[$key] = $value;

@@ -73,7 +73,10 @@ class BlogController extends Controller
         }
 
         $args = [];
-        $accept = ['bg_title', 'bg_description', 'bg_tag', 'bg_embed', 'bg_ref', 'bmc_id', 'bsc_id'];
+        $accept = [
+            'bg_title', 'bg_description', 'bg_tag', 'bg_embed', 'bg_ref', 'bmc_id', 'bsc_id',
+            'bg_store', 'bg_featured', 'bg_process', 'bg_detail', 'bg_benefits',
+        ];
         foreach ($data as $key => $value) {
             if (in_array($key, $accept)) {
                 $args[$key] = $value;
@@ -162,7 +165,10 @@ class BlogController extends Controller
         $u_id = $result['u_id'];
 
         $args = [];
-        $accept = ['bg_title', 'bg_description', 'bg_tag', 'bg_embed', 'bg_ref', 'bmc_id', 'bsc_id'];
+        $accept = [
+            'bg_title', 'bg_description', 'bg_tag', 'bg_embed', 'bg_ref', 'bmc_id', 'bsc_id',
+            'bg_store', 'bg_featured', 'bg_process', 'bg_detail', 'bg_benefits',
+        ];
         foreach ($data as $key => $value) {
             if (in_array($key, $accept)) {
                 $args[$key] = $value;

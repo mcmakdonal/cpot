@@ -9,12 +9,12 @@
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+ */
 
 Route::get('/', function () {
     if (!(\Cookie::get('ad_id') !== null)) {
         return view('login');
-    } else{
+    } else {
         return redirect('/administrator');
     }
 });
@@ -23,31 +23,43 @@ Route::get('/', function () {
 Route::get('/backend-login', function () {
     if (!(\Cookie::get('ad_id') !== null)) {
         return view('login');
-    } else{
+    } else {
         return redirect('/administrator');
     }
 });
-Route::post('/backend-login','AdministratorController@check_login');
+Route::post('/backend-login', 'AdministratorController@check_login');
 Route::get('/backend-logout', function () {
     return redirect('/')->withCookie(Cookie::forget('ad_id'))
-    ->withCookie(Cookie::forget('ad_firstname'));
+        ->withCookie(Cookie::forget('ad_firstname'));
 });
 // login module //
 
 // admin module //
-Route::resource('administrator','AdministratorController');
+Route::resource('administrator', 'AdministratorController');
+
+Route::resource('evaluation', 'EvaluationController');
+Route::post('/evaluation/active', 'EvaluationController@active');
 // admin module //
 
 // product match module //
-Route::get('/product-match','ProductMapController@index');
-Route::get('/product-match/{id}/matching','ProductMapController@matching');
-Route::post('/product-match/{id}','ProductMapController@store');
+Route::get('/product-match', 'ProductMapController@index');
+Route::get('/product-match/{id}/matching', 'ProductMapController@matching');
+Route::post('/product-match/{id}', 'ProductMapController@store');
 // product match module //
+
+// image mobile //
+Route::get('/ads', 'ImagesController@ads');
+Route::get('/background', 'ImagesController@background');
+Route::post('/image-store', 'ImagesController@store');
+Route::post('/image-active', 'ImagesController@active');
+Route::post('/image-unactive', 'ImagesController@unactive');
+Route::delete('/image-destroy/{id}', 'ImagesController@destroy');
+// image mobile //
 
 // test
 Route::get('/ajax', function () {
     return view('ajax');
 });
-Route::get('/jwt','IndexController@jwt');
-Route::get('/jwtdecode','IndexController@jwtdecode');
+Route::get('/jwt', 'IndexController@jwt');
+Route::get('/jwtdecode', 'IndexController@jwtdecode');
 //

@@ -8,6 +8,25 @@ use Illuminate\Support\ServiceProvider;
 class Blog extends ServiceProvider
 {
 
+    private static $blog_field = [
+        'tbl_blog.bg_id',
+        'tbl_blog.bg_title',
+        'tbl_blog.bg_description',
+        'tbl_blog.bg_image',
+        'tbl_blog.bg_tag',
+        'tbl_blog.bg_embed',
+        'tbl_blog.bg_ref',
+        'tbl_blog.bg_store',
+        'tbl_blog.bg_featured',
+        'tbl_blog.bg_process',
+        'tbl_blog.bg_detail',
+        'tbl_blog.bg_benefits',
+        'tbl_blog.bmc_id',
+        'tbl_blog.bsc_id',
+        'bmc_name',
+        'bsc_name',
+    ];
+
     public static function lists($search = "", $bmc_id = "", $bsc_id = "", $search_tag = ['title', 'tag'])
     {
         $matchThese = [];
@@ -27,13 +46,12 @@ class Blog extends ServiceProvider
             }
         }
 
-        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bg_ref', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'bmc_name', 'bsc_name'];
         $data = DB::table('tbl_blog')
-            ->select($select)
+            ->select(self::$blog_field)
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
             ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
             ->where($matchThese)
-            ->groupBy($select)
+            ->groupBy(self::$blog_field)
             ->orderBy('bg_id', 'desc')
             ->get();
         foreach ($data as $k => $v) {
@@ -87,12 +105,11 @@ class Blog extends ServiceProvider
         $matchThese[] = ['tbl_blog.bg_id', '=', $id];
         $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
 
-        $select = ['tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description', 'tbl_blog.bg_image', 'tbl_blog.bg_tag', 'tbl_blog.bg_embed', 'tbl_blog.bg_ref', 'tbl_blog.bg_tag', 'tbl_blog.bmc_id', 'tbl_blog.bsc_id', 'bmc_name', 'bsc_name'];
         $data = DB::table('tbl_blog')
-            ->select($select)
+            ->select(self::$blog_field)
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
             ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
-            ->groupBy($select)
+            ->groupBy(self::$blog_field)
             ->where($matchThese)->get();
         foreach ($data as $k => $v) {
             $data[$k]->bg_image = url('/blog/' . $v->bg_image);
@@ -129,7 +146,7 @@ class Blog extends ServiceProvider
         return $data;
     }
 
-    public static function delete($id,$u_id)
+    public static function delete($id, $u_id)
     {
         DB::beginTransaction();
         $args = [

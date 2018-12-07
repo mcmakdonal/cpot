@@ -7,6 +7,31 @@ use Illuminate\Support\ServiceProvider;
 
 class Product extends ServiceProvider
 {
+
+    private static $product_field = [
+        'tbl_product.pd_id',
+        'tbl_product.pd_name',
+        'tbl_product.pd_price',
+        'tbl_product.pd_sprice',
+        'tbl_product.pd_description',
+        'tbl_product.pd_image',
+        'tbl_product.pd_rating',
+        'tbl_product.pd_tag',
+        'tbl_product.pd_ref',
+
+        'tbl_product.pd_store',
+        'tbl_product.pd_province',
+        'tbl_product.pd_history',
+        'tbl_product.pd_featured',
+        'tbl_product.pd_detail',
+        'tbl_product.pd_benefits',
+
+        'tbl_main_category.mcat_id',
+        'tbl_main_category.mcat_name',
+        'tbl_sub_category.scat_id',
+        'tbl_sub_category.scat_name',
+    ];
+
     public static function lists($search = "", $mcat_id = "", $scat_id = "", $search_tag = ['title', 'tag'])
     {
         $matchThese = [];
@@ -26,35 +51,20 @@ class Product extends ServiceProvider
             }
         }
 
-        $select = [
-            'tbl_product.pd_id',
-            'tbl_product.pd_name',
-            'tbl_product.pd_price',
-            'tbl_product.pd_sprice',
-            'tbl_product.pd_description',
-            'tbl_product.pd_image',
-            'tbl_product.pd_rating',
-            'tbl_product.pd_tag',
-            'tbl_product.pd_ref',
-            'tbl_main_category.mcat_id',
-            'tbl_main_category.mcat_name',
-            'tbl_sub_category.scat_id',
-            'tbl_sub_category.scat_name',
-        ];
         $data = DB::table('tbl_product')
-            ->select($select)
+            ->select(self::$product_field)
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
             ->where($matchThese)
             ->orderBy('tbl_product.pd_id', 'desc')
-            ->groupBy($select)
+            ->groupBy(self::$product_field)
             ->get()->toArray();
 
         foreach ($data as $k => $v) {
             $data[$k]->pd_image = url('/files/' . $v->pd_image);
 
-            $data[$k]->youtube = DB::table('tbl_product_youtube')
-                ->select('my_title', 'my_href', 'my_image')
+            $data[$k]->youtube = DB::table('tbl_youtube')
+                ->select('my_id', 'my_title', 'my_href', 'my_image', 'my_desc')
                 ->where([['record_status', '=', 'A'], ['pd_id', '=', $v->pd_id]])->get()->toArray();
         }
 
@@ -87,29 +97,13 @@ class Product extends ServiceProvider
         $matchThese[] = ['tbl_product.pd_id', '=', $id];
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
 
-        $select = [
-            'tbl_product.pd_id',
-            'tbl_product.pd_name',
-            'tbl_product.pd_price',
-            'tbl_product.pd_sprice',
-            'tbl_product.pd_description',
-            'tbl_product.pd_image',
-            'tbl_product.pd_rating',
-            'tbl_product.pd_tag',
-            'tbl_product.pd_ref',
-            'tbl_main_category.mcat_id',
-            'tbl_main_category.mcat_name',
-            'tbl_sub_category.scat_id',
-            'tbl_sub_category.scat_name',
-        ];
-
         $data = DB::table('tbl_product')
-            ->select($select)
+            ->select(self::$product_field)
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
             ->where($matchThese)
             ->orderBy('tbl_product.pd_id', 'desc')
-            ->groupBy($select)
+            ->groupBy(self::$product_field)
             ->get()->toArray();
 
         foreach ($data as $k => $v) {
@@ -143,12 +137,10 @@ class Product extends ServiceProvider
             }
             $data[$k]->product_relate = $product;
 
-            $data[$k]->youtube_relate = DB::table('tbl_product_youtube')
-                ->select('my_title', 'my_href', 'my_image')
+            $data[$k]->youtube_relate = DB::table('tbl_youtube')
+                ->select('my_id', 'my_title', 'my_href', 'my_image', 'my_desc')
                 ->where('pd_id', $v->pd_id)->get()->toArray();
-
         }
-
         return $data;
     }
 
@@ -170,7 +162,7 @@ class Product extends ServiceProvider
         }
     }
 
-    public static function delete($id,$u_id)
+    public static function delete($id, $u_id)
     {
         DB::beginTransaction();
         $args = [
@@ -199,7 +191,7 @@ class Product extends ServiceProvider
         $q = str_replace(",", "|", $search);
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=24&order=relevance&q=$q&key=AIzaSyASB9JR0hgdStc6q6-WMmVj6u0B1xrKDLY",
+            CURLOPT_URL => "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=24&type=video&order=relevance&q=$q&key=AIzaSyASB9JR0hgdStc6q6-WMmVj6u0B1xrKDLY",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -217,7 +209,7 @@ class Product extends ServiceProvider
         $err = curl_error($curl);
 
         curl_close($curl);
-
+        $data = json_decode($response);
         if ($err) {
             return [
                 'status' => false,
@@ -228,7 +220,7 @@ class Product extends ServiceProvider
             return [
                 'status' => true,
                 'message' => 'Success',
-                'items' => json_decode($response),
+                'items' => $data->items,
             ];
         }
     }
@@ -236,14 +228,14 @@ class Product extends ServiceProvider
     public static function insert_youtube($args, $id)
     {
         DB::beginTransaction();
-        $count = DB::table('tbl_product_youtube')
+        $count = DB::table('tbl_youtube')
             ->select('pd_id')
             ->where('pd_id', $id)
             ->count();
         if ($count > 0) {
-            DB::table('tbl_product_youtube')->where('pd_id', '=', $id)->delete();
+            DB::table('tbl_youtube')->where('pd_id', '=', $id)->delete();
         }
-        $status = DB::table('tbl_product_youtube')->insert($args);
+        $status = DB::table('tbl_youtube')->insert($args);
         if ($status) {
             DB::commit();
             return [
@@ -261,8 +253,8 @@ class Product extends ServiceProvider
 
     public static function select_youtube($id)
     {
-        $data = DB::table('tbl_product_youtube')
-            ->select('*')
+        $data = DB::table('tbl_youtube')
+            ->select('my_id', 'my_title', 'my_desc', 'my_href', 'my_image')
             ->where('pd_id', $id)
             ->get()->toArray();
 
@@ -274,10 +266,10 @@ class Product extends ServiceProvider
         $matchThese = [];
         if ($search != "") {
             if (in_array("tag", $search_tag)) {
-                $matchThese[] = ['tbl_product_youtube.my_bytag', 'like', "%$search%"];
+                $matchThese[] = ['tbl_youtube.my_bytag', 'like', "%$search%"];
             }
             if (in_array("title", $search_tag)) {
-                $matchThese[] = ['tbl_product_youtube.my_title', 'like', "%$search%"];
+                $matchThese[] = ['tbl_youtube.my_title', 'like', "%$search%"];
             }
         }
         $select = [
@@ -286,12 +278,33 @@ class Product extends ServiceProvider
             'my_href',
             'my_bytag',
             'my_image',
+            'my_desc',
         ];
-        $data = DB::table('tbl_product_youtube')
+        $data = DB::table('tbl_youtube')
             ->select($select)
             ->where($matchThese)
             ->groupBy($select)
-            ->orderBy('tbl_product_youtube.my_id', 'desc')
+            ->orderBy('tbl_youtube.my_id', 'desc')
+            ->get()->toArray();
+
+        return $data;
+    }
+
+    public static function detail_youtube($id)
+    {
+        $select = [
+            'my_id',
+            'my_title',
+            'my_href',
+            'my_bytag',
+            'my_image',
+            'my_desc',
+        ];
+        $data = DB::table('tbl_youtube')
+            ->select($select)
+            ->where('my_id', '=', $id)
+            ->groupBy($select)
+            ->orderBy('tbl_youtube.my_id', 'desc')
             ->get()->toArray();
 
         return $data;

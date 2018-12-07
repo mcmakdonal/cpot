@@ -27,6 +27,7 @@ class ProductMapController extends Controller
         $tag = $data[0]->pd_tag;
         $youtube = Product::search($tag);
         $select = Product::select_youtube($id);
+        // dd($youtube);
         return view('product-match.match', ['data' => $data, 'youtube' => $youtube['items'], 'select' => $select]);
     }
 
@@ -39,6 +40,7 @@ class ProductMapController extends Controller
                 'my_title' => $json->my_title,
                 'my_href' => $json->my_href,
                 'my_bytag' => $request->pd_tag,
+                'my_desc' => $json->my_desc,
                 'pd_id' => $id,
                 'my_image' => $json->my_image,
                 'create_date' => date('Y-m-d H:i:s'),
