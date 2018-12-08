@@ -76,12 +76,13 @@ class Images extends ServiceProvider
         DB::beginTransaction();
         $matchThese[] = ['id', '=', $id];
         $data = DB::table('tbl_images_mobile')
-            ->select('id','type')
+            ->select('id','type','active')
             ->where($matchThese)
             ->orderBy('id', 'desc')
             ->get()->toArray();
 
         $type = $data[0]->type;
+        $active = $data[0]->active;
             
         $count = self::lists($type, "A");
         if (count($count) == 1) {
