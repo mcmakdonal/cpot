@@ -25,7 +25,7 @@ Route::get('/sub_category/{mcat_id}', 'CategoryController@sub_list');
 
 //////// Product ///////////////////////////////////
 
-// Route::post('/product', 'ProductController@index');
+Route::post('/product', 'ProductController@index');
 Route::post('/product/create', 'ProductController@store');
 Route::post('/product/{id}/update', 'ProductController@update');
 Route::post('/product/{id}/delete', 'ProductController@destroy');
@@ -38,7 +38,7 @@ Route::get('/product/{id}/detail', 'ProductController@show');
 
 //////// Blog ///////////////////////////////////
 
-// Route::post('/blog', 'BlogController@index');
+Route::post('/blog', 'BlogController@index');
 Route::post('/blog/create', 'BlogController@store');
 Route::post('/blog/{id}/update', 'BlogController@update');
 Route::post('/blog/{id}/delete', 'BlogController@destroy');
