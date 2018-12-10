@@ -27,9 +27,10 @@ class Blog extends ServiceProvider
         'bsc_name',
     ];
 
-    public static function lists($search = "", $bmc_id = "", $bsc_id = "", $search_tag = ['title', 'tag'])
+    public static function lists($search = "", $bmc_id = "", $bsc_id = "", $search_tag = ['title', 'tag'], $page = 1)
     {
         $matchThese = [];
+        $limit = 10;
         $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
         if ($bmc_id != "") {
             $matchThese[] = ['tbl_blog.bmc_id', '=', $bmc_id];
@@ -46,6 +47,18 @@ class Blog extends ServiceProvider
             }
         }
 
+        $count = DB::table('tbl_blog')
+            ->select(self::$blog_field)
+            ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
+            ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
+            ->where($matchThese)
+            ->groupBy(self::$blog_field)
+            ->orderBy('bg_id', 'desc')
+            ->get()->toArray();
+
+        $total = ceil(count($count) / $limit);
+        $offset = ($page - 1) * $limit;
+
         $data = DB::table('tbl_blog')
             ->select(self::$blog_field)
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
@@ -53,11 +66,20 @@ class Blog extends ServiceProvider
             ->where($matchThese)
             ->groupBy(self::$blog_field)
             ->orderBy('bg_id', 'desc')
-            ->get();
+            ->offset($offset)
+            ->limit($limit)
+            ->get()->toArray();
+
         foreach ($data as $k => $v) {
-            $data[$k]->bg_image = url('/blog/' . $v->bg_image);
+            $image = DB::table('tbl_blog_images')->select('path')->where('bg_id', '=', $v->bg_id)->get()->toArray();
+            $img = [];
+            foreach ($image as $kk => $vv) {
+                array_push($img, url($vv->path));
+            }
+            $data[$k]->bg_image = $img;
         }
-        return $data;
+        
+        return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page];
     }
 
     public static function insert($args)
@@ -112,7 +134,13 @@ class Blog extends ServiceProvider
             ->groupBy(self::$blog_field)
             ->where($matchThese)->get();
         foreach ($data as $k => $v) {
-            $data[$k]->bg_image = url('/blog/' . $v->bg_image);
+            $image = DB::table('tbl_blog_images')->select('path')->where('bg_id', '=', $v->bg_id)->get()->toArray();
+            $img = [];
+            foreach ($image as $kk => $vv) {
+                array_push($img, url($vv->path));
+            }
+            $data[$k]->bg_image = $img;
+
             $sub_tag = explode(",", $v->bg_tag);
             $matchThese = "where (record_status = 'A') AND ";
             foreach ($sub_tag as $k_t => $tag) {
@@ -122,9 +150,14 @@ class Blog extends ServiceProvider
                 }
             }
             $matchThese .= " limit 4";
-            $product = DB::select("select pd_id,pd_name,pd_price,pd_sprice,pd_description,pd_image,pd_tag from tbl_product $matchThese");
+            $product = DB::select("select pd_id,pd_name,pd_price,pd_sprice,pd_description,pd_tag from tbl_product $matchThese");
             foreach ($product as $kk => $vv) {
-                $product[$kk]->pd_image = url('/files/' . $vv->pd_image);
+                $image = DB::table('tbl_product_images')->select('path')->where('pd_id', '=', $vv->pd_id)->get()->toArray();
+                $img = [];
+                foreach ($image as $pk => $pv) {
+                    array_push($img, url($pv->path));
+                }
+                $product[$kk]->pd_image = $img;
             }
             $data[$k]->product_relate = $product;
 
@@ -138,7 +171,12 @@ class Blog extends ServiceProvider
             $matchThese .= " limit 4";
             $blog = DB::select("select bg_id,bg_title,bg_image,bg_tag from tbl_blog $matchThese");
             foreach ($blog as $kk => $vv) {
-                $blog[$kk]->bg_image = url('/blog/' . $vv->bg_image);
+                $image = DB::table('tbl_blog_images')->select('path')->where('bg_id', '=', $vv->bg_id)->get()->toArray();
+                $img = [];
+                foreach ($image as $bk => $bv) {
+                    array_push($img, url($bv->path));
+                }
+                $blog[$kk]->bg_image = $img;
             }
             $data[$k]->blog_relate = $blog;
         }

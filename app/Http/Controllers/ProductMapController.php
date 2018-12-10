@@ -15,7 +15,8 @@ class ProductMapController extends Controller
     public function index()
     {
         $data = Product::lists();
-        return view('product-match.index', ['data' => $data]);
+        // dd($data['data_object']);
+        return view('product-match.index', ['data' => $data['data_object']]);
     }
 
     public function matching(Request $request, $id)

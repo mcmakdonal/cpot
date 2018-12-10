@@ -23,9 +23,12 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $data = Product::lists($request->search, $request->mcat_id, $request->scat_id);
-        $obj = ['data_object' => $data];
-        return $obj;
+        $search = $request->search;
+        $mcat_id = $request->mcat_id;
+        $scat_id = $request->scat_id;
+        $page = ($request->page == 0 || $request == "") ? 1 : $request->page;
+        $data = Product::lists($search, $mcat_id, $scat_id, [], $page);
+        return $data;
     }
 
     /**

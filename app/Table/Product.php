@@ -24,6 +24,7 @@ class Product extends ServiceProvider
         'tbl_product.pd_featured',
         'tbl_product.pd_detail',
         'tbl_product.pd_benefits',
+        'tbl_product.pd_phone',
 
         'tbl_main_category.mcat_id',
         'tbl_main_category.mcat_name',
@@ -31,9 +32,10 @@ class Product extends ServiceProvider
         'tbl_sub_category.scat_name',
     ];
 
-    public static function lists($search = "", $mcat_id = "", $scat_id = "", $search_tag = ['title', 'tag'])
+    public static function lists($search = "", $mcat_id = "", $scat_id = "", $search_tag = ['title', 'tag'], $page = 1)
     {
         $matchThese = [];
+        $limit = 10;
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
         if ($mcat_id != "") {
             $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
@@ -50,7 +52,7 @@ class Product extends ServiceProvider
             }
         }
 
-        $data = DB::table('tbl_product')
+        $count = DB::table('tbl_product')
             ->select(self::$product_field)
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
@@ -59,17 +61,35 @@ class Product extends ServiceProvider
             ->groupBy(self::$product_field)
             ->get()->toArray();
 
+        $total = ceil(count($count) / $limit);
+        $offset = ($page - 1) * $limit;
+
+        $data = DB::table('tbl_product')
+            ->select(self::$product_field)
+            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+            ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
+            ->where($matchThese)
+            ->orderBy('tbl_product.pd_id', 'desc')
+            ->groupBy(self::$product_field)
+            ->offset($offset)
+            ->limit($limit)
+            ->get()->toArray();
+
         foreach ($data as $k => $v) {
-            $data[$k]->pd_image = url('/files/' . $v->pd_image);
+            $image = DB::table('tbl_product_images')->select('path')->where('pd_id', '=', $v->pd_id)->get()->toArray();
+            $img = [];
+            foreach ($image as $kk => $vv) {
+                array_push($img, url($vv->path));
+            }
+            $data[$k]->pd_image = $img;
 
             $data[$k]->youtube = DB::table('tbl_youtube')
                 ->select('my_id', 'my_title', 'my_href', 'my_image', 'my_desc')
                 ->where([['record_status', '=', 'A'], ['pd_id', '=', $v->pd_id]])->get()->toArray();
         }
 
-        return $data;
+        return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page];
     }
-
 
     public static function tag_lists()
     {
@@ -77,7 +97,7 @@ class Product extends ServiceProvider
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
 
         $data = DB::table('tbl_product')
-            ->select('tbl_product.pd_tag',DB::raw('count(tbl_product.pd_tag) counter'))
+            ->select('tbl_product.pd_tag', DB::raw('count(tbl_product.pd_tag) counter'))
             ->where($matchThese)
             ->orderBy('counter', 'desc')
             ->groupBy('tbl_product.pd_tag')
@@ -85,7 +105,6 @@ class Product extends ServiceProvider
 
         return $data;
     }
-
 
     public static function insert($args)
     {
@@ -123,7 +142,13 @@ class Product extends ServiceProvider
             ->get()->toArray();
 
         foreach ($data as $k => $v) {
-            $data[$k]->pd_image = url('/files/' . $v->pd_image);
+            $image = DB::table('tbl_product_images')->select('path')->where('pd_id', '=', $v->pd_id)->get()->toArray();
+            $img = [];
+            foreach ($image as $kk => $vv) {
+                array_push($img, url($vv->path));
+            }
+            $data[$k]->pd_image = $img;
+
             $sub_tag = explode(",", $v->pd_tag);
             $matchThese = "where ";
             foreach ($sub_tag as $k_t => $tag) {
@@ -147,9 +172,14 @@ class Product extends ServiceProvider
                 }
             }
             $matchThese .= " limit 4";
-            $product = DB::select("select pd_id,pd_name,pd_price,pd_sprice,pd_description,pd_image,pd_tag from tbl_product $matchThese");
+            $product = DB::select("select pd_id,pd_name,pd_price,pd_sprice,pd_description,pd_tag from tbl_product $matchThese");
             foreach ($product as $kk => $vv) {
-                $product[$kk]->pd_image = url('/files/' . $vv->pd_image);
+                $image = DB::table('tbl_product_images')->select('path')->where('pd_id', '=', $vv->pd_id)->get()->toArray();
+                $img = [];
+                foreach ($image as $pk => $pv) {
+                    array_push($img, url($pv->path));
+                }
+                $product[$kk]->pd_image = $img;
             }
             $data[$k]->product_relate = $product;
 

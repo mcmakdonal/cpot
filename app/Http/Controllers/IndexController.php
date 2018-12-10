@@ -16,10 +16,14 @@ class IndexController extends Controller
     {
         $product = $blog = $youtube = [];
         $obj = [
-            'data_object' => [],
+            'product' => [],
+            'blog' => [],
+            'youtube' => []
         ];
         $search = ($request->search) ? $request->search : "";
         $type = ($request->type) ? $request->type : "all";
+        $pd_page = ($request->pd_page == 0 || $request->pd_page == "") ? 1 : $request->pd_page;
+        $bg_page = ($request->bg_page == 0 || $request->bg_page == "") ? 1 : $request->bg_page;
 
         $mcat_id = ($request->mcat_id) ? $request->mcat_id : "";
         $scat_id = ($request->scat_id) ? $request->scat_id : "";
@@ -28,33 +32,27 @@ class IndexController extends Controller
         $bsc_id = ($request->bsc_id) ? $request->bsc_id : "";
 
         if ($type == "pd" || $type == "all") {
-            $product = Product::lists($search, $mcat_id, $scat_id, ['title']);
-            $args = [
-                'product' => $product,
-                'product_total' => count($product),
-            ];
-
-            array_push($obj['data_object'], $args);
+            $product = Product::lists($search, $mcat_id, $scat_id, ['title'], $pd_page);
+            $product['product_total'] = $product['totalPages'] * 10;
+            array_push($obj['product'], $product);
         }
 
         if ($type == "bg" || $type == "all") {
-            $blog = Blog::lists($search, $bmc_id, $bsc_id, ['title']);
-            $args = [
-                'blog' => $blog,
-                'blog_total' => count($blog),
-            ];
-
-            array_push($obj['data_object'], $args);
+            $blog = Blog::lists($search, $bmc_id, $bsc_id, ['title'], $bg_page);
+            $blog['blog_total'] = $blog['totalPages'] * 10;
+            array_push($obj['blog'], $blog);
         }
 
         if ($type == "yt" || $type == "all") {
             $youtube = Product::lists_youtube($search, ['title']);
             $args = [
-                'youtube' => $youtube,
+                'data_object' => $youtube,
                 'youtube_total' => count($youtube),
+                'currentPage' => 0,
+                'totalPages' => 0
             ];
 
-            array_push($obj['data_object'], $args);
+            array_push($obj['youtube'], $args);
         }
 
         return $obj;
@@ -64,10 +62,14 @@ class IndexController extends Controller
     {
         $product = $blog = $youtube = [];
         $obj = [
-            'data_object' => [],
+            'product' => [],
+            'blog' => [],
+            'youtube' => []
         ];
         $search = ($request->search) ? $request->search : "";
         $type = ($request->type) ? $request->type : "all";
+        $pd_page = ($request->pd_page == 0 || $request->pd_page == "") ? 1 : $request->pd_page;
+        $bg_page = ($request->bg_page == 0 || $request->bg_page == "") ? 1 : $request->bg_page;
 
         $mcat_id = ($request->mcat_id) ? $request->mcat_id : "";
         $scat_id = ($request->scat_id) ? $request->scat_id : "";
@@ -76,33 +78,27 @@ class IndexController extends Controller
         $bsc_id = ($request->bsc_id) ? $request->bsc_id : "";
 
         if ($type == "pd" || $type == "all") {
-            $product = Product::lists($search, $mcat_id, $scat_id, ['tag']);
-            $args = [
-                'product' => $product,
-                'product_total' => count($product),
-            ];
-
-            array_push($obj['data_object'], $args);
+            $product = Product::lists($search, $mcat_id, $scat_id, ['tag'], $pd_page);
+            $product['product_total'] = $product['totalPages'] * 10;
+            array_push($obj['product'], $product);
         }
 
         if ($type == "bg" || $type == "all") {
-            $blog = Blog::lists($search, $bmc_id, $bsc_id, ['tag']);
-            $args = [
-                'blog' => $blog,
-                'blog_total' => count($blog),
-            ];
-
-            array_push($obj['data_object'], $args);
+            $blog = Blog::lists($search, $bmc_id, $bsc_id, ['tag'], $bg_page);
+            $blog['blog_total'] = $blog['totalPages'] * 10;
+            array_push($obj['blog'], $blog);
         }
 
         if ($type == "yt" || $type == "all") {
             $youtube = Product::lists_youtube($search, ['tag']);
             $args = [
-                'youtube' => $youtube,
+                'data_object' => $youtube,
                 'youtube_total' => count($youtube),
+                'currentPage' => 0,
+                'totalPages' => 0
             ];
 
-            array_push($obj['data_object'], $args);
+            array_push($obj['youtube'], $args);
         }
 
         return $obj;
@@ -267,22 +263,5 @@ class IndexController extends Controller
             'data_object' => $data,
         ];
         return $obj;
-    }
-
-    // ////////////////////////////////////////////
-
-    public function jwt(Request $request)
-    {
-        return JwtService::auth(['u_id' => 1]);
-    }
-
-    public function jwtdecode(Request $request)
-    {
-        $id = JwtService::de_auth($request);
-        if (gettype($id) != "array") {
-            die();
-        } else {
-            return $id;
-        }
     }
 }

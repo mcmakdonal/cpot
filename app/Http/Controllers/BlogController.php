@@ -23,8 +23,12 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
-        $obj = ['data_object' => Blog::lists($request->search, $request->bmc_id, $request->bsc_id)];
-        return $obj;
+        $search = $request->search;
+        $bmc_id = $request->bmc_id;
+        $bsc_id = $request->bsc_id;
+        $page = ($request->page == 0 || $request == "") ? 1 : $request->page;
+        $data = Blog::lists($search, $bmc_id, $bsc_id, [], $page);
+        return $data;
     }
 
     /**

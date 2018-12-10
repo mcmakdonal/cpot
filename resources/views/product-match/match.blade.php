@@ -32,14 +32,9 @@
                     <label for="">Spacial Price : </label>
                     <input type="text" class="form-control" id="" name="" placeholder="" value="{{ $data[0]->pd_sprice }}" readonly="">
                 </div>
-                <div class="col-md-3 mb-3">
+                <div class="col-md-6 mb-3">
                     <label for="">Tag : </label>
                     <input type="text" class="form-control" id="" name="pd_tag" placeholder="" value="{{ $data[0]->pd_tag }}" readonly="">
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="">Image : </label>
-                    <br />
-                    <img src="{{ url($data[0]->pd_image) }}" class="img-responsive">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">Description : </label>

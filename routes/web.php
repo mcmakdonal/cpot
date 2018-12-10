@@ -70,6 +70,9 @@ Route::get('/report/share', 'ReportController@share');
 Route::get('/ajax', function () {
     return view('ajax');
 });
-Route::get('/jwt', 'IndexController@jwt');
-Route::get('/jwtdecode', 'IndexController@jwtdecode');
+Route::get('/jwt', 'TestController@jwt');
+Route::get('/jwtdecode', 'TestController@jwtdecode');
+
+// Route::get('/product-excel', 'TestController@product');
+// Route::get('/blog-excel', 'TestController@blog');
 //

@@ -13,7 +13,6 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Product Name</th>
-                                    <th>Image</th>
                                     <th>Match</th>
                                     <th>Match</th>
                                 </tr>
@@ -23,7 +22,6 @@
                                 <tr>
                                     <td>{{ $k + 1 }}</td>
                                     <td>{{ $v->pd_name }}</td>
-                                    <td><img src="{{ url($v->pd_image) }}" class="img-responsive"></td>
                                     <td>@php echo (count($v->youtube) > 0) ? '<a href="#" class="badge badge-success">Match</a>' : '<a href="#" class="badge badge-secondary">Not Match</a>' @endphp</td>
                                     <td>
                                         <?=link_to("/product-match/$v->pd_id/matching", $title = 'Match' , ['class' => 'btn btn-warning mb-3'], $secure = null); ?>
