@@ -228,4 +228,21 @@ class Evaluation extends ServiceProvider
         }
     }
 
+
+    public static function total_user_evaluation($u_id)
+    {
+        $matchThese[] = ['tbl_answer_topic.u_id', '=', $u_id];
+        $matchThese[] = ['tbl_evaluation_topic.record_status', '=', 'A'];
+
+        $data = DB::table('tbl_evaluation_topic')
+            ->select('tbl_evaluation_topic.et_id', 'tbl_evaluation_topic.et_topic')
+            ->leftJoin('tbl_answer_topic', 'tbl_answer_topic.et_id', '=', 'tbl_evaluation_topic.et_id')
+            ->where($matchThese)
+            ->groupBy('tbl_evaluation_topic.et_id')
+            ->orderBy('tbl_evaluation_topic.et_id', 'asc')
+            ->get()->toArray();
+
+        return $data;
+    }
+
 }

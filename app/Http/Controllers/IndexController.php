@@ -151,7 +151,7 @@ class IndexController extends Controller
                 'create_by' => $u_id,
                 'update_date' => date('Y-m-d H:i:s'),
                 'update_by' => $u_id,
-                'record_status' => 'A'
+                'record_status' => 'A',
             ];
             array_push($args, $ans);
         }
@@ -159,6 +159,21 @@ class IndexController extends Controller
         $eva = Evaluation::answer($args);
 
         return $eva;
+    }
+
+    public function total_user_evaluation(Request $request)
+    {
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
+        $data = Evaluation::total_user_evaluation($u_id);
+        return [
+            'status' => true,
+            'total' => count($data),
+            'topic' => $data,
+        ];
     }
 
     public function activities(Request $request)
@@ -249,7 +264,7 @@ class IndexController extends Controller
         // return $id;
         $data = Product::detail_youtube($id);
         $obj = [
-            'data_object' => $data
+            'data_object' => $data,
         ];
         return $obj;
     }

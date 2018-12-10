@@ -84,6 +84,7 @@ Route::post('/favorite/unlike', 'FavoriteController@favorite_unlike');
 // Eva //
 Route::get('/question', 'IndexController@question');
 Route::post('/answer', 'IndexController@answer');
+Route::get('/user-evaluation', 'IndexController@total_user_evaluation');
 // Eva //
 
 // activities //
