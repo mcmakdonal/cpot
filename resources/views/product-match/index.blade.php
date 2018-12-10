@@ -1,12 +1,12 @@
 @extends('master.master') 
 @section('main')
-    @include('master.breadcrumb')
+@include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'การจัดการ YouTube และ สินค้า'])
 <div class="main-content-inner">
     <div class="row">
         <div class="col-12 mt-5">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="header-title">Product Matching</h4>
+                    <h4 class="header-title">การจัดการ YouTube และ สินค้า</h4>
                     <div class="data-tables">
                         <table id="dataTable" class="">
                             <thead class="bg-light text-capitalize">

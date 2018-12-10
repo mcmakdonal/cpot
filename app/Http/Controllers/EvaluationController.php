@@ -167,9 +167,23 @@ class EvaluationController extends Controller
             ]);
         } else {
             $ad_id = \Cookie::get('ad_id');
-            $result = Evaluation::active($id, $ad_id);
+            $result = Evaluation::active($id, $ad_id, "A");
             return response()->json($result);
         }
+    }
 
+    public function unactive(Request $request)
+    {
+        $id = $request->id;
+        if ($id == "" || $id == null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'error',
+            ]);
+        } else {
+            $ad_id = \Cookie::get('ad_id');
+            $result = Evaluation::active($id, $ad_id, "I");
+            return response()->json($result);
+        }
     }
 }

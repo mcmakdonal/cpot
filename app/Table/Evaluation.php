@@ -9,11 +9,13 @@ class Evaluation extends ServiceProvider
 {
     public static function lists()
     {
-        $matchThese[] = ['record_status', '=', 'A'];
+        $matchThese[] = ['tbl_evaluation_topic.record_status', '=', 'A'];
         $data = DB::table('tbl_evaluation_topic')
-            ->select('*')
+            ->select('tbl_evaluation_topic.*', DB::raw('count(tbl_answer_topic.et_id) totol_vote'))
+            ->leftJoin('tbl_answer_topic', 'tbl_answer_topic.et_id', '=', 'tbl_evaluation_topic.et_id')
             ->where($matchThese)
-            ->orderBy('et_id', 'desc')
+            ->groupBy('tbl_evaluation_topic.et_id')
+            ->orderBy('tbl_evaluation_topic.et_id', 'desc')
             ->get()->toArray();
 
         return $data;
@@ -50,18 +52,38 @@ class Evaluation extends ServiceProvider
             ->where($matchThese)
             ->get()->toArray();
 
-        $et_id = $tbl_evaluation_topic[0]->et_id;
-
-        $tbl_question_topic = DB::table('tbl_question_topic')
+        $ques = [];
+        foreach($tbl_evaluation_topic as $k => $v){
+        $question = DB::table('tbl_question_topic')
             ->select('*')
-            ->where('et_id', '=', $et_id)
+            ->where('et_id', '=', $v->et_id)
             ->orderBy('q_id', 'asc')
             ->get()->toArray();
+            $obj = [
+                'topic' => $v,
+                'question' => $question
+            ];
 
-        return [
-            'question' => $tbl_question_topic,
-            'topic' => $tbl_evaluation_topic[0],
-        ];
+            $ques[][] = $obj;
+        }
+
+        return $ques;
+    }
+
+    public static function get_question_w_point($et_id)
+    {
+        $matchThese[] = ['tbl_question_topic.et_id', '=', $et_id];
+        // $matchThese[] = ['tbl_question_topic.record_status', '=', 'A'];
+
+        $data = DB::table('tbl_question_topic')
+            ->select('tbl_question_topic.q_id', 'tbl_question_topic.et_id', 'tbl_question_topic.q_question', DB::raw('SUM(tbl_answer_topic.q_point) sum_point'))
+            ->leftJoin('tbl_answer_topic', 'tbl_answer_topic.q_id', '=', 'tbl_question_topic.q_id')
+            ->where($matchThese)
+            ->groupBy('tbl_question_topic.q_id')
+            ->orderBy('tbl_question_topic.q_id', 'asc')
+            ->get()->toArray();
+
+        return $data;
     }
 
     public static function insert($args, $question)
@@ -155,13 +177,12 @@ class Evaluation extends ServiceProvider
         }
     }
 
-    public static function active($id, $ad_id)
+    public static function active($id, $ad_id, $status = "A")
     {
         DB::beginTransaction();
-        $status = DB::table('tbl_evaluation_topic')->update(['et_active' => 'I']);
         if ($status) {
             $args = [
-                'et_active' => 'A',
+                'et_active' => $status,
                 'update_date' => date('Y-m-d H:i:s'),
                 'update_by' => $ad_id,
             ];

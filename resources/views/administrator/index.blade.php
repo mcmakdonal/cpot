@@ -1,12 +1,12 @@
 @extends('master.master') 
 @section('main')
-    @include('master.breadcrumb')
+@include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'การจัดการผู้ดูแลระบบ'])
 <div class="main-content-inner">
     <div class="row">
         <div class="col-12 mt-5">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="header-title">Administrator</h4>
+                    <h4 class="header-title">การจัดการผู้ดูแลระบบ</h4>
                     <?=link_to('/administrator/create', $title = 'Create' , ['class' => 'btn btn-success mb-3 float-right'], $secure = null); ?>
                         <div class="data-tables">
                             <table id="dataTable" class="text-center">

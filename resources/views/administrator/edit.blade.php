@@ -1,11 +1,10 @@
 @extends('master.master') 
 @section('main')
-    @include('master.breadcrumb')
-
+@include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'แก้ไขผู้ดูแลระบบ'])
 <div class="col-12">
     <div class="card mt-5">
         <div class="card-body">
-            <h4 class="header-title">Edit Administrator</h4>
+            <h4 class="header-title">แก้ไขผู้ดูแลระบบ</h4>
             @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>

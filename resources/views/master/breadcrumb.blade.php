@@ -3,10 +3,10 @@
     <div class="row align-items-center">
         <div class="col-sm-6">
             <div class="breadcrumbs-area clearfix">
-                <h4 class="page-title pull-left" style="text-transform: capitalize;">{{ ucfirst(str_replace([url('/'),'/','-'],' ',url()->current())) }}</h4>
+                <h4 class="page-title pull-left" style="text-transform: capitalize;">{{ ($mtitle)? $mtitle : "" }}</h4>
                 <ul class="breadcrumbs pull-left">
-                    <li><a href="/">Home</a></li>
-                    <li><span>{{ ucfirst(str_replace([url('/'),'/','-'],' ',url()->current())) }}</span></li>
+                    <li><a href="/">หน้าหลัก</a></li>
+                    <li><span>{{ ($stitle)? $stitle : "" }}</span></li>
                 </ul>
             </div>
         </div>

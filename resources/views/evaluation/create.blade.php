@@ -1,11 +1,10 @@
 @extends('master.master') 
 @section('main')
-    @include('master.breadcrumb')
-
+@include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'เพิ่มแบบประเมิน'])
 <div class="col-12">
     <div class="card mt-5">
         <div class="card-body">
-            <h4 class="header-title">Create Evaluation</h4>
+            <h4 class="header-title">เพิ่มแบบประเมิน</h4>
             @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>

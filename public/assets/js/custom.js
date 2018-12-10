@@ -1,6 +1,13 @@
 var dataTable = '';
+var report_dataTable = '';
 $(document).ready(function () {
     dataTable = $('#dataTable').DataTable();
+
+    report_dataTable = $('#report_dataTable').DataTable({
+        dom: 'Bfrtip',
+        buttons: ['excel'],
+        dom: 'Bfrtip'
+    });
 });
 
 function destroy(src, id) {

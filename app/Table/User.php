@@ -19,7 +19,7 @@ class User extends ServiceProvider
         $exists = [
             'status' => true,
             'message' => 'Email Already Exists',
-            'user_data' => $data
+            'user_data' => $data,
         ];
 
         $notexists = [
@@ -28,6 +28,20 @@ class User extends ServiceProvider
             'user_data' => [],
         ];
         return (count($data) > 0) ? $exists : $notexists;
+    }
+
+    public static function lists()
+    {
+        $matchThese = [];
+        $matchThese[] = ['tbl_user.record_status', '=', 'A'];
+
+        $data = DB::table('tbl_user')
+            ->select('u_id', 'fb_id', 'u_identity', 'u_fullname', 'u_profile', 'u_email', 'u_phone', 'u_owner', 'u_phone', 'u_store', 'u_addr', 'u_community', 'u_desc')
+            ->where($matchThese)
+            ->orderBy('u_id', 'desc')
+            ->get()->toArray();
+
+        return $data;
     }
 
     public static function get_user($email, $id = "")
@@ -41,7 +55,7 @@ class User extends ServiceProvider
         }
 
         $data = DB::table('tbl_user')
-            ->select('u_id', 'fb_id', 'u_fullname', 'u_profile', 'u_email', 'u_phone','u_password')
+            ->select('u_id', 'fb_id', 'u_fullname', 'u_profile', 'u_email', 'u_phone', 'u_password')
             ->where($matchThese)
             ->get()->toArray();
 
@@ -110,10 +124,10 @@ class User extends ServiceProvider
         }
     }
 
-
     ///////////////////////////////////////////////////
 
-    public static function generate_random_letters($length) {
+    public static function generate_random_letters($length)
+    {
         $random = '';
         for ($i = 0; $i < $length; $i++) {
             $random .= chr(rand(ord('a'), ord('z')));

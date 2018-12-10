@@ -39,6 +39,7 @@ Route::resource('administrator', 'AdministratorController');
 
 Route::resource('evaluation', 'EvaluationController');
 Route::post('/evaluation/active', 'EvaluationController@active');
+Route::post('/evaluation/unactive', 'EvaluationController@unactive');
 // admin module //
 
 // product match module //
@@ -55,6 +56,15 @@ Route::post('/image-active', 'ImagesController@active');
 Route::post('/image-unactive', 'ImagesController@unactive');
 Route::delete('/image-destroy/{id}', 'ImagesController@destroy');
 // image mobile //
+
+// report //
+Route::get('/report', 'ReportController@evaluation');
+Route::get('/report/evaluation', 'ReportController@evaluation');
+Route::get('/report/user', 'ReportController@user');
+Route::get('/report/tag', 'ReportController@tag');
+Route::get('/report/share', 'ReportController@share');
+// report //
+
 
 // test
 Route::get('/ajax', function () {

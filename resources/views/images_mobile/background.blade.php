@@ -1,12 +1,12 @@
 @extends('master.master') 
 @section('main')
-    @include('master.breadcrumb')
+@include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'การจัดการแบล็คกราว'])
 <div class="main-content-inner">
     <div class="row">
         <div class="col-12 mt-5">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="header-title">Background</h4>
+                    <h4 class="header-title">การจัดการแบล็คกราว</h4>
                         @if ($errors->any())
                             <div class="alert alert-danger">
                                 <ul>

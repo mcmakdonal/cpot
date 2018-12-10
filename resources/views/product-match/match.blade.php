@@ -1,11 +1,10 @@
 @extends('master.master') 
 @section('main')
-    @include('master.breadcrumb')
-
+@include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'การจัดการ YouTube และ สินค้า'])
 <div class="col-12">
     <div class="card mt-5">
         <div class="card-body">
-            <h4 class="header-title">Matching Product & Youtube</h4>
+            <h4 class="header-title">การจัดการ YouTube และ สินค้า</h4>
             @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>

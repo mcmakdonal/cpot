@@ -1,12 +1,12 @@
 @extends('master.master') 
 @section('main')
-    @include('master.breadcrumb')
+@include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'การจัดการแบบประเมิน'])
 <div class="main-content-inner">
     <div class="row">
         <div class="col-12 mt-5">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="header-title">Evaluation</h4>
+                    <h4 class="header-title">การจัดการแบบประเมิน</h4>
                     <?=link_to('/evaluation/create', $title = 'Create' , ['class' => 'btn btn-success mb-3 float-right'], $secure = null); ?>
                         <div class="data-tables">
                             <table id="dataTable" class="text-center">
@@ -26,9 +26,9 @@
                                         <td>{{ $v->et_topic }}</td>
                                         <td>
                                             @if($v->et_active == "A")
-                                                <button class="btn btn-success" type="button">Now Active</button>
+                                                <button class="btn btn-success" type="button" onclick='func_unactive("/evaluation/unactive",{{$v->et_id}})'>Unactive</button>
                                             @else
-                                                <button class="btn btn-info" type="button" onclick='func_active("evaluation/active",{{$v->et_id}})'>Active</button>
+                                                <button class="btn btn-info" type="button" onclick='func_active("/evaluation/active",{{$v->et_id}})'>Active</button>
                                             @endif
                                         </td>
                                         <td>

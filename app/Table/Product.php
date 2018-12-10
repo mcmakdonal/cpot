@@ -7,7 +7,6 @@ use Illuminate\Support\ServiceProvider;
 
 class Product extends ServiceProvider
 {
-
     private static $product_field = [
         'tbl_product.pd_id',
         'tbl_product.pd_name',
@@ -70,6 +69,23 @@ class Product extends ServiceProvider
 
         return $data;
     }
+
+
+    public static function tag_lists()
+    {
+        $matchThese = [];
+        $matchThese[] = ['tbl_product.record_status', '=', 'A'];
+
+        $data = DB::table('tbl_product')
+            ->select('tbl_product.pd_tag',DB::raw('count(tbl_product.pd_tag) counter'))
+            ->where($matchThese)
+            ->orderBy('counter', 'desc')
+            ->groupBy('tbl_product.pd_tag')
+            ->get()->toArray();
+
+        return $data;
+    }
+
 
     public static function insert($args)
     {

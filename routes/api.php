@@ -99,7 +99,6 @@ Route::get('/ads-image', 'ImagesController@ads_image');
 Route::get('/background-image', 'ImagesController@background_image');
 // Ads & Wallpaer //
 
-
 // Access Denind //
 Route::get('/jwt', 'IndexController@jwt');
 Route::get('/jwtdecode', 'IndexController@jwtdecode');
