@@ -19,7 +19,10 @@ class Product extends ServiceProvider
         'tbl_product.pd_ref',
 
         'tbl_product.pd_store',
+
         'tbl_product.pd_province',
+        'tbl_province.province_name',
+
         'tbl_product.pd_history',
         'tbl_product.pd_featured',
         'tbl_product.pd_detail',
@@ -56,6 +59,7 @@ class Product extends ServiceProvider
             ->select(self::$product_field)
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->where($matchThese)
             ->orderBy('tbl_product.pd_id', 'desc')
             ->groupBy(self::$product_field)
@@ -68,6 +72,7 @@ class Product extends ServiceProvider
             ->select(self::$product_field)
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->where($matchThese)
             ->orderBy('tbl_product.pd_id', 'desc')
             ->groupBy(self::$product_field)
@@ -136,6 +141,7 @@ class Product extends ServiceProvider
             ->select(self::$product_field)
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->where($matchThese)
             ->orderBy('tbl_product.pd_id', 'desc')
             ->groupBy(self::$product_field)
@@ -351,6 +357,24 @@ class Product extends ServiceProvider
             ->where('my_id', '=', $id)
             ->groupBy($select)
             ->orderBy('tbl_youtube.my_id', 'desc')
+            ->get()->toArray();
+
+        return $data;
+    }
+
+    //////////////////////
+
+    public static function province_lists($id = "")
+    {
+        $matchThese = [];
+        if ($id != "") {
+            $matchThese[] = ['tbl_province.province_id', '=', "$id"];
+        }
+
+        $data = DB::table('tbl_province')
+            ->select('*')
+            ->where($matchThese)
+            ->orderBy('tbl_province.province_id', 'ASC')
             ->get()->toArray();
 
         return $data;

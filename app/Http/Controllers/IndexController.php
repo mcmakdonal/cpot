@@ -264,4 +264,13 @@ class IndexController extends Controller
         ];
         return $obj;
     }
+
+    public function province(Request $request)
+    {
+        $data = Product::province_lists();
+        $obj = [
+            'data_object' => $data,
+        ];
+        return $obj;
+    }
 }

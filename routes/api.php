@@ -100,6 +100,11 @@ Route::get('/ads-image', 'ImagesController@ads_image');
 Route::get('/background-image', 'ImagesController@background_image');
 // Ads & Wallpaer //
 
+// Province //
+Route::get('/get-province', 'IndexController@province');
+// Province //
+
+
 // Access Denind //
 Route::get('/jwt', 'IndexController@jwt');
 Route::get('/jwtdecode', 'IndexController@jwtdecode');
