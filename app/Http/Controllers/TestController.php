@@ -192,11 +192,84 @@ class TestController extends Controller
         $json = '[{"province_id":1,"province_name":"กรุงเทพมหานคร"},{"province_id":2,"province_name":"สมุทรปราการ"},{"province_id":3,"province_name":"นนทบุรี"},{"province_id":4,"province_name":"ปทุมธานี"},{"province_id":5,"province_name":"พระนครศรีอยุธยา"},{"province_id":6,"province_name":"อ่างทอง"},{"province_id":7,"province_name":"ลพบุรี"},{"province_id":8,"province_name":"สิงห์บุรี"},{"province_id":9,"province_name":"ชัยนาท"},{"province_id":10,"province_name":"สระบุรี"},{"province_id":11,"province_name":"ชลบุรี"},{"province_id":12,"province_name":"ระยอง"},{"province_id":13,"province_name":"จันทบุรี"},{"province_id":14,"province_name":"ตราด"},{"province_id":15,"province_name":"ฉะเชิงเทรา"},{"province_id":16,"province_name":"ปราจีนบุรี"},{"province_id":17,"province_name":"นครนายก"},{"province_id":18,"province_name":"สระแก้ว"},{"province_id":19,"province_name":"นครราชสีมา"},{"province_id":20,"province_name":"บุรีรัมย์"},{"province_id":21,"province_name":"สุรินทร์"},{"province_id":22,"province_name":"ศรีสะเกษ"},{"province_id":23,"province_name":"อุบลราชธานี"},{"province_id":24,"province_name":"ยโสธร"},{"province_id":25,"province_name":"ชัยภูมิ"},{"province_id":26,"province_name":"อำนาจเจริญ"},{"province_id":27,"province_name":"บึงกาฬ"},{"province_id":28,"province_name":"หนองบัวลำภู"},{"province_id":29,"province_name":"ขอนแก่น"},{"province_id":30,"province_name":"อุดรธานี"},{"province_id":31,"province_name":"เลย"},{"province_id":32,"province_name":"หนองคาย"},{"province_id":33,"province_name":"มหาสารคาม"},{"province_id":34,"province_name":"ร้อยเอ็ด"},{"province_id":35,"province_name":"กาฬสินธุ์"},{"province_id":36,"province_name":"สกลนคร"},{"province_id":37,"province_name":"นครพนม"},{"province_id":38,"province_name":"มุกดาหาร"},{"province_id":39,"province_name":"เชียงใหม่"},{"province_id":40,"province_name":"ลำพูน"},{"province_id":41,"province_name":"ลำปาง"},{"province_id":42,"province_name":"อุตรดิตถ์"},{"province_id":43,"province_name":"แพร่"},{"province_id":44,"province_name":"น่าน"},{"province_id":45,"province_name":"พะเยา"},{"province_id":46,"province_name":"เชียงราย"},{"province_id":47,"province_name":"แม่ฮ่องสอน"},{"province_id":48,"province_name":"นครสวรรค์"},{"province_id":49,"province_name":"อุทัยธานี"},{"province_id":50,"province_name":"กำแพงเพชร"},{"province_id":51,"province_name":"ตาก"},{"province_id":52,"province_name":"สุโขทัย"},{"province_id":53,"province_name":"พิษณุโลก"},{"province_id":54,"province_name":"พิจิตร"},{"province_id":55,"province_name":"เพชรบูรณ์"},{"province_id":56,"province_name":"ราชบุรี"},{"province_id":57,"province_name":"กาญจนบุรี"},{"province_id":58,"province_name":"สุพรรณบุรี"},{"province_id":59,"province_name":"นครปฐม"},{"province_id":60,"province_name":"สมุทรสาคร"},{"province_id":61,"province_name":"สมุทรสงคราม"},{"province_id":62,"province_name":"เพชรบุรี"},{"province_id":63,"province_name":"ประจวบคีรีขันธ์"},{"province_id":64,"province_name":"นครศรีธรรมราช"},{"province_id":65,"province_name":"กระบี่"},{"province_id":66,"province_name":"พังงา"},{"province_id":67,"province_name":"ภูเก็ต"},{"province_id":68,"province_name":"สุราษฎร์ธานี"},{"province_id":69,"province_name":"ระนอง"},{"province_id":70,"province_name":"ชุมพร"},{"province_id":71,"province_name":"สงขลา"},{"province_id":72,"province_name":"สตูล"},{"province_id":73,"province_name":"ตรัง"},{"province_id":74,"province_name":"พัทลุง"},{"province_id":75,"province_name":"ปัตตานี"},{"province_id":76,"province_name":"ยะลา"},{"province_id":77,"province_name":"นราธิวาส"}]';
         $arr = json_decode($json);
         foreach ($arr as $k => $v) {
-            if ($v->province_name == $name) {
+            if (trim($v->province_name) == trim($name)) {
                 return $v->province_id;
             }
         }
 
         return "";
+    }
+
+    public function insert_p_t_s()
+    {
+        $matchThese = [];
+
+        $data = DB::table('tbl_product')
+            ->select('pd_province', 'pd_store', 'pd_phone')
+            ->where($matchThese)
+            ->groupBy('pd_store')
+            ->get()->toArray();
+
+        $args = [];
+        foreach ($data as $k => $v) {
+            $obj = [
+                's_name' => $v->pd_store,
+                's_onwer' => $v->pd_store,
+                'province_id' => $v->pd_province,
+                's_phone' => $v->pd_phone,
+            ];
+
+            array_push($args, $obj);
+        }
+
+        // dd($args);
+        DB::beginTransaction();
+        $result = DB::table('tbl_store')->insert($args);
+        if ($result) {
+            DB::commit();
+            echo "Success";
+            echo "<br />";
+        } else {
+            DB::rollBack();
+            echo "Fail";
+            echo "<br />";
+        }
+    }
+
+    public function update_s_t_p()
+    {
+        $matchThese = [];
+
+        $data = DB::table('tbl_product')
+            ->select('pd_id', 'pd_store')
+            ->where($matchThese)
+            ->get()->toArray();
+
+        $args = [];
+        foreach ($data as $k => $v) {
+            $matchThese = [];
+            $matchThese[] = ['tbl_store.s_name', '=', trim($v->pd_store)];
+            $count = DB::table('tbl_store')
+                ->select('s_id')
+                ->where($matchThese)
+                ->get()->toArray();
+
+            if (count($count) > 0) {
+                DB::beginTransaction();
+                $args = [
+                    's_id' => $count[0]->s_id,
+                ];
+                $status = DB::table('tbl_product')->where('pd_id', $v->pd_id)->update($args);
+                if ($status) {
+                    DB::commit();
+                    echo "Success";
+                    echo "<br />";
+                } else {
+                    DB::rollBack();
+                    echo "Fail";
+                    echo "<br />";
+                }
+            }
+        }
     }
 }

@@ -27,10 +27,18 @@ class Blog extends ServiceProvider
         'bsc_name',
     ];
 
-    public static function lists($search = "", $bmc_id = "", $bsc_id = "", $search_tag = ['title', 'tag'], $page = 1)
+    public static function lists($search = "", $bmc_id = "", $bsc_id = "", $search_tag = ['title', 'tag'], $page = 1, $date = false)
     {
-        $matchThese = [];
         $limit = 10;
+        $matchThese = [];
+
+        // For default Release //
+        $Release = "tbl_blog.bg_id != ''";
+        if ($date) {
+            $Release = "WEEK(create_date) = WEEK(CURDATE())";
+        }
+        // For default Release //
+
         $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
         if ($bmc_id != "") {
             $matchThese[] = ['tbl_blog.bmc_id', '=', $bmc_id];
@@ -52,11 +60,13 @@ class Blog extends ServiceProvider
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
             ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
             ->where($matchThese)
+            ->whereRaw($Release)
             ->groupBy(self::$blog_field)
             ->orderBy('bg_id', 'desc')
             ->get()->toArray();
 
-        $total = ceil(count($count) / $limit);
+        $count_all = count($count);
+        $total = ceil($count_all / $limit);
         $offset = ($page - 1) * $limit;
 
         $data = DB::table('tbl_blog')
@@ -64,6 +74,7 @@ class Blog extends ServiceProvider
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
             ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
             ->where($matchThese)
+            ->whereRaw($Release)
             ->groupBy(self::$blog_field)
             ->orderBy('bg_id', 'desc')
             ->offset($offset)
@@ -78,8 +89,8 @@ class Blog extends ServiceProvider
             }
             $data[$k]->bg_image = $img;
         }
-        
-        return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page];
+
+        return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalBlog' => $count_all];
     }
 
     public static function insert($args)
@@ -169,7 +180,7 @@ class Blog extends ServiceProvider
                 }
             }
             $matchThese .= " limit 4";
-            $blog = DB::select("select bg_id,bg_title,bg_image,bg_tag from tbl_blog $matchThese");
+            $blog = DB::select("select bg_id,bg_title,bg_tag from tbl_blog $matchThese");
             foreach ($blog as $kk => $vv) {
                 $image = DB::table('tbl_blog_images')->select('path')->where('bg_id', '=', $vv->bg_id)->get()->toArray();
                 $img = [];

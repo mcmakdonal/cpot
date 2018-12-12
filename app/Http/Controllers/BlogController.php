@@ -88,7 +88,6 @@ class BlogController extends Controller
         }
 
         $args = array_merge($args, [
-            'bg_image' => $file,
             'create_date' => date('Y-m-d H:i:s'),
             'create_by' => $u_id,
             'update_date' => date('Y-m-d H:i:s'),

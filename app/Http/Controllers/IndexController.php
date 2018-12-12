@@ -3,102 +3,72 @@
 namespace App\Http\Controllers;
 
 use App\Http\JwtService;
+use App\Table\Addr;
 use App\Table\Blog;
 use App\Table\Evaluation;
 use App\Table\Log;
 use App\Table\Product;
+use App\Table\StoreandMaterial;
 use Illuminate\Http\Request;
 use Validator;
 
 class IndexController extends Controller
 {
-    public function search_title_all(Request $request)
+    public function search(Request $request)
     {
-        $product = $blog = $youtube = [];
         $obj = [
             'product' => [],
-            'blog' => [],
-            'youtube' => []
+            'blog' => [
+                'cpot' => [],
+                'youtube' => [],
+            ],
+            'store' => [],
+            'material' => [],
         ];
+
+        $search_type = ($request->seach_type) ? [trim(strtolower($request->seach_type))] : ['title'];
         $search = ($request->search) ? $request->search : "";
         $type = ($request->type) ? $request->type : "all";
-        $pd_page = ($request->pd_page == 0 || $request->pd_page == "") ? 1 : $request->pd_page;
-        $bg_page = ($request->bg_page == 0 || $request->bg_page == "") ? 1 : $request->bg_page;
+        $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
 
-        $mcat_id = ($request->mcat_id) ? $request->mcat_id : "";
-        $scat_id = ($request->scat_id) ? $request->scat_id : "";
-
-        $bmc_id = ($request->bmc_id) ? $request->bmc_id : "";
-        $bsc_id = ($request->bsc_id) ? $request->bsc_id : "";
+        // Product
+        $mcat_id = (array_key_exists('mcat_id', $request->product)) ? $request->product['mcat_id'] : "";
+        $scat_id = (array_key_exists('scat_id', $request->product)) ? $request->product['scat_id'] : "";
+        $price = (array_key_exists('price', $request->product)) ? $request->product['price'] : "";
+        $rating = (array_key_exists('rating', $request->product)) ? $request->product['rating'] : "";
+        // Blog
+        $bmc_id = (array_key_exists('bmc_id', $request->blog)) ? $request->blog['bmc_id'] : "";
+        $bsc_id = (array_key_exists('bsc_id', $request->blog)) ? $request->blog['bsc_id'] : "";
+        // Store
+        $pv_id = (array_key_exists('pv_id', $request->store)) ? $request->store['pv_id'] : "";
+        // Material
+        $spv_id = (array_key_exists('pv_id', $request->material)) ? $request->material['pv_id'] : "";
+        $sdt_id = (array_key_exists('dt_id', $request->material)) ? $request->material['dt_id'] : "";
+        $ssdt_id = (array_key_exists('sdt_id', $request->material)) ? $request->material['sdt_id'] : "";
 
         if ($type == "pd" || $type == "all") {
-            $product = Product::lists($search, $mcat_id, $scat_id, ['title'], $pd_page);
-            $product['product_total'] = $product['totalPages'] * 10;
+            $product = Product::lists($search, $mcat_id, $scat_id, $search_type, $page, $price, $rating);
             array_push($obj['product'], $product);
         }
 
         if ($type == "bg" || $type == "all") {
-            $blog = Blog::lists($search, $bmc_id, $bsc_id, ['title'], $bg_page);
-            $blog['blog_total'] = $blog['totalPages'] * 10;
-            array_push($obj['blog'], $blog);
+            $blog = Blog::lists($search, $bmc_id, $bsc_id, $search_type, $page);
+            array_push($obj['blog']['cpot'], $blog);
         }
 
         if ($type == "yt" || $type == "all") {
-            $youtube = Product::lists_youtube($search, ['title']);
-            $args = [
-                'data_object' => $youtube,
-                'youtube_total' => count($youtube),
-                'currentPage' => 0,
-                'totalPages' => 0
-            ];
-
-            array_push($obj['youtube'], $args);
+            $youtube = Product::lists_youtube($search, $search_type, $page);
+            array_push($obj['blog']['youtube'], $youtube);
         }
 
-        return $obj;
-    }
-
-    public function search_tag_all(Request $request)
-    {
-        $product = $blog = $youtube = [];
-        $obj = [
-            'product' => [],
-            'blog' => [],
-            'youtube' => []
-        ];
-        $search = ($request->search) ? $request->search : "";
-        $type = ($request->type) ? $request->type : "all";
-        $pd_page = ($request->pd_page == 0 || $request->pd_page == "") ? 1 : $request->pd_page;
-        $bg_page = ($request->bg_page == 0 || $request->bg_page == "") ? 1 : $request->bg_page;
-
-        $mcat_id = ($request->mcat_id) ? $request->mcat_id : "";
-        $scat_id = ($request->scat_id) ? $request->scat_id : "";
-
-        $bmc_id = ($request->bmc_id) ? $request->bmc_id : "";
-        $bsc_id = ($request->bsc_id) ? $request->bsc_id : "";
-
-        if ($type == "pd" || $type == "all") {
-            $product = Product::lists($search, $mcat_id, $scat_id, ['tag'], $pd_page);
-            $product['product_total'] = $product['totalPages'] * 10;
-            array_push($obj['product'], $product);
+        if ($type == "st" || $type == "all") {
+            $store = StoreandMaterial::store_lists("", $search, $page, $pv_id);
+            array_push($obj['store'], $store);
         }
 
-        if ($type == "bg" || $type == "all") {
-            $blog = Blog::lists($search, $bmc_id, $bsc_id, ['tag'], $bg_page);
-            $blog['blog_total'] = $blog['totalPages'] * 10;
-            array_push($obj['blog'], $blog);
-        }
-
-        if ($type == "yt" || $type == "all") {
-            $youtube = Product::lists_youtube($search, ['tag']);
-            $args = [
-                'data_object' => $youtube,
-                'youtube_total' => count($youtube),
-                'currentPage' => 0,
-                'totalPages' => 0
-            ];
-
-            array_push($obj['youtube'], $args);
+        if ($type == "mt" || $type == "all") {
+            $material = StoreandMaterial::material_lists("", $search, $page, $spv_id, $sdt_id, $ssdt_id);
+            array_push($obj['material'], $material);
         }
 
         return $obj;
@@ -112,7 +82,6 @@ class IndexController extends Controller
             'status' => true,
             'message' => 'success',
         ];
-
         return $obj;
     }
 
@@ -153,7 +122,6 @@ class IndexController extends Controller
         }
 
         $eva = Evaluation::answer($args);
-
         return $eva;
     }
 
@@ -241,7 +209,6 @@ class IndexController extends Controller
         ]);
 
         $log = Log::insert($args);
-
         return $log;
 
     }
@@ -257,7 +224,6 @@ class IndexController extends Controller
             $u_id = $result['u_id'];
             // $favorite = Favorite::is_like("P", $id, $u_id);
         }
-        // return $id;
         $data = Product::detail_youtube($id);
         $obj = [
             'data_object' => $data,
@@ -265,12 +231,44 @@ class IndexController extends Controller
         return $obj;
     }
 
-    public function province(Request $request)
+    public function province(Request $request, $id = "")
     {
-        $data = Product::province_lists();
+        $data = Addr::province_lists($id);
         $obj = [
             'data_object' => $data,
         ];
         return $obj;
+    }
+
+    public function distrcit(Request $request, $id)
+    {
+        $data = Addr::district_lists($id);
+        $obj = [
+            'data_object' => $data,
+        ];
+        return $obj;
+    }
+
+    public function sub_district(Request $request, $id)
+    {
+        $data = Addr::sub_district_lists($id);
+        $obj = [
+            'data_object' => $data,
+        ];
+        return $obj;
+    }
+
+    public function new_release(Request $request)
+    {
+        $type = ($request->type) ? trim(strtolower($request->type)) : "pd";
+        $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
+
+        $data = "";
+        if ($type == "pd") {
+            $data = Product::lists("", "", "", [], $page, "", "", true);
+        } else {
+            $data = Blog::lists("", "", "", [], $page, true);
+        }
+        return $data;
     }
 }

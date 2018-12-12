@@ -18,8 +18,6 @@ class Product extends ServiceProvider
         'tbl_product.pd_tag',
         'tbl_product.pd_ref',
 
-        'tbl_product.pd_store',
-
         'tbl_product.pd_province',
         'tbl_province.province_name',
 
@@ -27,7 +25,11 @@ class Product extends ServiceProvider
         'tbl_product.pd_featured',
         'tbl_product.pd_detail',
         'tbl_product.pd_benefits',
-        'tbl_product.pd_phone',
+
+        'tbl_store.s_id',
+        'tbl_store.s_name',
+        'tbl_store.s_onwer',
+        'tbl_store.s_phone',
 
         'tbl_main_category.mcat_id',
         'tbl_main_category.mcat_name',
@@ -35,16 +37,35 @@ class Product extends ServiceProvider
         'tbl_sub_category.scat_name',
     ];
 
-    public static function lists($search = "", $mcat_id = "", $scat_id = "", $search_tag = ['title', 'tag'], $page = 1)
+    public static function lists($search = "", $mcat_id = "", $scat_id = "", $search_tag = ['title', 'tag'], $page = 1, $price = "", $rating = "", $date = false)
     {
-        $matchThese = [];
         $limit = 10;
+        $matchThese = [];
+
+        // For default Release //
+        $Release = "tbl_product.pd_id != ''";
+        if ($date) {
+            $Release = "WEEK(create_date) = WEEK(CURDATE())";
+        }
+        // For default Release //
+        
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
         if ($mcat_id != "") {
             $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
         }
         if ($scat_id != "") {
             $matchThese[] = ['tbl_sub_category.scat_id', '=', $scat_id];
+        }
+        if ($price != "") {
+            $range = explode(",", $price);
+            $min = $range[0];
+            $max = $range[1];
+
+            $matchThese[] = ['tbl_product.pd_price', '>=', $min];
+            $matchThese[] = ['tbl_product.pd_price', '<=', $max];
+        }
+        if ($rating != "") {
+            $matchThese[] = ['tbl_product.pd_rating', '=', $rating];
         }
         if ($search != "") {
             if (in_array("tag", $search_tag)) {
@@ -60,12 +81,15 @@ class Product extends ServiceProvider
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
+            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
             ->where($matchThese)
+            ->whereRaw($Release)
             ->orderBy('tbl_product.pd_id', 'desc')
             ->groupBy(self::$product_field)
             ->get()->toArray();
 
-        $total = ceil(count($count) / $limit);
+        $count_all = count($count);
+        $total = ceil($count_all / $limit);
         $offset = ($page - 1) * $limit;
 
         $data = DB::table('tbl_product')
@@ -73,7 +97,9 @@ class Product extends ServiceProvider
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
+            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
             ->where($matchThese)
+            ->whereRaw($Release)
             ->orderBy('tbl_product.pd_id', 'desc')
             ->groupBy(self::$product_field)
             ->offset($offset)
@@ -93,7 +119,7 @@ class Product extends ServiceProvider
                 ->where([['record_status', '=', 'A'], ['pd_id', '=', $v->pd_id]])->get()->toArray();
         }
 
-        return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page];
+        return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalProduct' => $count_all];
     }
 
     public static function tag_lists()
@@ -142,6 +168,7 @@ class Product extends ServiceProvider
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
+            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
             ->where($matchThese)
             ->orderBy('tbl_product.pd_id', 'desc')
             ->groupBy(self::$product_field)
@@ -164,9 +191,14 @@ class Product extends ServiceProvider
                 }
             }
             $matchThese .= " limit 4";
-            $blog = DB::select("select bg_id,bg_title,bg_image,bg_tag from tbl_blog $matchThese");
+            $blog = DB::select("select bg_id,bg_title,bg_tag from tbl_blog $matchThese");
             foreach ($blog as $kk => $vv) {
-                $blog[$kk]->bg_image = url('/blog/' . $vv->bg_image);
+                $image = DB::table('tbl_blog_images')->select('path')->where('bg_id', '=', $vv->bg_id)->get()->toArray();
+                $img = [];
+                foreach ($image as $bk => $bv) {
+                    array_push($img, url($bv->path));
+                }
+                $blog[$kk]->bg_image = $img;
             }
             $data[$k]->blog_relate = $blog;
 
@@ -313,8 +345,9 @@ class Product extends ServiceProvider
         return $data;
     }
 
-    public static function lists_youtube($search, $search_tag = ['title', 'tag'])
+    public static function lists_youtube($search, $search_tag = ['title', 'tag'], $page = 1)
     {
+        $limit = 10;
         $matchThese = [];
         if ($search != "") {
             if (in_array("tag", $search_tag)) {
@@ -332,14 +365,28 @@ class Product extends ServiceProvider
             'my_image',
             'my_desc',
         ];
-        $data = DB::table('tbl_youtube')
+
+        $count = DB::table('tbl_youtube')
             ->select($select)
             ->where($matchThese)
             ->groupBy($select)
             ->orderBy('tbl_youtube.my_id', 'desc')
             ->get()->toArray();
 
-        return $data;
+        $count_all = count($count);
+        $total = ceil($count_all / $limit);
+        $offset = ($page - 1) * $limit;
+
+        $data = DB::table('tbl_youtube')
+            ->select($select)
+            ->where($matchThese)
+            ->groupBy($select)
+            ->orderBy('tbl_youtube.my_id', 'desc')
+            ->offset($offset)
+            ->limit($limit)
+            ->get()->toArray();
+
+        return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalYoutube' => $count_all];
     }
 
     public static function detail_youtube($id)
@@ -362,21 +409,4 @@ class Product extends ServiceProvider
         return $data;
     }
 
-    //////////////////////
-
-    public static function province_lists($id = "")
-    {
-        $matchThese = [];
-        if ($id != "") {
-            $matchThese[] = ['tbl_province.province_id', '=', "$id"];
-        }
-
-        $data = DB::table('tbl_province')
-            ->select('*')
-            ->where($matchThese)
-            ->orderBy('tbl_province.province_id', 'ASC')
-            ->get()->toArray();
-
-        return $data;
-    }
 }

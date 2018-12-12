@@ -75,4 +75,6 @@ Route::get('/jwtdecode', 'TestController@jwtdecode');
 
 // Route::get('/product-excel', 'TestController@product');
 // Route::get('/blog-excel', 'TestController@blog');
+// Route::get('/insert-p-t-s','TestController@insert_p_t_s');
+// Route::get('/update-s-t-p','TestController@update_s_t_p');
 //

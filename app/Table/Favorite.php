@@ -76,14 +76,19 @@ class Favorite extends ServiceProvider
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
 
         $tbl_favorite = DB::table('tbl_favorite')
-            ->select('tbl_product.pd_id', 'tbl_product.pd_name', 'tbl_product.pd_description', 'tbl_product.pd_image')
+            ->select('tbl_product.pd_id', 'tbl_product.pd_name', 'tbl_product.pd_description')
             ->join('tbl_product', 'tbl_product.pd_id', '=', 'tbl_favorite.id')
             ->where($matchThese)
             ->orderBy('tbl_favorite.id', 'desc')
             ->get()->toArray();
 
         foreach ($tbl_favorite as $k => $v) {
-            $tbl_favorite[$k]->pd_image = url('/files/' . $v->pd_image);
+            $image = DB::table('tbl_product_images')->select('path')->where('pd_id', '=', $v->pd_id)->get()->toArray();
+            $img = [];
+            foreach ($image as $kk => $vv) {
+                array_push($img, url($vv->path));
+            }
+            $tbl_favorite[$k]->pd_image = $img;
             $tbl_favorite[$k]->type = "product";
         }
 
@@ -98,14 +103,19 @@ class Favorite extends ServiceProvider
         $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
 
         $tbl_favorite = DB::table('tbl_favorite')
-            ->select('tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_image', 'tbl_blog.bg_description')
+            ->select('tbl_blog.bg_id', 'tbl_blog.bg_title', 'tbl_blog.bg_description')
             ->join('tbl_blog', 'tbl_blog.bg_id', '=', 'tbl_favorite.id')
             ->where($matchThese)
             ->orderBy('tbl_favorite.id', 'desc')
             ->get()->toArray();
 
         foreach ($tbl_favorite as $k => $v) {
-            $tbl_favorite[$k]->bg_image = url('/blog/' . $v->bg_image);
+            $image = DB::table('tbl_blog_images')->select('path')->where('bg_id', '=', $v->bg_id)->get()->toArray();
+            $img = [];
+            foreach ($image as $kk => $vv) {
+                array_push($img, url($vv->path));
+            }
+            $tbl_favorite[$k]->bg_image = $img;
             $tbl_favorite[$k]->type = "blog";
         }
 

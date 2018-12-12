@@ -61,14 +61,26 @@ Route::post('/user/check_login', 'UserController@check_login');
 Route::post('/user/update', 'UserController@update');
 Route::post('/user/delete', 'UserController@destroy');
 Route::get('/user/detail', 'UserController@show');
-Route::post('/user/forget-password','UserController@forget_password');
+Route::post('/user/forget-password', 'UserController@forget_password');
 
 Route::post('/user/register_facebook', 'UserController@register_facebook');
 //////// User /////////////////////////////////
 
 /// Search Common ///
-Route::post('/search_title_all', 'IndexController@search_title_all');
-Route::post('/search_tag_all', 'IndexController@search_tag_all');
+Route::post('/search_title_all', function (Request $request) {
+    return [
+        'status' => false,
+        'message' => "Please use endpoint /search-all",
+    ];
+});
+Route::post('/search_tag_all', function (Request $request) {
+    return [
+        'status' => false,
+        'message' => "Please use endpoint /search-all",
+    ];
+});
+
+Route::post('/search-all', 'IndexController@search');
 /// Search Common ///
 
 // Favorite //
@@ -102,8 +114,13 @@ Route::get('/background-image', 'ImagesController@background_image');
 
 // Province //
 Route::get('/get-province', 'IndexController@province');
+Route::get('/get-district/{id}', 'IndexController@distrcit');
+Route::get('/get-sub-district/{id}', 'IndexController@sub_district');
 // Province //
 
+// New release //
+Route::post('/new-release', 'IndexController@new_release');
+// New release //
 
 // Access Denind //
 Route::get('/jwt', 'IndexController@jwt');
