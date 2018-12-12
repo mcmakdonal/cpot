@@ -113,7 +113,7 @@ class BlogController extends Controller
                 die();
             }
             $u_id = $result['u_id'];
-            $favorite = Favorite::is_like("P", $id, $u_id);
+            $favorite = Favorite::is_like("bg", $id, $u_id);
         }
         $data = Blog::detail($id);
         $obj = ['data_object' => $data, 'favorite' => $favorite];

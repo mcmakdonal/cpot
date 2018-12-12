@@ -35,24 +35,28 @@ class ProductMapController extends Controller
     public function store(Request $request, $id)
     {
         $args = [];
-        foreach ($request->youtube as $k => $v) {
-            $json = json_decode($v);
-            $args[] = [
-                'my_title' => $json->my_title,
-                'my_href' => $json->my_href,
-                'my_bytag' => $request->pd_tag,
-                'my_desc' => $json->my_desc,
-                'pd_id' => $id,
-                'my_image' => $json->my_image,
-                'create_date' => date('Y-m-d H:i:s'),
-                'create_by' => 1,
-                'update_date' => date('Y-m-d H:i:s'),
-                'update_by' => 1,
-                'record_status' => 'A',
-            ];
+        if ($request->youtube) {
+            foreach ($request->youtube as $k => $v) {
+                $json = json_decode($v);
+                $args[] = [
+                    'my_title' => $json->my_title,
+                    'my_href' => $json->my_href,
+                    'my_bytag' => $request->pd_tag,
+                    'my_desc' => $json->my_desc,
+                    'pd_id' => $id,
+                    'my_image' => $json->my_image,
+                    'create_date' => date('Y-m-d H:i:s'),
+                    'create_by' => 1,
+                    'update_date' => date('Y-m-d H:i:s'),
+                    'update_by' => 1,
+                    'record_status' => 'A',
+                ];
+            }
+        } else {
+            return redirect()->back()->withErrors(array('error' => 'error'));
         }
 
-        $result = Product::insert_youtube($args,$id);
+        $result = Product::insert_youtube($args, $id);
         if ($result['status']) {
             return redirect("/product-match/$id/matching")->with('status', 'บันทึกสำเร็จ');
         } else {

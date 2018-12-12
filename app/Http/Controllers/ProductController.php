@@ -113,7 +113,7 @@ class ProductController extends Controller
                 die();
             }
             $u_id = $result['u_id'];
-            $favorite = Favorite::is_like("P", $id, $u_id);
+            $favorite = Favorite::is_like("pd", $id, $u_id);
         }
         $data = Product::detail($id);
         $obj = [

@@ -143,34 +143,19 @@ class Favorite extends ServiceProvider
         return $tbl_favorite;
     }
 
-    public static function is_like($type = "P", $id, $u_id)
+    public static function is_like($type = "pd", $id, $u_id)
     {
-        DB::beginTransaction();
-        if ($type === "P") {
-            $matchThese = [];
-            $matchThese[] = ['u_id', '=', $u_id];
-            $matchThese[] = ['pd_id', '=', $id];
-            $matchThese[] = ['record_status', '=', 'A'];
-            $tbl_favorite_product = DB::table('tbl_favorite_product')
-                ->select('u_id')
-                ->where($matchThese)
-                ->count();
+        $matchThese = [];
+        $matchThese[] = ['id', '=', $id];
+        $matchThese[] = ['type', '=', $type];
+        $matchThese[] = ['u_id', '=', $u_id];
+        $matchThese[] = ['record_status', '=', 'A'];
+        $tbl_favorite = DB::table('tbl_favorite')
+            ->select('u_id')
+            ->where($matchThese)
+            ->count();
 
-            return ($tbl_favorite_product > 0) ? true : false;
-
-        } else {
-            $matchThese = [];
-            $matchThese[] = ['u_id', '=', $u_id];
-            $matchThese[] = ['bg_id', '=', $id];
-            $matchThese[] = ['record_status', '=', 'A'];
-            $tbl_favorite_product = DB::table('tbl_favorite_blog')
-                ->select('u_id')
-                ->where($matchThese)
-                ->count();
-
-            return ($tbl_favorite_product > 0) ? true : false;
-
-        }
+        return ($tbl_favorite > 0) ? true : false;
     }
 
     // @param type  : pd = product | bg = blog | yt = youtube

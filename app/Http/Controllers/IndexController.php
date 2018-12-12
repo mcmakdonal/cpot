@@ -8,7 +8,9 @@ use App\Table\Blog;
 use App\Table\Evaluation;
 use App\Table\Log;
 use App\Table\Product;
+use App\Table\Favorite;
 use App\Table\StoreandMaterial;
+
 use Illuminate\Http\Request;
 use Validator;
 
@@ -16,6 +18,18 @@ class IndexController extends Controller
 {
     public function search(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'seach_type' => 'required',
+            'type' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+
         $obj = [
             'product' => [],
             'blog' => [
@@ -222,12 +236,10 @@ class IndexController extends Controller
                 die();
             }
             $u_id = $result['u_id'];
-            // $favorite = Favorite::is_like("P", $id, $u_id);
+            $favorite = Favorite::is_like("yt", $id, $u_id);
         }
         $data = Product::detail_youtube($id);
-        $obj = [
-            'data_object' => $data,
-        ];
+        $obj = ['data_object' => $data, 'favorite' => $favorite];
         return $obj;
     }
 
@@ -260,6 +272,18 @@ class IndexController extends Controller
 
     public function new_release(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'type' => 'required',
+            'page' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+
         $type = ($request->type) ? trim(strtolower($request->type)) : "pd";
         $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
 
@@ -270,5 +294,25 @@ class IndexController extends Controller
             $data = Blog::lists("", "", "", [], $page, true);
         }
         return $data;
+    }
+
+    public function recive_token(Request $request){
+        $validator = Validator::make($request->all(), [
+            'token' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+
+        $args = [
+            'token' => $request->token,
+            'create_date' => date('Y-m-d H:i:s')
+        ];
+
+        return Log::token_insert($args);
     }
 }

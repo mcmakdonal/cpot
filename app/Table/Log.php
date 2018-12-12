@@ -77,4 +77,23 @@ class Log extends ServiceProvider
         }
     }
 
+    public static function token_insert($args)
+    {
+        DB::beginTransaction();
+        $status = DB::table('tbl_device_token')->insert($args);
+        if ($status) {
+            DB::commit();
+            return [
+                'status' => true,
+                'message' => 'Success',
+            ];
+        } else {
+            DB::rollBack();
+            return [
+                'status' => false,
+                'message' => 'Fail',
+            ];
+        }
+    }
+
 }

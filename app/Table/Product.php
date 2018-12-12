@@ -48,7 +48,7 @@ class Product extends ServiceProvider
             $Release = "WEEK(create_date) = WEEK(CURDATE())";
         }
         // For default Release //
-        
+
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
         if ($mcat_id != "") {
             $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];

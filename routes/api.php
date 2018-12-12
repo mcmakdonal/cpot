@@ -122,6 +122,11 @@ Route::get('/get-sub-district/{id}', 'IndexController@sub_district');
 Route::post('/new-release', 'IndexController@new_release');
 // New release //
 
+// Nof //
+Route::post('/nof-token', 'IndexController@recive_token');
+// Nof //
+
+
 // Access Denind //
 Route::get('/jwt', 'IndexController@jwt');
 Route::get('/jwtdecode', 'IndexController@jwtdecode');
