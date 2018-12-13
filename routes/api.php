@@ -101,6 +101,7 @@ Route::get('/user-evaluation', 'IndexController@total_user_evaluation');
 
 // activities //
 Route::post('/activities', 'IndexController@activities');
+Route::post('/user-activities', 'IndexController@lists_activities');
 // activities //
 
 // Youtube Detail //

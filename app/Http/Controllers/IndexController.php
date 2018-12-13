@@ -6,11 +6,10 @@ use App\Http\JwtService;
 use App\Table\Addr;
 use App\Table\Blog;
 use App\Table\Evaluation;
+use App\Table\Favorite;
 use App\Table\Log;
 use App\Table\Product;
-use App\Table\Favorite;
 use App\Table\StoreandMaterial;
-
 use Illuminate\Http\Request;
 use Validator;
 
@@ -20,7 +19,7 @@ class IndexController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'seach_type' => 'required',
-            'type' => 'required'
+            'type' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -224,7 +223,49 @@ class IndexController extends Controller
 
         $log = Log::insert($args);
         return $log;
+    }
 
+    public function lists_activities(Request $request)
+    {
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
+
+        $validator = Validator::make($request->all(), [
+            'type' => 'required',
+            'action' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+
+        $obj = [
+            'product' => [],
+            'blog' => [],
+            'youtube' => [],
+        ];
+
+        $type = ($request->type) ? $request->type : "pd";
+        $action = ($request->action) ? $request->action : "share";
+        if ($type == "pd" || $type == "all") {
+            $obj['product'] = Log::lists_activities_product($u_id, $action);
+        }
+
+        if ($type == "bg" || $type == "all") {
+            $obj['blog'] = Log::lists_activities_blog($u_id, $action);
+        }
+
+        if ($type == "yt" || $type == "all") {
+            $obj['youtube'] = Log::lists_activities_youtube($u_id, $action);
+        }
+
+        return $obj;
     }
 
     public function youtube(Request $request, $id)
@@ -274,7 +315,7 @@ class IndexController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'type' => 'required',
-            'page' => 'required'
+            'page' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -296,7 +337,8 @@ class IndexController extends Controller
         return $data;
     }
 
-    public function recive_token(Request $request){
+    public function recive_token(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'token' => 'required',
         ]);
@@ -310,7 +352,7 @@ class IndexController extends Controller
 
         $args = [
             'token' => $request->token,
-            'create_date' => date('Y-m-d H:i:s')
+            'create_date' => date('Y-m-d H:i:s'),
         ];
 
         return Log::token_insert($args);
