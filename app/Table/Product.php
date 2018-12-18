@@ -18,8 +18,9 @@ class Product extends ServiceProvider
         'tbl_product.pd_tag',
         'tbl_product.pd_ref',
 
-        'tbl_product.pd_province',
+        'tbl_province.province_id',
         'tbl_province.province_name',
+        'tbl_province.province_sector',
 
         'tbl_product.pd_history',
         'tbl_product.pd_featured',
@@ -35,6 +36,7 @@ class Product extends ServiceProvider
         'tbl_main_category.mcat_name',
         'tbl_sub_category.scat_id',
         'tbl_sub_category.scat_name',
+
     ];
 
     public static function lists($search = "", $mcat_id = "", $scat_id = "", $search_tag = ['title', 'tag'], $page = 1, $price = "", $rating = "", $date = false)
@@ -118,6 +120,79 @@ class Product extends ServiceProvider
                 ->select('my_id', 'my_title', 'my_href', 'my_image', 'my_desc')
                 ->where([['record_status', '=', 'A'], ['pd_id', '=', $v->pd_id]])->get()->toArray();
         }
+
+        return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalProduct' => $count_all];
+    }
+
+    public static function listsv2($search = "", $mcat_id = "", $search_tag = ['title', 'tag'], $page = 1, $price = "", $rating = "",$sector = "")
+    {
+        $limit = 10;
+        $matchThese = [];
+        
+        $matchThese[] = ['tbl_product.record_status', '=', 'A'];
+        if ($mcat_id != "") {
+            $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
+        }
+        if ($price != "") {
+            $range = explode(",", $price);
+            $min = $range[0];
+            $max = $range[1];
+
+            $matchThese[] = ['tbl_product.pd_price', '>=', $min];
+            $matchThese[] = ['tbl_product.pd_price', '<=', $max];
+        }
+        if ($rating != "") {
+            $matchThese[] = ['tbl_product.pd_rating', '=', $rating];
+        }
+        if ($sector != "") {
+            $matchThese[] = ['tbl_province.province_sector', '=', $sector];
+        }
+
+        if ($search != "") {
+            if (in_array("tag", $search_tag)) {
+                $matchThese[] = ['tbl_product.pd_tag', 'like', "%$search%"];
+            }
+            if (in_array("title", $search_tag)) {
+                $matchThese[] = ['tbl_product.pd_name', 'like', "%$search%"];
+            }
+        }
+
+        $count = DB::table('tbl_product')
+            ->select(self::$product_field)
+            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+            ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
+            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
+            ->where($matchThese)
+            ->orderBy('tbl_product.pd_id', 'desc')
+            ->groupBy(self::$product_field)
+            ->get()->toArray();
+
+        $count_all = count($count);
+        $total = ceil($count_all / $limit);
+        $offset = ($page - 1) * $limit;
+
+        $data = DB::table('tbl_product')
+            ->select(self::$product_field)
+            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+            ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
+            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
+            ->where($matchThese)
+            ->orderBy('tbl_product.pd_id', 'desc')
+            ->groupBy(self::$product_field)
+            ->offset($offset)
+            ->limit($limit)
+            ->get()->toArray();
+
+        // foreach ($data as $k => $v) {
+        //     $image = DB::table('tbl_product_images')->select('path')->where('pd_id', '=', $v->pd_id)->get()->toArray();
+        //     $img = [];
+        //     foreach ($image as $kk => $vv) {
+        //         array_push($img, url($vv->path));
+        //     }
+        //     $data[$k]->pd_image = $img;
+        // }
 
         return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalProduct' => $count_all];
     }
@@ -345,7 +420,7 @@ class Product extends ServiceProvider
         return $data;
     }
 
-    public static function lists_youtube($search, $search_tag = ['title', 'tag'], $page = 1)
+    public static function lists_youtube($search = "", $search_tag = ['title', 'tag'], $page = 1,$mcat_id = "", $price = "", $rating = "",$sector = "")
     {
         $limit = 10;
         $matchThese = [];
@@ -357,6 +432,25 @@ class Product extends ServiceProvider
                 $matchThese[] = ['tbl_youtube.my_title', 'like', "%$search%"];
             }
         }
+
+        if ($mcat_id != "") {
+            $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
+        }
+        if ($price != "") {
+            $range = explode(",", $price);
+            $min = $range[0];
+            $max = $range[1];
+
+            $matchThese[] = ['tbl_product.pd_price', '>=', $min];
+            $matchThese[] = ['tbl_product.pd_price', '<=', $max];
+        }
+        if ($rating != "") {
+            $matchThese[] = ['tbl_product.pd_rating', '=', $rating];
+        }
+        if ($sector != "") {
+            $matchThese[] = ['tbl_province.province_sector', '=', $sector];
+        }
+
         $select = [
             'my_id',
             'my_title',
@@ -368,6 +462,9 @@ class Product extends ServiceProvider
 
         $count = DB::table('tbl_youtube')
             ->select($select)
+            ->join('tbl_product', 'tbl_product.pd_id', '=', 'tbl_youtube.pd_id')
+            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->where($matchThese)
             ->groupBy($select)
             ->orderBy('tbl_youtube.my_id', 'desc')
@@ -379,6 +476,9 @@ class Product extends ServiceProvider
 
         $data = DB::table('tbl_youtube')
             ->select($select)
+            ->join('tbl_product', 'tbl_product.pd_id', '=', 'tbl_youtube.pd_id')
+            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->where($matchThese)
             ->groupBy($select)
             ->orderBy('tbl_youtube.my_id', 'desc')

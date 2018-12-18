@@ -81,6 +81,10 @@ Route::post('/search_tag_all', function (Request $request) {
 });
 
 Route::post('/search-all', 'IndexController@search');
+
+Route::post('/search-all-v2', 'IndexController@searchv2');
+
+Route::post('/blog-tube', 'IndexController@blog_youtube');
 /// Search Common ///
 
 // Favorite //
@@ -127,6 +131,10 @@ Route::post('/new-release', 'IndexController@new_release');
 Route::post('/nof-token', 'IndexController@recive_token');
 // Nof //
 
+// Mat and Store //
+Route::post('/material-all', 'IndexController@material');
+Route::post('/store-all', 'IndexController@store');
+// Mat and Store //
 
 // Access Denind //
 Route::get('/jwt', 'IndexController@jwt');

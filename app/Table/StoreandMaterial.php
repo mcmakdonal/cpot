@@ -7,13 +7,13 @@ use Illuminate\Support\ServiceProvider;
 
 class StoreandMaterial extends ServiceProvider
 {
-    public static function store_lists($id = "", $search = "", $page = 1, $pv_id = "")
+    public static function store_lists($id = "", $search = "", $page = 1, $pv_id = "", $mcat_id = "", $price = "", $rating = "", $sector = "")
     {
         $limit = 10;
         $matchThese = [];
 
         if ($id != "") {
-            $matchThese[] = ['s_id', '=', "$id"];
+            $matchThese[] = ['tbl_store.s_id', '=', "$id"];
         }
         if ($search != "") {
             $matchThese[] = ['s_name', 'like', "%$search%"];
@@ -23,11 +23,32 @@ class StoreandMaterial extends ServiceProvider
             $matchThese[] = ['tbl_province.province_id', '=', "$pv_id"];
         }
 
+        $matchThese[] = ['tbl_product.record_status', '=', 'A'];
+        if ($mcat_id != "") {
+            $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
+        }
+        if ($price != "") {
+            $range = explode(",", $price);
+            $min = $range[0];
+            $max = $range[1];
+
+            $matchThese[] = ['tbl_product.pd_price', '>=', $min];
+            $matchThese[] = ['tbl_product.pd_price', '<=', $max];
+        }
+        if ($rating != "") {
+            $matchThese[] = ['tbl_product.pd_rating', '=', $rating];
+        }
+        if ($sector != "") {
+            $matchThese[] = ['tbl_province.province_sector', '=', $sector];
+        }
+
         $count = DB::table('tbl_store')
-            ->select('s_id', 's_name', 's_onwer', 's_phone', 'province_name')
+            ->select('tbl_store.s_id', 's_name', 's_onwer', 's_phone', 'province_name')
+            ->join('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
+            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
             ->where($matchThese)
-            ->orderBy('s_id', 'DESC')
+            ->orderBy('tbl_store.s_id', 'DESC')
             ->get()->toArray();
 
         $count_all = count($count);
@@ -35,10 +56,12 @@ class StoreandMaterial extends ServiceProvider
         $offset = ($page - 1) * $limit;
 
         $data = DB::table('tbl_store')
-            ->select('s_id', 's_name', 's_onwer', 's_phone', 'province_name')
+            ->select('tbl_store.s_id', 's_name', 's_onwer', 's_phone', 'province_name')
+            ->join('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
+            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
             ->where($matchThese)
-            ->orderBy('s_id', 'DESC')
+            ->orderBy('tbl_store.s_id', 'DESC')
             ->offset($offset)
             ->limit($limit)
             ->get()->toArray();
@@ -46,7 +69,7 @@ class StoreandMaterial extends ServiceProvider
         return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalStore' => $count_all];
     }
 
-    public static function material_lists($id = "", $search = "", $page = 1, $spv_id, $sdt_id, $ssdt_id)
+    public static function material_lists($id = "", $search = "", $page = 1, $spv_id = "", $sdt_id = "", $ssdt_id = "",$sector = "")
     {
         $limit = 10;
         $matchThese = [];
@@ -66,7 +89,9 @@ class StoreandMaterial extends ServiceProvider
         if ($ssdt_id != "") {
             $matchThese[] = ['tbl_sub_district.sub_district_id', '=', "$ssdt_id"];
         }
-
+        if ($sector != "") {
+            $matchThese[] = ['tbl_province.province_sector', '=', $sector];
+        }
         $select = [
             'tbl_material.m_id', 'tbl_material.m_name', 'tbl_material.m_price', 'tbl_province.province_id', 'tbl_province.province_name', 'tbl_district.district_id', 'tbl_district.district_name', 'tbl_sub_district.sub_district_id', 'tbl_sub_district.sub_district_name',
         ];

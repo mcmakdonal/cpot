@@ -87,6 +87,105 @@ class IndexController extends Controller
         return $obj;
     }
 
+    // 12 18 2018
+    public function searchv2(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'search' => 'nullable',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'Please fill all data',
+            ];
+        }
+
+        $obj = [
+            'product' => [],
+            'blog' => [
+                'cpot' => [],
+                'youtube' => [],
+            ],
+            'store' => [],
+            'material' => [],
+        ];
+
+        $search = ($request->search) ? $request->search : "";
+        $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
+
+        // Filter Category
+        $mcat_id = ($request->mcat_id) ? $request->mcat_id : "";
+        $search_tag = ($request->search_tag) ? ['tag'] : ['title'];
+        // Filter Sector
+        $sector = ($request->sector) ? strtoupper($request->sector) : "";
+        // Filter Type
+        $type = ($request->type) ? $request->type : "";
+        // Filter Rating
+        $rating = ($request->rating) ? $request->rating : "";
+        // Filter Price
+        $price = ($request->price) ? $request->price : "";
+
+        if ($type == "") {
+            $data = Product::listsv2($search, $mcat_id, $search_tag, $page, $price, $rating, $sector);
+            array_push($obj['product'], $data);
+        }
+
+        if ($type == "") {
+            $store = StoreandMaterial::store_lists("", $search, $page, "", $mcat_id, $price, $rating, $sector);
+            array_push($obj['store'], $store);
+        }
+
+        if ($type == "") {
+            $material = StoreandMaterial::material_lists("", $search, $page, "", "", "",$sector);
+            array_push($obj['material'], $material);
+        }
+
+        if ($type == "" || $type == "bg") {
+            $data = Blog::listsv2($search, $search_tag, $page, $mcat_id, $price, $rating, $sector);
+            array_push($obj['blog']['cpot'], $data);
+        }
+
+        if ($type == "" || $type == "yt") {
+            $data = Product::lists_youtube($search, $search_tag, $page, $mcat_id, $price, $rating);
+            array_push($obj['blog']['youtube'], $data);
+        }
+
+        return $obj;
+    }
+
+    public function blog_youtube(Request $request)
+    {
+        $obj = [
+            'blog' => [],
+            'youtube' => [],
+        ];
+
+        $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
+
+        $data = Blog::list_only_have_pd($page);
+        array_push($obj['blog'], $data);
+
+        $data = Product::lists_youtube("", [], $page);
+        array_push($obj['youtube'], $data);
+
+        return $obj;
+    }
+
+    public function material(Request $request){
+        $search = ($request->search) ? $request->search : "";
+        $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
+        $material = StoreandMaterial::material_lists("", $search, $page);
+        return $material;
+    }
+
+    public function store(Request $request){
+        $search = ($request->search) ? $request->search : "";
+        $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
+        $store = StoreandMaterial::store_lists("", $search, $page);
+        return $store;
+    }
+
     public function question()
     {
         $eva = Evaluation::get_question();
