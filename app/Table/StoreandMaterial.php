@@ -97,12 +97,14 @@ class StoreandMaterial extends ServiceProvider
         }
         $select = [
             'tbl_material.m_id', 'tbl_material.m_name', 'tbl_material.m_price', 'tbl_province.province_id', 'tbl_province.province_name', 'tbl_district.district_id', 'tbl_district.district_name', 'tbl_sub_district.sub_district_id', 'tbl_sub_district.sub_district_name',
+            'tbl_store.s_name'
         ];
 
         $count = DB::table('tbl_material')
             ->select($select)
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
             ->join('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
+            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
             ->join('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
             ->where($matchThese)
             ->orderBy('tbl_material.m_id', 'DESC')
@@ -116,6 +118,7 @@ class StoreandMaterial extends ServiceProvider
             ->select($select)
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
             ->join('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
+            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
             ->join('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
             ->where($matchThese)
             ->orderBy('tbl_material.m_id', 'DESC')
