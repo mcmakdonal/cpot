@@ -40,7 +40,7 @@ class Blog extends ServiceProvider
         // For default Release //
         $Release = "tbl_blog.bg_id != ''";
         if ($date) {
-            $Release = "WEEK(create_date) = WEEK(CURDATE())";
+            $Release = "WEEK(tbl_blog.create_date) = WEEK(CURDATE())";
         }
         // For default Release //
 

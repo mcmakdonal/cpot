@@ -47,7 +47,7 @@ class Product extends ServiceProvider
         // For default Release //
         $Release = "tbl_product.pd_id != ''";
         if ($date) {
-            $Release = "WEEK(create_date) = WEEK(CURDATE())";
+            $Release = "WEEK(tbl_product.create_date) = WEEK(CURDATE())";
         }
         // For default Release //
 
