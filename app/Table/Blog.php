@@ -286,6 +286,9 @@ class Blog extends ServiceProvider
 
         $data = DB::table('tbl_blog')
             ->select(self::$blog_field)
+            ->join('tbl_product', 'tbl_product.pd_id', '=', 'tbl_blog.pd_id')
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
+            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
             ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
             ->groupBy(self::$blog_field)
