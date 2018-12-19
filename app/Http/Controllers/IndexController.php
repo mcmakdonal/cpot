@@ -116,7 +116,7 @@ class IndexController extends Controller
 
         // Filter Category
         $mcat_id = ($request->mcat_id) ? $request->mcat_id : "";
-        $search_tag = ($request->search_tag) ? ['tag'] : ['title'];
+        $search_tag = ($request->search_tag) ? ['tag'] : ['title','tag'];
         // Filter Sector
         $sector = ($request->sector) ? strtoupper($request->sector) : "";
         // Filter Type

@@ -11,19 +11,14 @@ class StoreandMaterial extends ServiceProvider
     {
         $limit = 10;
         $matchThese = [];
+        $matchThese[] = ['tbl_product.record_status', '=', 'A'];
 
         if ($id != "") {
             $matchThese[] = ['tbl_store.s_id', '=', "$id"];
         }
-        if ($search != "") {
-            $matchThese[] = ['s_name', 'like', "%$search%"];
-            $matchThese[] = ['s_onwer', 'like', "%$search%"];
-        }
         if ($pv_id != "") {
             $matchThese[] = ['tbl_province.province_id', '=', "$pv_id"];
         }
-
-        $matchThese[] = ['tbl_product.record_status', '=', 'A'];
         if ($mcat_id != "") {
             $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
         }
@@ -48,6 +43,10 @@ class StoreandMaterial extends ServiceProvider
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
             ->where($matchThese)
+            ->where(function ($query) use ($search) {
+                $query->where('s_name', 'like', "%$search%");
+                $query->orWhere('s_onwer', 'like', "%$search%");
+            })
             ->orderBy('tbl_store.s_id', 'DESC')
             ->get()->toArray();
 
@@ -61,6 +60,10 @@ class StoreandMaterial extends ServiceProvider
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
             ->where($matchThese)
+            ->where(function ($query) use ($search) {
+                $query->where('s_name', 'like', "%$search%");
+                $query->orWhere('s_onwer', 'like', "%$search%");
+            })
             ->orderBy('tbl_store.s_id', 'DESC')
             ->offset($offset)
             ->limit($limit)
@@ -69,7 +72,7 @@ class StoreandMaterial extends ServiceProvider
         return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalStore' => $count_all];
     }
 
-    public static function material_lists($id = "", $search = "", $page = 1, $spv_id = "", $sdt_id = "", $ssdt_id = "",$sector = "")
+    public static function material_lists($id = "", $search = "", $page = 1, $spv_id = "", $sdt_id = "", $ssdt_id = "", $sector = "")
     {
         $limit = 10;
         $matchThese = [];

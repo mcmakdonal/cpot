@@ -28,6 +28,8 @@ class Blog extends ServiceProvider
 
         'tbl_province.province_name',
         'tbl_province.province_sector',
+
+        'tbl_product.pd_id'
     ];
 
     public static function lists($search = "", $bmc_id = "", $bsc_id = "", $search_tag = ['title', 'tag'], $page = 1, $date = false)
@@ -106,15 +108,6 @@ class Blog extends ServiceProvider
         $matchThese = [];
 
         $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
-        if ($search != "") {
-            if (in_array("tag", $search_tag)) {
-                $matchThese[] = ['tbl_blog.bg_tag', 'like', "%$search%"];
-            }
-            if (in_array("title", $search_tag)) {
-                $matchThese[] = ['tbl_blog.bg_title', 'like', "%$search%"];
-            }
-        }
-
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
         if ($mcat_id != "") {
             $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
@@ -142,6 +135,16 @@ class Blog extends ServiceProvider
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
             ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
             ->where($matchThese)
+            ->where(function ($query) use ($search, $search_tag) {
+                if ($search != "") {
+                    if (in_array("tag", $search_tag)) {
+                        $query->where('tbl_blog.bg_tag', 'like', "%$search%");
+                    }
+                    if (in_array("title", $search_tag)) {
+                        $query->orWhere('tbl_blog.bg_title', 'like', "%$search%");
+                    }
+                }
+            })
             ->groupBy(self::$blog_field)
             ->orderBy('bg_id', 'desc')
             ->get()->toArray();
@@ -158,11 +161,22 @@ class Blog extends ServiceProvider
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
             ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
             ->where($matchThese)
+            ->where(function ($query) use ($search, $search_tag) {
+                if ($search != "") {
+                    if (in_array("tag", $search_tag)) {
+                        $query->where('tbl_blog.bg_tag', 'like', "%$search%");
+                    }
+                    if (in_array("title", $search_tag)) {
+                        $query->orWhere('tbl_blog.bg_title', 'like', "%$search%");
+                    }
+                }
+            })
             ->groupBy(self::$blog_field)
             ->orderBy('bg_id', 'desc')
             ->offset($offset)
             ->limit($limit)
             ->get()->toArray();
+            // ->toSql();
 
         foreach ($data as $k => $v) {
             $image = DB::table('tbl_blog_images')->select('path')->where('bg_id', '=', $v->bg_id)->get()->toArray();

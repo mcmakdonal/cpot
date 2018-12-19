@@ -124,11 +124,13 @@ class Product extends ServiceProvider
         return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalProduct' => $count_all];
     }
 
-    public static function listsv2($search = "", $mcat_id = "", $search_tag = ['title', 'tag'], $page = 1, $price = "", $rating = "",$sector = "")
+    public static function listsv2($search = "", $mcat_id = "", $search_tag = ['title', 'tag'], $page = 1, $price = "", $rating = "", $sector = "")
     {
         $limit = 10;
         $matchThese = [];
-        
+        $Orwhere_1 = [];
+        $Orwhere_2 = [];
+
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
         if ($mcat_id != "") {
             $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
@@ -150,10 +152,10 @@ class Product extends ServiceProvider
 
         if ($search != "") {
             if (in_array("tag", $search_tag)) {
-                $matchThese[] = ['tbl_product.pd_tag', 'like', "%$search%"];
+                $Orwhere_1 = ['tbl_product.pd_tag', 'like', "%$search%"];
             }
             if (in_array("title", $search_tag)) {
-                $matchThese[] = ['tbl_product.pd_name', 'like', "%$search%"];
+                $Orwhere_2 = ['tbl_product.pd_name', 'like', "%$search%"];
             }
         }
 
@@ -164,6 +166,16 @@ class Product extends ServiceProvider
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
             ->where($matchThese)
+            ->where(function ($query) use ($search, $search_tag) {
+                if ($search != "") {
+                    if (in_array("tag", $search_tag)) {
+                        $query->where('tbl_product.pd_tag', 'like', "%$search%");
+                    }
+                    if (in_array("title", $search_tag)) {
+                        $query->orWhere('tbl_product.pd_name', 'like', "%$search%");
+                    }
+                }
+            })
             ->orderBy('tbl_product.pd_id', 'desc')
             ->groupBy(self::$product_field)
             ->get()->toArray();
@@ -179,20 +191,31 @@ class Product extends ServiceProvider
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
             ->where($matchThese)
+            ->where(function ($query) use ($search, $search_tag) {
+                if ($search != "") {
+                    if (in_array("tag", $search_tag)) {
+                        $query->where('tbl_product.pd_tag', 'like', "%$search%");
+                    }
+                    if (in_array("title", $search_tag)) {
+                        $query->orWhere('tbl_product.pd_name', 'like', "%$search%");
+                    }
+                }
+            })
             ->orderBy('tbl_product.pd_id', 'desc')
             ->groupBy(self::$product_field)
             ->offset($offset)
             ->limit($limit)
             ->get()->toArray();
+            // ->toSql();
 
-        // foreach ($data as $k => $v) {
-        //     $image = DB::table('tbl_product_images')->select('path')->where('pd_id', '=', $v->pd_id)->get()->toArray();
-        //     $img = [];
-        //     foreach ($image as $kk => $vv) {
-        //         array_push($img, url($vv->path));
-        //     }
-        //     $data[$k]->pd_image = $img;
-        // }
+        foreach ($data as $k => $v) {
+            $image = DB::table('tbl_product_images')->select('path')->where('pd_id', '=', $v->pd_id)->get()->toArray();
+            $img = [];
+            foreach ($image as $kk => $vv) {
+                array_push($img, url($vv->path));
+            }
+            $data[$k]->pd_image = $img;
+        }
 
         return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalProduct' => $count_all];
     }
@@ -420,19 +443,10 @@ class Product extends ServiceProvider
         return $data;
     }
 
-    public static function lists_youtube($search = "", $search_tag = ['title', 'tag'], $page = 1,$mcat_id = "", $price = "", $rating = "",$sector = "")
+    public static function lists_youtube($search = "", $search_tag = ['title', 'tag'], $page = 1, $mcat_id = "", $price = "", $rating = "", $sector = "")
     {
         $limit = 10;
         $matchThese = [];
-        if ($search != "") {
-            if (in_array("tag", $search_tag)) {
-                $matchThese[] = ['tbl_youtube.my_bytag', 'like', "%$search%"];
-            }
-            if (in_array("title", $search_tag)) {
-                $matchThese[] = ['tbl_youtube.my_title', 'like', "%$search%"];
-            }
-        }
-
         if ($mcat_id != "") {
             $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
         }
@@ -466,6 +480,16 @@ class Product extends ServiceProvider
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->where($matchThese)
+            ->where(function ($query) use ($search, $search_tag) {
+                if ($search != "") {
+                    if (in_array("tag", $search_tag)) {
+                        $query->where('tbl_youtube.my_bytag', 'like', "%$search%");
+                    }
+                    if (in_array("title", $search_tag)) {
+                        $query->orWhere('tbl_youtube.my_title', 'like', "%$search%");
+                    }
+                }
+            })
             ->groupBy($select)
             ->orderBy('tbl_youtube.my_id', 'desc')
             ->get()->toArray();
@@ -480,6 +504,16 @@ class Product extends ServiceProvider
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->where($matchThese)
+            ->where(function ($query) use ($search, $search_tag) {
+                if ($search != "") {
+                    if (in_array("tag", $search_tag)) {
+                        $query->where('tbl_youtube.my_bytag', 'like', "%$search%");
+                    }
+                    if (in_array("title", $search_tag)) {
+                        $query->orWhere('tbl_youtube.my_title', 'like', "%$search%");
+                    }
+                }
+            })
             ->groupBy($select)
             ->orderBy('tbl_youtube.my_id', 'desc')
             ->offset($offset)
