@@ -14,7 +14,7 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('Jwt', ['except' => [
-            'store', 'check_email', 'check_login', 'register_facebook','forget_password'
+            'store', 'check_email', 'check_login', 'register_facebook', 'forget_password',
         ]]);
     }
     /**
@@ -45,20 +45,20 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'u_fullname' => 'required',
-            'u_profile' => 'required',
-            'u_email' => 'required',
-            'u_phone' => 'required',
-            'u_password' => 'required',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'u_fullname' => 'required',
+        //     'u_profile' => 'required',
+        //     'u_email' => 'required',
+        //     'u_phone' => 'required',
+        //     'u_password' => 'required',
+        // ]);
 
-        if ($validator->fails()) {
-            return [
-                'status' => false,
-                'message' => 'Please fill all data',
-            ];
-        }
+        // if ($validator->fails()) {
+        //     return [
+        //         'status' => false,
+        //         'message' => 'Please fill all data',
+        //     ];
+        // }
 
         $check = User::check_email_exists($request->u_email);
         if ($check['status']) {
@@ -87,6 +87,10 @@ class UserController extends Controller
             'record_status' => 'A',
         ]);
 
+        $user = User::insert($args);
+        if ($user['status']) {
+            Send_mail::nofti_register($request->u_fullname, $request->u_email, "ยินดีต้อนรับท่านเข้าสู่ระบบ MCulture Mobile");
+        }
         return User::insert($args);
     }
 
@@ -335,6 +339,9 @@ class UserController extends Controller
         ]);
 
         $user = User::insert($args);
+        if ($user['status']) {
+            Send_mail::nofti_register($request->u_fullname, $request->u_email, "ยินดีต้อนรับท่านเข้าสู่ระบบ MCulture Mobile");
+        }
         return [
             'data_object' => $user,
             'token' => JwtService::auth(['u_id' => $user['id']]),

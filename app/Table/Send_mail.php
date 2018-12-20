@@ -14,18 +14,39 @@ class Send_mail extends ServiceProvider
 
         try {
             $status = Mail::send('emails.mail', $data, function ($message) use ($to_name, $to_email) {
-                $message->to($to_email, $to_name)->subject('New Password for login');
+                $message->to($to_email, $to_name)->subject('รหัสผ่านใหม่ในการเข้าสู่ระบบ MCulture Mobile');
                 $message->from('webmaster.mculture@gmail.com', 'Webmaster Mculture');
             });
 
             return [
                 'status' => true,
-                'message' => "Success ! New password has been send to email : $to_email",
+                'message' => "สำเร็จ ! รหัสผ่านได้ถูกส่งไปยังอีเมล : $to_email",
             ];
         } catch (\Throwable $th) {
             return [
                 'status' => false,
-                'message' => 'Fail ! ' . $th->getMessage(),
+                'message' => 'ผิดพลาด ! ' . $th->getMessage(),
+            ];
+        }
+    }
+
+    public static function nofti_register($to_name, $to_email, $body){
+        $data = array('name' => $to_name, "body" => $body);
+
+        try {
+            $status = Mail::send('emails.mail', $data, function ($message) use ($to_name, $to_email) {
+                $message->to($to_email, $to_name)->subject('ยินดีต้อนรับท่านเข้าสู่ระบบ MCulture Mobile');
+                $message->from('webmaster.mculture@gmail.com', 'Webmaster Mculture');
+            });
+
+            return [
+                'status' => true,
+                'message' => "ยินดีต้อนรับท่านเข้าสู่ระบบ MCulture Mobile",
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => 'ผิดพลาด ! ' . $th->getMessage(),
             ];
         }
     }

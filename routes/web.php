@@ -65,6 +65,14 @@ Route::get('/report/tag', 'ReportController@tag');
 Route::get('/report/share', 'ReportController@share');
 // report //
 
+// image mobile //
+Route::get('/ads', 'ImagesController@ads');
+Route::get('/background', 'ImagesController@background');
+Route::post('/image-store', 'ImagesController@store');
+Route::post('/image-active', 'ImagesController@active');
+Route::post('/image-unactive', 'ImagesController@unactive');
+Route::delete('/image-destroy/{id}', 'ImagesController@destroy');
+// image mobile //
 
 // test
 Route::get('/ajax', function () {
