@@ -115,38 +115,38 @@ class IndexController extends Controller
         $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
 
         // Filter Category
-        $mcat_id = ($request->mcat_id) ? $request->mcat_id : "";
-        $search_tag = ($request->search_tag) ? ['tag'] : ['title','tag'];
+        $mcat_id = ($request->mcat_id) ? explode(",", $request->mcat_id) : [];
+        $search_tag = ($request->search_tag) ? ['tag'] : ['title', 'tag'];
         // Filter Sector
-        $sector = ($request->sector) ? strtoupper($request->sector) : "";
+        $sector = ($request->sector) ? (explode(",", strtoupper($request->sector))) : [];
         // Filter Type
-        $type = ($request->type) ? $request->type : "";
+        $type = ($request->type) ? (explode(",", strtolower($request->type))) : [];
         // Filter Rating
         $rating = ($request->rating) ? $request->rating : "";
         // Filter Price
         $price = ($request->price) ? $request->price : "";
 
-        if ($type == "") {
+        if ($type == [] || in_array("pd", $type)) {
             $data = Product::listsv2($search, $mcat_id, $search_tag, $page, $price, $rating, $sector);
             array_push($obj['product'], $data);
         }
 
-        if ($type == "") {
+        if ($type == [] || in_array("st", $type)) {
             $store = StoreandMaterial::store_lists("", $search, $page, "", $mcat_id, $price, $rating, $sector);
             array_push($obj['store'], $store);
         }
 
-        if ($type == "") {
-            $material = StoreandMaterial::material_lists("", $search, $page, "", "", "",$sector);
+        if ($type == [] || in_array("mt", $type)) {
+            $material = StoreandMaterial::material_lists("", $search, $page, "", "", "", $sector);
             array_push($obj['material'], $material);
         }
 
-        if ($type == "" || $type == "bg") {
+        if ($type == [] || in_array("bg", $type)) {
             $data = Blog::listsv2($search, $search_tag, $page, $mcat_id, $price, $rating, $sector);
             array_push($obj['blog']['cpot'], $data);
         }
 
-        if ($type == "" || $type == "yt") {
+        if ($type == [] || in_array("yt", $type)) {
             $data = Product::lists_youtube($search, $search_tag, $page, $mcat_id, $price, $rating);
             array_push($obj['blog']['youtube'], $data);
         }
@@ -172,17 +172,19 @@ class IndexController extends Controller
         return $obj;
     }
 
-    public function material(Request $request){
+    public function material(Request $request)
+    {
         $search = ($request->search) ? $request->search : "";
         $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
         $material = StoreandMaterial::material_lists("", $search, $page);
         return $material;
     }
 
-    public function store(Request $request){
-        $search = ($request->search) ? $request->search : "";
+    public function store(Request $request)
+    {
         $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
-        $store = StoreandMaterial::store_lists("", $search, $page);
+        $pv_id = ($request->pv_id) ? $request->pv_id : "";
+        $store = StoreandMaterial::store_lists_province("", "", $page, $pv_id);
         return $store;
     }
 

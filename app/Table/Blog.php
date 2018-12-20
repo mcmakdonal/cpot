@@ -29,7 +29,7 @@ class Blog extends ServiceProvider
         'tbl_province.province_name',
         'tbl_province.province_sector',
 
-        'tbl_product.pd_id'
+        'tbl_product.pd_id',
     ];
 
     public static function lists($search = "", $bmc_id = "", $bsc_id = "", $search_tag = ['title', 'tag'], $page = 1, $date = false)
@@ -102,16 +102,13 @@ class Blog extends ServiceProvider
         return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalBlog' => $count_all];
     }
 
-    public static function listsv2($search = "", $search_tag = ['title', 'tag'], $page = 1, $mcat_id = "", $price = "", $rating = "", $sector = "")
+    public static function listsv2($search = "", $search_tag = ['title', 'tag'], $page = 1, $mcat_id = [], $price = "", $rating = "", $sector = [])
     {
         $limit = 10;
         $matchThese = [];
 
         $matchThese[] = ['tbl_blog.record_status', '=', 'A'];
         $matchThese[] = ['tbl_product.record_status', '=', 'A'];
-        if ($mcat_id != "") {
-            $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
-        }
         if ($price != "") {
             $range = explode(",", $price);
             $min = $range[0];
@@ -123,9 +120,6 @@ class Blog extends ServiceProvider
         if ($rating != "") {
             $matchThese[] = ['tbl_product.pd_rating', '=', $rating];
         }
-        if ($sector != "") {
-            $matchThese[] = ['tbl_province.province_sector', '=', $sector];
-        }
 
         $count = DB::table('tbl_blog')
             ->select(self::$blog_field)
@@ -135,13 +129,23 @@ class Blog extends ServiceProvider
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
             ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
             ->where($matchThese)
-            ->where(function ($query) use ($search, $search_tag) {
+            ->where(function ($query) use ($search, $search_tag, $mcat_id, $sector) {
                 if ($search != "") {
                     if (in_array("tag", $search_tag)) {
                         $query->where('tbl_blog.bg_tag', 'like', "%$search%");
                     }
                     if (in_array("title", $search_tag)) {
                         $query->orWhere('tbl_blog.bg_title', 'like', "%$search%");
+                    }
+                }
+                if (count($mcat_id) > 0) {
+                    foreach ($mcat_id as $k => $v) {
+                        $query->orWhere('tbl_main_category.mcat_id', '=', $v);
+                    }
+                }
+                if (count($sector) > 0) {
+                    foreach ($sector as $k => $v) {
+                        $query->orWhere('tbl_province.province_sector', '=', $v);
                     }
                 }
             })
@@ -161,7 +165,7 @@ class Blog extends ServiceProvider
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
             ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
             ->where($matchThese)
-            ->where(function ($query) use ($search, $search_tag) {
+            ->where(function ($query) use ($search, $search_tag, $mcat_id, $sector) {
                 if ($search != "") {
                     if (in_array("tag", $search_tag)) {
                         $query->where('tbl_blog.bg_tag', 'like', "%$search%");
@@ -170,13 +174,23 @@ class Blog extends ServiceProvider
                         $query->orWhere('tbl_blog.bg_title', 'like', "%$search%");
                     }
                 }
+                if (count($mcat_id) > 0) {
+                    foreach ($mcat_id as $k => $v) {
+                        $query->orWhere('tbl_main_category.mcat_id', '=', $v);
+                    }
+                }
+                if (count($sector) > 0) {
+                    foreach ($sector as $k => $v) {
+                        $query->orWhere('tbl_province.province_sector', '=', $v);
+                    }
+                }
             })
             ->groupBy(self::$blog_field)
             ->orderBy('bg_id', 'desc')
             ->offset($offset)
             ->limit($limit)
             ->get()->toArray();
-            // ->toSql();
+        // ->toSql();
 
         foreach ($data as $k => $v) {
             $image = DB::table('tbl_blog_images')->select('path')->where('bg_id', '=', $v->bg_id)->get()->toArray();

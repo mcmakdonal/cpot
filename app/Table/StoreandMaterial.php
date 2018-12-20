@@ -7,7 +7,41 @@ use Illuminate\Support\ServiceProvider;
 
 class StoreandMaterial extends ServiceProvider
 {
-    public static function store_lists($id = "", $search = "", $page = 1, $pv_id = "", $mcat_id = "", $price = "", $rating = "", $sector = "")
+    private static $store_field = [
+        'tbl_store.s_id',
+        'tbl_store.s_name',
+        'tbl_store.s_onwer',
+        'tbl_store.s_phone',
+        'tbl_store.fb_id',
+        'tbl_store.s_addr',
+        'tbl_store.s_image',
+
+        'tbl_province.province_name',
+        'tbl_province.province_sector',
+    ];
+
+    private static $material_field = [
+        'tbl_material.m_id',
+        'tbl_material.m_name',
+        'tbl_material.m_price',
+        'tbl_province.province_id',
+        'tbl_province.province_name',
+        'tbl_district.district_id',
+        'tbl_district.district_name',
+        'tbl_sub_district.sub_district_id',
+        'tbl_sub_district.sub_district_name',
+
+        'tbl_store.s_id',
+        'tbl_store.s_name',
+        'tbl_store.s_onwer',
+        'tbl_store.s_phone',
+        'tbl_store.fb_id',
+        'tbl_store.s_addr',
+        'tbl_store.s_image',
+
+    ];
+
+    public static function store_lists($id = "", $search = "", $page = 1, $pv_id = "", $mcat_id = [], $price = "", $rating = "", $sector = [])
     {
         $limit = 10;
         $matchThese = [];
@@ -18,9 +52,6 @@ class StoreandMaterial extends ServiceProvider
         }
         if ($pv_id != "") {
             $matchThese[] = ['tbl_province.province_id', '=', "$pv_id"];
-        }
-        if ($mcat_id != "") {
-            $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
         }
         if ($price != "") {
             $range = explode(",", $price);
@@ -33,21 +64,31 @@ class StoreandMaterial extends ServiceProvider
         if ($rating != "") {
             $matchThese[] = ['tbl_product.pd_rating', '=', $rating];
         }
-        if ($sector != "") {
-            $matchThese[] = ['tbl_province.province_sector', '=', $sector];
-        }
 
         $count = DB::table('tbl_store')
-            ->select('tbl_store.s_id', 's_name', 's_onwer', 's_phone', 'province_name')
+            ->select(self::$store_field)
             ->join('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
             ->where($matchThese)
-            ->where(function ($query) use ($search) {
-                $query->where('s_name', 'like', "%$search%");
-                $query->orWhere('s_onwer', 'like', "%$search%");
+            ->where(function ($query) use ($search, $mcat_id, $sector) {
+                if ($search != "") {
+                    $query->where('tbl_store.s_name', 'like', "%$search%");
+                    $query->orWhere('tbl_store.s_onwer', 'like', "%$search%");
+                }
+                if (count($mcat_id) > 0) {
+                    foreach ($mcat_id as $k => $v) {
+                        $query->orWhere('tbl_main_category.mcat_id', '=', $v);
+                    }
+                }
+                if (count($sector) > 0) {
+                    foreach ($sector as $k => $v) {
+                        $query->orWhere('tbl_province.province_sector', '=', $sector);
+                    }
+                }
             })
-            ->orderBy('tbl_store.s_id', 'DESC')
+            ->orderBy('tbl_store.s_name', 'ASC')
+            ->groupBy(self::$store_field)
             ->get()->toArray();
 
         $count_all = count($count);
@@ -55,24 +96,89 @@ class StoreandMaterial extends ServiceProvider
         $offset = ($page - 1) * $limit;
 
         $data = DB::table('tbl_store')
-            ->select('tbl_store.s_id', 's_name', 's_onwer', 's_phone', 'province_name')
+            ->select(self::$store_field)
             ->join('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
             ->where($matchThese)
-            ->where(function ($query) use ($search) {
-                $query->where('s_name', 'like', "%$search%");
-                $query->orWhere('s_onwer', 'like', "%$search%");
+            ->where(function ($query) use ($search, $mcat_id, $sector) {
+                if ($search != "") {
+                    $query->where('tbl_store.s_name', 'like', "%$search%");
+                    $query->orWhere('tbl_store.s_onwer', 'like', "%$search%");
+                }
+                if (count($mcat_id) > 0) {
+                    foreach ($mcat_id as $k => $v) {
+                        $query->orWhere('tbl_main_category.mcat_id', '=', $v);
+                    }
+                }
+                if (count($sector) > 0) {
+                    foreach ($sector as $k => $v) {
+                        $query->orWhere('tbl_province.province_sector', '=', $sector);
+                    }
+                }
             })
-            ->orderBy('tbl_store.s_id', 'DESC')
+            ->orderBy('tbl_store.s_name', 'ASC')
+            ->groupBy(self::$store_field)
             ->offset($offset)
             ->limit($limit)
             ->get()->toArray();
+        // ->toSql();
 
         return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalStore' => $count_all];
     }
 
-    public static function material_lists($id = "", $search = "", $page = 1, $spv_id = "", $sdt_id = "", $ssdt_id = "", $sector = "")
+    public static function store_lists_province($id = "", $search = "", $page = 1, $pv_id = "", $mcat_id = [], $price = "", $rating = "", $sector = [])
+    {
+        $limit = 4;
+        $count_all = 77;
+        $total = ceil($count_all / $limit);
+        $offset = ($page - 1) * $limit;
+
+        $matchThese = [];
+        if ($pv_id != "") {
+            $matchThese[] = ['tbl_province.province_id', '=', $pv_id];
+        }
+
+        // ร้านค้าทั้งหมด
+        $count = DB::table('tbl_store')
+            ->select(self::$store_field)
+            ->join('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
+            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
+            ->where($matchThese)
+            ->orderBy('tbl_store.s_name', 'ASC')
+            ->groupBy(self::$store_field)
+            ->get()->toArray();
+
+        // เอาจังหวัดมา วน loop 
+        $data = DB::table('tbl_province')
+            ->select('province_id', 'province_name')
+            ->orderBy('tbl_province.province_id', 'ASC')
+            ->where($matchThese)
+            ->offset($offset)
+            ->limit($limit)
+            ->get()->toArray();
+
+        foreach ($data as $k => $v) {
+            $matchThese = [];
+            $matchThese[] = ['tbl_store.province_id', '=', $v->province_id];
+
+            $data[$k]->store = DB::table('tbl_store')
+                ->select(self::$store_field)
+                ->join('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
+                ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+                ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
+                ->where($matchThese)
+                ->orderBy('tbl_store.s_name', 'ASC')
+                ->groupBy(self::$store_field)
+                ->get()->toArray();
+        }
+
+        return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalStore' => count($count)];
+
+    }
+
+    public static function material_lists($id = "", $search = "", $page = 1, $spv_id = "", $sdt_id = "", $ssdt_id = "", $sector = [])
     {
         $limit = 10;
         $matchThese = [];
@@ -92,22 +198,22 @@ class StoreandMaterial extends ServiceProvider
         if ($ssdt_id != "") {
             $matchThese[] = ['tbl_sub_district.sub_district_id', '=', "$ssdt_id"];
         }
-        if ($sector != "") {
-            $matchThese[] = ['tbl_province.province_sector', '=', $sector];
-        }
-        $select = [
-            'tbl_material.m_id', 'tbl_material.m_name', 'tbl_material.m_price', 'tbl_province.province_id', 'tbl_province.province_name', 'tbl_district.district_id', 'tbl_district.district_name', 'tbl_sub_district.sub_district_id', 'tbl_sub_district.sub_district_name',
-            'tbl_store.s_name'
-        ];
 
         $count = DB::table('tbl_material')
-            ->select($select)
+            ->select(self::$material_field)
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
             ->join('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
             ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
             ->join('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
             ->where($matchThese)
-            ->orderBy('tbl_material.m_id', 'DESC')
+            ->where(function ($query) use ($sector) {
+                if (count($sector) > 0) {
+                    foreach ($sector as $k => $v) {
+                        $query->orWhere('tbl_province.province_sector', '=', $sector);
+                    }
+                }
+            })
+            ->orderBy('tbl_material.m_name', 'ASC')
             ->get()->toArray();
 
         $count_all = count($count);
@@ -115,13 +221,20 @@ class StoreandMaterial extends ServiceProvider
         $offset = ($page - 1) * $limit;
 
         $data = DB::table('tbl_material')
-            ->select($select)
+            ->select(self::$material_field)
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
             ->join('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
             ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
             ->join('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
             ->where($matchThese)
-            ->orderBy('tbl_material.m_id', 'DESC')
+            ->where(function ($query) use ($sector) {
+                if (count($sector) > 0) {
+                    foreach ($sector as $k => $v) {
+                        $query->orWhere('tbl_province.province_sector', '=', $sector);
+                    }
+                }
+            })
+            ->orderBy('tbl_material.m_name', 'ASC')
             ->offset($offset)
             ->limit($limit)
             ->get()->toArray();
