@@ -23,39 +23,34 @@
                         @endif
                         {!! Form::open(['url' => "/privacy",'class' => 'form-auth-small', 'method' => 'POST','files' => false]) !!}
                         <div class="form-row align-items-center">
-                            <div class="col-sm-10 my-1">
-                                <label class="sr-only" for="inlineFormInputName">Name</label>
-                                <input type="text" class="form-control" id="inlineFormInputName" placeholder="Jane Doe">
+                            <div class="col-md-10 my-1">
+                                <label class="" for="p_choice">เพิ่มข้อกำหนด</label>
+                                <textarea name="p_choice" class="form-control" rows="5" style="resize: none;"></textarea>
                             </div>
-                            <div class="col-auto my-1">
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                            <div class="col-md-2 my-1">
+                                <button type="submit" class="btn btn-primary">บักทึก</button>
+                            </div>
+                            <div class="col-md-12">
+                                <hr />
                             </div>
                         </div>
                         {!! Form::close() !!}
                         <div class="data-tables">
-                            <table id="dataTable" class="text-center">
+                            <table id="dataTable">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Image</th>
-                                        <th>Status</th>
-                                        <th>Delete</th>
+                                        <th style="width: 5%">#</th>
+                                        <th>Choice</th>
+                                        <th style="width: 10%">Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($data as $k => $v)
                                     <tr>
                                         <td>{{ $k + 1 }}</td>
-                                        <td><img src="{{ url($v->path) }}" class="img-responsive" style="width: 120px;"></td>
+                                        <td class="text-left" style="word-break: break-all;">{{ $v->p_choice }}</td>
                                         <td>
-                                            @if($v->active == "A")
-                                                <button class="btn btn-success" type="button" onclick='func_unactive("/image-unactive",{{$v->id}},"ads")'>Now Active</button>
-                                            @else
-                                                <button class="btn btn-info" type="button" onclick='func_active("/image-active",{{$v->id}})'>Active</button>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-danger" type="button" onclick='destroy("image-destroy",{{$v->id}})'>Delete</button>
+                                            <button class="btn btn-danger" type="button" onclick='destroy("privacy",{{$v->p_id}})'>Delete</button>
                                         </td>
                                     </tr>
                                     @endforeach

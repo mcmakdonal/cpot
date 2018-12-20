@@ -12,6 +12,7 @@ use App\Table\Product;
 use App\Table\StoreandMaterial;
 use Illuminate\Http\Request;
 use Validator;
+use App\Table\Privacy;
 
 class IndexController extends Controller
 {
@@ -457,5 +458,16 @@ class IndexController extends Controller
         ];
 
         return Log::token_insert($args);
+    }
+
+    public function rule_privacy()
+    {
+        $privacy = Privacy::lists();
+        $obj = [
+            'data_object' => $privacy,
+            'status' => true,
+            'message' => 'success',
+        ];
+        return $obj;
     }
 }

@@ -89,9 +89,11 @@ class UserController extends Controller
 
         $user = User::insert($args);
         if ($user['status']) {
-            Send_mail::nofti_register($request->u_fullname, $request->u_email, "ยินดีต้อนรับท่านเข้าสู่ระบบ MCulture Mobile");
+            $email = $request->u_email;
+            $mess = " การลงทะเบียนสมาชิกของคุณสำเร็จแล้ว!  MCulture Mobile ขอขอบคุณท่านที่ลงทะเบียนเพื่อใช้งานแอพพลิเคชั่น โดยการใช้อีเมล์ $email ของท่านในการติดต่อและส่งข้อมูลต่างๆระหว่างท่านกับกระทรวง ตามเงื่อนไขและข้อตกลงการใช้งานแอพพลิเคชั่น ขอแสดงความนับถือ";
+            Send_mail::nofti_register($request->u_fullname, $request->u_email, $mess);
         }
-        return User::insert($args);
+        return $user;
     }
 
     /**
@@ -108,6 +110,11 @@ class UserController extends Controller
         }
         $u_id = $result['u_id'];
         $user = User::get_user("", $u_id);
+        foreach ($user as $k => $v) {
+            if (!strpos($v->u_profile, 'http')) {
+                $v->u_profile = url($v->u_profile);
+            }
+        }
         $obj = ['data_object' => $user];
         return $obj;
     }
@@ -132,16 +139,9 @@ class UserController extends Controller
      */
     public function update(Request $request, $id = "")
     {
-        $result = JwtService::de_auth($request);
-        if (gettype($result) != "array") {
-            die();
-        }
-        $u_id = $result['u_id'];
         $validator = Validator::make($request->all(), [
-            'u_fullname' => 'nullable',
-            'u_profile' => 'nullable',
-            'u_phone' => 'nullable',
-            'u_password' => 'nullable',
+            'data' => 'required',
+            'file' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -151,9 +151,24 @@ class UserController extends Controller
             ];
         }
 
+        $result = JwtService::de_auth($request);
+        if (gettype($result) != "array") {
+            die();
+        }
+        $u_id = $result['u_id'];
+
+        $file = "";
+        $data = json_decode($request->data, true);
+        if ($request->hasfile('file')) {
+            $file = $request->file('file');
+            $name = md5($file->getClientOriginalName() . " " . date('Y-m-d H:i:s')) . "." . $file->getClientOriginalExtension();
+            $file->move(public_path() . '/profile/', $name);
+            $file = "/profile/" . $name;
+        }
+
         $args = [];
-        $accept = ['u_fullname', 'u_profile', 'u_phone', 'u_password'];
-        foreach ($request->all() as $key => $value) {
+        $accept = ['u_fullname', 'u_phone', 'u_password'];
+        foreach ($data as $key => $value) {
             if (in_array($key, $accept)) {
                 if ($key == "u_password") {
                     $value = Hash::make($value);
@@ -162,6 +177,10 @@ class UserController extends Controller
                     $args[$key] = $value;
                 }
             }
+        }
+
+        if ($file != "") {
+            $args['u_profile'] = $file;
         }
 
         $args = array_merge($args, ['update_date' => date('Y-m-d H:i:s'), 'update_by' => $u_id]);
@@ -340,7 +359,9 @@ class UserController extends Controller
 
         $user = User::insert($args);
         if ($user['status']) {
-            Send_mail::nofti_register($request->u_fullname, $request->u_email, "ยินดีต้อนรับท่านเข้าสู่ระบบ MCulture Mobile");
+            $email = $request->u_email;
+            $mess = " การลงทะเบียนสมาชิกของคุณสำเร็จแล้ว!  MCulture Mobile ขอขอบคุณท่านที่ลงทะเบียนเพื่อใช้งานแอพพลิเคชั่น โดยการใช้อีเมล์ $email ของท่านในการติดต่อและส่งข้อมูลต่างๆระหว่างท่านกับกระทรวง ตามเงื่อนไขและข้อตกลงการใช้งานแอพพลิเคชั่น ขอแสดงความนับถือ";
+            Send_mail::nofti_register($request->u_fullname, $request->u_email, $mess);
         }
         return [
             'data_object' => $user,

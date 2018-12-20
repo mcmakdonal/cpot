@@ -136,6 +136,10 @@ Route::post('/material-all', 'IndexController@material');
 Route::post('/store-all', 'IndexController@store');
 // Mat and Store //
 
+// Nof //
+Route::get('/rule-privacy', 'IndexController@rule_privacy');
+// Nof //
+
 // Access Denind //
 Route::get('/jwt', 'IndexController@jwt');
 Route::get('/jwtdecode', 'IndexController@jwtdecode');

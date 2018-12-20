@@ -66,12 +66,9 @@ Route::get('/report/share', 'ReportController@share');
 // report //
 
 // image mobile //
-Route::get('/ads', 'ImagesController@ads');
-Route::get('/background', 'ImagesController@background');
-Route::post('/image-store', 'ImagesController@store');
-Route::post('/image-active', 'ImagesController@active');
-Route::post('/image-unactive', 'ImagesController@unactive');
-Route::delete('/image-destroy/{id}', 'ImagesController@destroy');
+Route::get('/privacy', 'PrivacyController@index');
+Route::post('/privacy', 'PrivacyController@store');
+Route::delete('/privacy/{id}', 'PrivacyController@destroy');
 // image mobile //
 
 // test

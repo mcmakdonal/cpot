@@ -11,7 +11,7 @@ class Privacy extends ServiceProvider
     {
         $matchThese[] = ['record_status', '=', 'A'];
         $data = DB::table('tbl_privacy')
-            ->select('*')
+            ->select('p_id','p_choice')
             ->where($matchThese)
             ->get()->toArray();
 
@@ -27,25 +27,6 @@ class Privacy extends ServiceProvider
             return [
                 'status' => true,
                 'message' => 'Success'
-            ];
-        } else {
-            DB::rollBack();
-            return [
-                'status' => false,
-                'message' => 'Fail',
-            ];
-        }
-    }
-
-    public static function update($args, $id)
-    {
-        DB::beginTransaction();
-        $status = DB::table('tbl_blog')->where('bg_id', $id)->update($args);
-        if ($status) {
-            DB::commit();
-            return [
-                'status' => true,
-                'message' => 'Success',
             ];
         } else {
             DB::rollBack();

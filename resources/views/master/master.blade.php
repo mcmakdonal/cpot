@@ -68,6 +68,7 @@
                             <li class="{{ (strpos(url()->current(),'evaluation') ) ? 'active' : '' }}"><a href="/evaluation"><i class="ti-comment-alt"></i> <span>การจัดการแบบประเมิน</span></a></li>
                             <li class="{{ (strpos(url()->current(),'ads') ) ? 'active' : '' }}"><a href="/ads"><i class="ti-blackboard"></i> <span>การจัดการโฆษณา</span></a></li>
                             <li class="{{ (strpos(url()->current(),'background') ) ? 'active' : '' }}"><a href="/background"><i class="ti-panel"></i> <span>การจัดการแบล็คกราว</span></a></li>
+                            <li class="{{ (strpos(url()->current(),'privacy') ) ? 'active' : '' }}"><a href="/privacy"><i class="ti-pencil-alt"></i> <span>การจัดการข้อกำหนด</span></a></li>
                             <li class="{{ (strpos(url()->current(),'report') ) ? 'active' : '' }}">
                                 <a href="javascript:void(0)" aria-expanded="true"><i class="ti-files"></i><span>รายงาน</span></a>
                                 <ul class="collapse">
