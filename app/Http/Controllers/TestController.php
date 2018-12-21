@@ -272,4 +272,171 @@ class TestController extends Controller
             }
         }
     }
+
+    public function store_excel()
+    {
+        $file_path = public_path('mat.xlsx');
+        $reader = \Excel::load($file_path); //this will load file
+        $sheets = $reader->noHeading()->get()->toArray(); //this will convert file to array
+        unset($sheets[0]);
+        foreach ($sheets as $k => $v) {
+            unset($sheets[$k][0]);
+            unset($sheets[$k][1]);
+            // unset($sheets[$k][2]);
+            // unset($sheets[$k][3]);
+            unset($sheets[$k][4]);
+            unset($sheets[$k][5]);
+            $sheets[$k] = array_values($sheets[$k]);
+        }
+        $sheets = array_values($sheets);
+
+        // dd($sheets);
+
+        $args = [];
+        $name = [];
+        foreach ($sheets as $k => $v) {
+            if (!in_array(trim($v[4]), $name)) {
+                $args[] = [
+                    'fb_id' => $v[3],
+                    's_name' => trim($v[4]),
+                    's_onwer' => trim($v[4]),
+                    's_phone' => $v[2],
+                    's_addr' => $v[0],
+                    's_image' => "",
+                    'province_id' => $this->province($v[1]),
+                ];
+                array_push($name, trim($v[4]));
+            }
+        }
+
+        // dd($args);
+        DB::beginTransaction();
+        $result = DB::table('tbl_store')->insert($args);
+        if ($result) {
+            DB::commit();
+            echo "Success";
+            echo "<br />";
+        } else {
+            DB::rollBack();
+            echo "Fail";
+            echo "<br />";
+        }
+    }
+
+    public function mat()
+    {
+        $file_path = public_path('mat.xlsx');
+        $reader = \Excel::load($file_path); //this will load file
+        $sheets = $reader->noHeading()->get()->toArray(); //this will convert file to array
+        unset($sheets[0]);
+        foreach ($sheets as $k => $v) {
+            // unset($sheets[$k][0]);
+            // unset($sheets[$k][1]);
+            unset($sheets[$k][2]);
+            // unset($sheets[$k][3]);
+            // unset($sheets[$k][4]);
+            // unset($sheets[$k][5]);
+            unset($sheets[$k][6]);
+            unset($sheets[$k][7]);
+            // unset($sheets[$k][8]);
+            $sheets[$k] = array_values($sheets[$k]);
+        }
+        $sheets = array_values($sheets);
+
+        // dd($sheets);
+
+        // foreach ($sheets as $k => $v) {
+        //     if ($v[2] != "" && $v[3] != "" && $v[4] != "") {
+        //         echo "<pre>";
+        //         print_r($this->match_ad(trim($v[2]), trim($v[3]), trim($v[4])));
+        //         echo "<br />";
+        //     }
+        // }
+
+        // exit();
+
+        $args = [];
+        $name = [];
+        foreach ($sheets as $k => $v) {
+            $p = $d = $sd = "";
+            if ($v[2] != "" && $v[3] != "" && $v[4] != "") {
+                $data = $this->match_ad(trim($v[2]), trim($v[3]), trim($v[4]));
+                $p = $data[0]->province_id;
+                $d = $data[1]->district_id;
+                $sd = $data[2]->sub_district_id;
+            }
+            $args[] = [
+                'm_name' => trim($v[0]),
+                'm_price' => trim($v[1]),
+                'province_id' => $p,
+                'district_id' => $d,
+                'sub_district_id' => $sd,
+                's_id' => $this->match_shop($v[5]),
+            ];
+        }
+
+        // dd($args);
+        DB::beginTransaction();
+        $result = DB::table('tbl_material')->insert($args);
+        if ($result) {
+            DB::commit();
+            echo "Success";
+            echo "<br />";
+        } else {
+            DB::rollBack();
+            echo "Fail";
+            echo "<br />";
+        }
+    }
+
+    public function match_ad($p, $d, $sd)
+    {
+        $matchThese = [];
+        $data = [];
+        $tbl_province = DB::table('tbl_province')
+            ->select('province_id', 'province_name')
+            ->where('province_name', 'like', "%$p%")
+            ->get()->toArray();
+
+        $where = [];
+        if (count($tbl_province) > 0) {
+            $where[] = ['province_id', '=', $tbl_province[0]->province_id];
+        }
+        $tbl_district = DB::table('tbl_district')
+            ->select('district_id', 'district_name')
+            ->where('district_name', 'like', "%$d%")
+            ->where($where)
+            ->limit(1)
+            ->get()->toArray();
+
+        $where = [];
+        if (count($tbl_district) > 0) {
+            $where[] = ['district_id', '=', $tbl_district[0]->district_id];
+        }
+
+        $tbl_sub_district = DB::table('tbl_sub_district')
+            ->select('sub_district_id', 'sub_district_name')
+            ->where('sub_district_name', '=', "$sd")
+            ->where($where)
+            ->limit(1)
+            ->get()->toArray();
+
+        $data = array_merge($tbl_province, $tbl_district, $tbl_sub_district);
+
+        return $data;
+    }
+
+    public function match_shop($shop)
+    {
+        $tbl_store = DB::table('tbl_store')
+            ->select('s_id')
+            ->where('s_name', 'like', "%$shop%")
+            ->get()->toArray();
+
+        if (count($tbl_store) > 0) {
+            return $tbl_store[0]->s_id;
+        }
+        return "";
+    }
+
 }

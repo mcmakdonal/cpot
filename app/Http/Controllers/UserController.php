@@ -167,7 +167,7 @@ class UserController extends Controller
         }
 
         $args = [];
-        $accept = ['u_fullname', 'u_phone', 'u_password'];
+        $accept = ['u_fullname', 'u_phone', 'u_password','u_email'];
         foreach ($data as $key => $value) {
             if (in_array($key, $accept)) {
                 if ($key == "u_password") {

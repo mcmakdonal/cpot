@@ -142,8 +142,8 @@ class StoreandMaterial extends ServiceProvider
         // ร้านค้าทั้งหมด
         $count = DB::table('tbl_store')
             ->select(self::$store_field)
-            ->join('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
-            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+            ->leftJoin('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
+            ->leftJoin('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
             ->where($matchThese)
             ->orderBy('tbl_store.s_name', 'ASC')
@@ -165,8 +165,8 @@ class StoreandMaterial extends ServiceProvider
 
             $data[$k]->store = DB::table('tbl_store')
                 ->select(self::$store_field)
-                ->join('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
-                ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+                ->leftJoin('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
+                ->leftJoin('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
                 ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
                 ->where($matchThese)
                 ->orderBy('tbl_store.s_name', 'ASC')
