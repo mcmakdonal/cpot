@@ -139,17 +139,17 @@ class UserController extends Controller
      */
     public function update(Request $request, $id = "")
     {
-        $validator = Validator::make($request->all(), [
-            'data' => 'required',
-            'file' => 'nullable',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'data' => 'required',
+        //     'file' => 'nullable',
+        // ]);
 
-        if ($validator->fails()) {
-            return [
-                'status' => false,
-                'message' => 'Please fill all data',
-            ];
-        }
+        // if ($validator->fails()) {
+        //     return [
+        //         'status' => false,
+        //         'message' => 'Please fill all data',
+        //     ];
+        // }
 
         $result = JwtService::de_auth($request);
         if (gettype($result) != "array") {
