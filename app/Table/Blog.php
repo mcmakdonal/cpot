@@ -23,8 +23,11 @@ class Blog extends ServiceProvider
         'tbl_blog.bg_benefits',
         'tbl_blog.bmc_id',
         'tbl_blog.bsc_id',
-        'bmc_name',
-        'bsc_name',
+
+        'tbl_blog.create_date',
+
+        'tbl_blog_main_category.bmc_name',
+        'tbl_blog_sub_category.bsc_name',
 
         'tbl_province.province_name',
         'tbl_province.province_sector',

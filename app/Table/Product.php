@@ -18,6 +18,8 @@ class Product extends ServiceProvider
         'tbl_product.pd_tag',
         'tbl_product.pd_ref',
 
+        'tbl_product.create_date',
+
         'tbl_province.province_id',
         'tbl_province.province_name',
         'tbl_province.province_sector',
