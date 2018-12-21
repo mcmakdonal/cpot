@@ -88,9 +88,13 @@ class User extends ServiceProvider
         $status = DB::table('tbl_user')->where('u_id', $id)->update($args);
         if ($status) {
             DB::commit();
+            unset($args['update_date']);
+            unset($args['u_password']);
+            unset($args['update_by']);
             return [
                 'status' => true,
                 'message' => 'Success',
+                'data' => $args
             ];
         } else {
             return [
