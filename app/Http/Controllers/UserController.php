@@ -141,7 +141,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'data' => 'required',
-            'file' => 'required',
+            'file' => 'nullable',
         ]);
 
         if ($validator->fails()) {
