@@ -132,7 +132,7 @@ class Blog extends ServiceProvider
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
             ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
             ->where($matchThese)
-            ->where(function ($query) use ($search, $search_tag, $mcat_id, $sector) {
+            ->where(function ($query) use ($search, $search_tag) {
                 if ($search != "") {
                     if (in_array("tag", $search_tag)) {
                         $query->where('tbl_blog.bg_tag', 'like', "%$search%");
@@ -141,14 +141,18 @@ class Blog extends ServiceProvider
                         $query->orWhere('tbl_blog.bg_title', 'like', "%$search%");
                     }
                 }
+            })
+            ->where(function ($query) use ($mcat_id) {
                 if (count($mcat_id) > 0) {
                     foreach ($mcat_id as $k => $v) {
                         $query->orWhere('tbl_main_category.mcat_id', '=', $v);
                     }
                 }
+            })
+            ->where(function ($query) use ($sector) {
                 if (count($sector) > 0) {
                     foreach ($sector as $k => $v) {
-                        $query->orWhere('tbl_province.province_sector', '=', $v);
+                        $query->orWhere('tbl_province.province_sector', '=', $sector);
                     }
                 }
             })
@@ -168,7 +172,7 @@ class Blog extends ServiceProvider
             ->join('tbl_blog_main_category', 'tbl_blog_main_category.bmc_id', '=', 'tbl_blog.bmc_id')
             ->leftJoin('tbl_blog_sub_category', 'tbl_blog_sub_category.bsc_id', '=', 'tbl_blog.bsc_id')
             ->where($matchThese)
-            ->where(function ($query) use ($search, $search_tag, $mcat_id, $sector) {
+            ->where(function ($query) use ($search, $search_tag) {
                 if ($search != "") {
                     if (in_array("tag", $search_tag)) {
                         $query->where('tbl_blog.bg_tag', 'like', "%$search%");
@@ -177,14 +181,18 @@ class Blog extends ServiceProvider
                         $query->orWhere('tbl_blog.bg_title', 'like', "%$search%");
                     }
                 }
+            })
+            ->where(function ($query) use ($mcat_id) {
                 if (count($mcat_id) > 0) {
                     foreach ($mcat_id as $k => $v) {
                         $query->orWhere('tbl_main_category.mcat_id', '=', $v);
                     }
                 }
+            })
+            ->where(function ($query) use ($sector) {
                 if (count($sector) > 0) {
                     foreach ($sector as $k => $v) {
-                        $query->orWhere('tbl_province.province_sector', '=', $v);
+                        $query->orWhere('tbl_province.province_sector', '=', $sector);
                     }
                 }
             })

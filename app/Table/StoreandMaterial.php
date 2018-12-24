@@ -71,16 +71,20 @@ class StoreandMaterial extends ServiceProvider
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
             ->where($matchThese)
-            ->where(function ($query) use ($search, $mcat_id, $sector) {
+            ->where(function ($query) use ($search) {
                 if ($search != "") {
                     $query->where('tbl_store.s_name', 'like', "%$search%");
                     $query->orWhere('tbl_store.s_onwer', 'like', "%$search%");
                 }
+            })
+            ->where(function ($query) use ($mcat_id) {
                 if (count($mcat_id) > 0) {
                     foreach ($mcat_id as $k => $v) {
                         $query->orWhere('tbl_main_category.mcat_id', '=', $v);
                     }
                 }
+            })
+            ->where(function ($query) use ($sector) {
                 if (count($sector) > 0) {
                     foreach ($sector as $k => $v) {
                         $query->orWhere('tbl_province.province_sector', '=', $sector);
@@ -101,16 +105,20 @@ class StoreandMaterial extends ServiceProvider
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
             ->where($matchThese)
-            ->where(function ($query) use ($search, $mcat_id, $sector) {
+            ->where(function ($query) use ($search) {
                 if ($search != "") {
                     $query->where('tbl_store.s_name', 'like', "%$search%");
                     $query->orWhere('tbl_store.s_onwer', 'like', "%$search%");
                 }
+            })
+            ->where(function ($query) use ($mcat_id) {
                 if (count($mcat_id) > 0) {
                     foreach ($mcat_id as $k => $v) {
                         $query->orWhere('tbl_main_category.mcat_id', '=', $v);
                     }
                 }
+            })
+            ->where(function ($query) use ($sector) {
                 if (count($sector) > 0) {
                     foreach ($sector as $k => $v) {
                         $query->orWhere('tbl_province.province_sector', '=', $sector);

@@ -163,7 +163,7 @@ class Product extends ServiceProvider
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
             ->where($matchThese)
-            ->where(function ($query) use ($search, $search_tag,$mcat_id,$sector) {
+            ->where(function ($query) use ($search, $search_tag) {
                 if ($search != "") {
                     if (in_array("tag", $search_tag)) {
                         $query->where('tbl_product.pd_tag', 'like', "%$search%");
@@ -172,14 +172,18 @@ class Product extends ServiceProvider
                         $query->orWhere('tbl_product.pd_name', 'like', "%$search%");
                     }
                 }
+            })
+            ->where(function ($query) use ($mcat_id) {
                 if (count($mcat_id) > 0) {
                     foreach ($mcat_id as $k => $v) {
                         $query->orWhere('tbl_main_category.mcat_id', '=', $v);
                     }
                 }
+            })
+            ->where(function ($query) use ($sector) {
                 if (count($sector) > 0) {
                     foreach ($sector as $k => $v) {
-                        $query->orWhere('tbl_province.province_sector', '=', $v);
+                        $query->orWhere('tbl_province.province_sector', '=', $sector);
                     }
                 }
             })
@@ -198,7 +202,7 @@ class Product extends ServiceProvider
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
             ->where($matchThese)
-            ->where(function ($query) use ($search, $search_tag,$mcat_id,$sector) {
+            ->where(function ($query) use ($search, $search_tag) {
                 if ($search != "") {
                     if (in_array("tag", $search_tag)) {
                         $query->where('tbl_product.pd_tag', 'like', "%$search%");
@@ -207,11 +211,15 @@ class Product extends ServiceProvider
                         $query->orWhere('tbl_product.pd_name', 'like', "%$search%");
                     }
                 }
+            })
+            ->where(function ($query) use ($mcat_id) {
                 if (count($mcat_id) > 0) {
                     foreach ($mcat_id as $k => $v) {
                         $query->orWhere('tbl_main_category.mcat_id', '=', $v);
                     }
                 }
+            })
+            ->where(function ($query) use ($sector) {
                 if (count($sector) > 0) {
                     foreach ($sector as $k => $v) {
                         $query->orWhere('tbl_province.province_sector', '=', $sector);
@@ -494,7 +502,7 @@ class Product extends ServiceProvider
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->where($matchThese)
-            ->where(function ($query) use ($search, $search_tag,$mcat_id) {
+            ->where(function ($query) use ($search, $search_tag) {
                 if ($search != "") {
                     if (in_array("tag", $search_tag)) {
                         $query->where('tbl_youtube.my_bytag', 'like', "%$search%");
@@ -503,6 +511,8 @@ class Product extends ServiceProvider
                         $query->orWhere('tbl_youtube.my_title', 'like', "%$search%");
                     }
                 }
+            })
+            ->where(function ($query) use ($mcat_id) {
                 if (count($mcat_id) > 0) {
                     foreach ($mcat_id as $k => $v) {
                         $query->orWhere('tbl_main_category.mcat_id', '=', $v);
@@ -523,7 +533,7 @@ class Product extends ServiceProvider
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->where($matchThese)
-            ->where(function ($query) use ($search, $search_tag,$mcat_id) {
+            ->where(function ($query) use ($search, $search_tag) {
                 if ($search != "") {
                     if (in_array("tag", $search_tag)) {
                         $query->where('tbl_youtube.my_bytag', 'like', "%$search%");
@@ -532,6 +542,8 @@ class Product extends ServiceProvider
                         $query->orWhere('tbl_youtube.my_title', 'like', "%$search%");
                     }
                 }
+            })
+            ->where(function ($query) use ($mcat_id) {
                 if (count($mcat_id) > 0) {
                     foreach ($mcat_id as $k => $v) {
                         $query->orWhere('tbl_main_category.mcat_id', '=', $v);
