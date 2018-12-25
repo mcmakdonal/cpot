@@ -161,7 +161,6 @@ class StoreandMaterial extends ServiceProvider
         // เอาจังหวัดมา วน loop 
         $data = DB::table('tbl_province')
             ->select('province_id', 'province_name')
-            ->orderBy('tbl_province.province_id', 'ASC')
             ->where($matchThese)
             ->offset($offset)
             ->limit($limit)
