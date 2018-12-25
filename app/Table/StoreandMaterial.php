@@ -165,6 +165,7 @@ class StoreandMaterial extends ServiceProvider
             ->where($matchThese)
             ->offset($offset)
             ->limit($limit)
+            ->orderBy('tbl_province.province_name', 'ASC')
             ->get()->toArray();
 
         foreach ($data as $k => $v) {
