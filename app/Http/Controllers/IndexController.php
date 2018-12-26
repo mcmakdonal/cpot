@@ -177,15 +177,16 @@ class IndexController extends Controller
     {
         $search = ($request->search) ? $request->search : "";
         $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
-        $material = StoreandMaterial::material_lists("", $search, $page);
+        $material = StoreandMaterial::store_lists_material("", $search, $page);
         return $material;
     }
 
     public function store(Request $request)
     {
         $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
-        $pv_id = ($request->pv_id) ? $request->pv_id : "";
-        $store = StoreandMaterial::store_lists_province("", "", $page, $pv_id);
+        $search = ($request->search) ? $request->search : "";
+        // $pv_id = ($request->pv_id) ? $request->pv_id : "";
+        $store = StoreandMaterial::store_lists_province("", $search, $page);
         return $store;
     }
 

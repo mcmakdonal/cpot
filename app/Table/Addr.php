@@ -17,7 +17,7 @@ class Addr extends ServiceProvider
         $data = DB::table('tbl_province')
             ->select('*')
             ->where($matchThese)
-            ->orderBy('tbl_province.province_id', 'ASC')
+            ->orderBy('tbl_province.province_name', 'ASC')
             ->get()->toArray();
 
         return $data;
@@ -33,7 +33,7 @@ class Addr extends ServiceProvider
         $data = DB::table('tbl_district')
             ->select('*')
             ->where($matchThese)
-            ->orderBy('tbl_district.district_id', 'ASC')
+            ->orderBy('tbl_district.district_name', 'ASC')
             ->get()->toArray();
 
         return $data;
@@ -49,7 +49,7 @@ class Addr extends ServiceProvider
         $data = DB::table('tbl_sub_district')
             ->select('*')
             ->where($matchThese)
-            ->orderBy('tbl_sub_district.district_id', 'ASC')
+            ->orderBy('tbl_sub_district.district_name', 'ASC')
             ->get()->toArray();
 
         return $data;

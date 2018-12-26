@@ -158,7 +158,7 @@ class StoreandMaterial extends ServiceProvider
             ->groupBy(self::$store_field)
             ->get()->toArray();
 
-        // เอาจังหวัดมา วน loop 
+        // เอาจังหวัดมา วน loop
         $data = DB::table('tbl_province')
             ->select('province_id', 'province_name')
             ->where($matchThese)
@@ -248,6 +248,63 @@ class StoreandMaterial extends ServiceProvider
             ->get()->toArray();
 
         return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalMaterial' => $count_all];
+    }
+
+    public static function store_lists_material($id = "", $search = "", $page = 1)
+    {
+        $limit = 4;
+        $matchThese = [];
+
+        if ($id != "") {
+            $matchThese[] = ['tbl_material.m_id', '=', "$id"];
+        }
+        if ($search != "") {
+            $matchThese[] = ['tbl_material.m_name', 'like', "%$search%"];
+        }
+
+        // วัตถุดิบทั้งหมด
+        $count = DB::table('tbl_material')
+            ->select(self::$material_field)
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
+            ->join('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
+            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
+            ->join('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
+            ->where($matchThese)
+            ->orderBy('tbl_material.m_name', 'ASC')
+            ->get()->toArray();
+
+        $count_all = count($count);
+        $total = ceil($count_all / $limit);
+        $offset = ($page - 1) * $limit;
+
+        // เอาวัตถุดิบมา วน loop
+        $data = DB::table('tbl_material')
+            ->select('m_id', 'm_name', 's_id')
+            ->where($matchThese)
+            ->offset($offset)
+            ->limit($limit)
+            ->groupBy('m_name')
+            ->orderBy('tbl_material.m_id', 'ASC')
+            ->get()->toArray();
+
+        foreach ($data as $k => $v) {
+            $matchThese = [];
+            $matchThese[] = ['tbl_material.m_name', '=', $v->m_name];
+
+            $data[$k]->store = DB::table('tbl_store')
+                ->select(self::$store_field)
+                ->leftJoin('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
+                ->join('tbl_material', 'tbl_material.s_id', '=', 'tbl_store.s_id')
+                ->leftJoin('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+                ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
+                ->where($matchThese)
+                ->orderBy('tbl_store.s_name', 'ASC')
+                ->groupBy(self::$store_field)
+                ->get()->toArray();
+        }
+
+        return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalMaterial' => count($count)];
+
     }
 
 }
