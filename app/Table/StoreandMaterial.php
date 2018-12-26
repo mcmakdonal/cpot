@@ -284,7 +284,7 @@ class StoreandMaterial extends ServiceProvider
             ->offset($offset)
             ->limit($limit)
             ->groupBy('m_name')
-            ->orderBy('tbl_material.m_id', 'ASC')
+            ->orderBy('tbl_material.m_name', 'ASC')
             ->get()->toArray();
 
         foreach ($data as $k => $v) {
