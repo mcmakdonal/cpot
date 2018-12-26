@@ -8,6 +8,7 @@ use App\Table\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Validator;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -232,6 +233,7 @@ class UserController extends Controller
 
     public function check_login(Request $request)
     {
+        Log::debug($request->all());
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|max:250',
             'password' => 'required|string|max:250',
