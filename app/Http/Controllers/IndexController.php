@@ -185,8 +185,8 @@ class IndexController extends Controller
     {
         $page = ($request->page == 0 || $request->page == "") ? 1 : $request->page;
         $search = ($request->search) ? $request->search : "";
-        // $pv_id = ($request->pv_id) ? $request->pv_id : "";
-        $store = StoreandMaterial::store_lists_province("", $search, $page);
+        $pv_id = ($request->pv_id) ? $request->pv_id : "";
+        $store = StoreandMaterial::store_lists_province("", $search, $page,$pv_id);
         return $store;
     }
 
