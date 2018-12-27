@@ -112,7 +112,7 @@ class UserController extends Controller
         $u_id = $result['u_id'];
         $user = User::get_user("", $u_id);
         foreach ($user as $k => $v) {
-            if (!strpos($v->u_profile, 'http')) {
+            if (!strpos($v->u_profile, 'http') && $v->u_profile != "") {
                 $user[$k]->u_profile = url($v->u_profile);
             }
         }
