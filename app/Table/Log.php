@@ -164,7 +164,6 @@ class Log extends ServiceProvider
         $tbl_device_token = DB::table('tbl_device_token')
             ->select('token')
             ->groupBy('token')
-            ->limit(1)
             ->get()->toArray();
 
         $args['device_token'] = [];
