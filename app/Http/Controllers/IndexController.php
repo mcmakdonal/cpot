@@ -461,6 +461,11 @@ class IndexController extends Controller
         return Log::token_insert($args);
     }
 
+    public function simple_nofti(){
+        $log = Log::dateProduct();
+        return $log;
+    }
+
     public function rule_privacy()
     {
         $privacy = Privacy::lists();

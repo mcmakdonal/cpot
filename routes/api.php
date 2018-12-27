@@ -129,6 +129,7 @@ Route::post('/new-release', 'IndexController@new_release');
 
 // Nof //
 Route::post('/nof-token', 'IndexController@recive_token');
+Route::get('/simple-nofti','IndexController@simple_nofti');
 // Nof //
 
 // Mat and Store //

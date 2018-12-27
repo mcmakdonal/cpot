@@ -233,7 +233,7 @@ class UserController extends Controller
 
     public function check_login(Request $request)
     {
-        Log::debug($request->all());
+        // Log::debug($request->all());
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|max:250',
             'password' => 'required|string|max:250',
