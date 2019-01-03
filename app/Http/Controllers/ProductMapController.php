@@ -14,8 +14,10 @@ class ProductMapController extends Controller
 
     public function index()
     {
-        $data = Product::lists();
+        $data = Product::lists_formatch();
         // dd($data['data_object']);
+        // $paginated = new \Illuminate\Pagination\LengthAwarePaginator($data['data_object'], sizeof($data['data_object']), 10);
+        // dd($paginated);
         return view('product-match.index', ['data' => $data['data_object']]);
     }
 
