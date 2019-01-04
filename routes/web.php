@@ -85,6 +85,3 @@ Route::get('/jwtdecode', 'TestController@jwtdecode');
 // Route::get('/store-excel','TestController@store');
 // Route::get('/mat-excel','TestController@mat');
 //
-Route::post('/abc/abc', function () {
-    return json_encode(['a' => 'a']);
-});
