@@ -7,17 +7,17 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="header-title">การจัดการผู้ดูแลระบบ</h4>
-                    <?=link_to('/administrator/create', $title = 'Create' , ['class' => 'btn btn-success mb-3 float-right'], $secure = null); ?>
+                    <?=link_to('/administrator/create', $title = 'สร้าง' , ['class' => 'btn btn-success mb-3 float-right'], $secure = null); ?>
                         <div class="data-tables">
                             <table id="dataTable" class="text-center">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th>#</th>
-                                        <th>Firstname</th>
-                                        <th>Lastname</th>
-                                        <th>Username</th>
-                                        <th>Edit</th>
-                                        <th>Delete</th>
+                                        <th>ชื่อ</th>
+                                        <th>นามสกลุ</th>
+                                        <th>ชื่อผู้ใช้</th>
+                                        <th>แก้ไข</th>
+                                        <th>ลบ</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -28,9 +28,9 @@
                                         <td>{{ $v->ad_lastname }}</td>
                                         <td>{{ $v->ad_username }}</td>
                                         <td>
-                                            <?=link_to("/administrator/$v->ad_id/edit", $title = 'Edit' , ['class' => 'btn btn-warning mb-3'], $secure = null); ?>
+                                            <?=link_to("/administrator/$v->ad_id/edit", $title = 'แก้ไข' , ['class' => 'btn btn-warning mb-3'], $secure = null); ?>
                                         </td>
-                                        <td><button class="btn btn-danger" type="button" onclick='destroy("administrator",{{$v->ad_id}})'>Delete</button></td>
+                                        <td><button class="btn btn-danger" type="button" onclick='destroy("administrator",{{$v->ad_id}})'>ลบ</button></td>
                                     </tr>
                                     @endforeach
                                 </tbody>

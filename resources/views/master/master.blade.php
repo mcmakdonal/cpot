@@ -47,7 +47,7 @@
         <div class="sidebar-menu">
             <div class="sidebar-header">
                 <div class="logo">
-                    <a href="/"><img src="/assets/images/icon/logo_backend.png" alt="logo"></a>
+                    <a href="/"><img src="/assets/images/logo_backend.png" alt="logo"></a>
                 </div>
             </div>
             <div class="main-menu">

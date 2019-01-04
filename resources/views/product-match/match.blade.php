@@ -21,31 +21,31 @@
             => false]) !!}
             <div class="form-row">
                 <div class="col-md-6 mb-3">
-                    <label for="">Product name : </label>
+                    <label for="">ชื่อสินค้า : </label>
                     <input type="text" class="form-control" id="" name="" placeholder="" value="{{ $data[0]->pd_name }}" readonly="">
                 </div>
                 <div class="col-md-3 mb-3">
-                    <label for="">Price : </label>
+                    <label for="">ราคา : </label>
                     <input type="text" class="form-control" id="" name="" placeholder="" value="{{ $data[0]->pd_price }}" readonly="">
                 </div>
                 <div class="col-md-3 mb-3">
-                    <label for="">Spacial Price : </label>
+                    <label for="">ราคาพิเศษ : </label>
                     <input type="text" class="form-control" id="" name="" placeholder="" value="{{ $data[0]->pd_sprice }}" readonly="">
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">Tag : </label>
+                    <label for="">แท็ก : </label>
                     <input type="text" class="form-control" id="" name="pd_tag" placeholder="" value="{{ $data[0]->pd_tag }}" readonly="">
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">Description : </label>
+                    <label for="">รายละเอียด : </label>
                     <textarea class="form-control" readonly="" rows="5" style="resize: vertical">{{ $data[0]->pd_description }}</textarea>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-xs-12">
                     <hr />
-                    <h3> Youtube Matching </h3>
-                    <h5> Key Seach : {{ $data[0]->pd_tag }}
+                    <h3> จับคู่ Youtube </h3>
+                    <h5> คีย์ค้นหา : {{ $data[0]->pd_tag }}
                 </div>
 
                 @foreach($youtube as $k => $v)
@@ -58,7 +58,7 @@
                              @php 
                              $json = [ 'my_title' => $v->snippet->title, 'my_href' => $v->id->videoId,'my_image' => $v->snippet->thumbnails->medium->url,'my_desc' => $v->snippet->description ]; 
                             @endphp
-                            <button type="button" onclick="select_youtube(this)" class="btn btn-primary" data="{{ json_encode($json,JSON_UNESCAPED_UNICODE) }}">Select</button>
+                            <button type="button" onclick="select_youtube(this)" class="btn btn-primary" data="{{ json_encode($json,JSON_UNESCAPED_UNICODE) }}">เลือก</button>
                         </div>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
             <div class="row mt-1 mb-1">
                 <div class="col-lg-12 col-md-12 col-xs-12">
                     <hr />
-                    <h3> Select Items : </h3>
+                    <h3> ผลลัพท์ Items : </h3>
                     <hr />
                 </div>
             </div>
@@ -102,8 +102,8 @@
 
             <div class="form-group">
                 <hr />
-                <button type="submit" class="btn btn-success">Update</button>
-                <?=link_to('/product-match', $title = 'Cancle', ['class' => 'btn btn-warning'], $secure = null);?>
+                <button type="submit" class="btn btn-success">บันทึก</button>
+                <?=link_to('/product-match', $title = 'ยกเลิก', ['class' => 'btn btn-warning'], $secure = null);?>
             </div>
             {!! Form::close() !!}
         </div>

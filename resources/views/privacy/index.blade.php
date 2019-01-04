@@ -40,8 +40,8 @@
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th style="width: 5%">#</th>
-                                        <th>Choice</th>
-                                        <th style="width: 10%">Delete</th>
+                                        <th>ตัวเลือก</th>
+                                        <th style="width: 10%">ลบ</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -50,7 +50,7 @@
                                         <td>{{ $k + 1 }}</td>
                                         <td class="text-left" style="word-break: break-all;">{{ $v->p_choice }}</td>
                                         <td>
-                                            <button class="btn btn-danger" type="button" onclick='destroy("privacy",{{$v->p_id}})'>Delete</button>
+                                            <button class="btn btn-danger" type="button" onclick='destroy("privacy",{{$v->p_id}})'>ลบ</button>
                                         </td>
                                     </tr>
                                     @endforeach

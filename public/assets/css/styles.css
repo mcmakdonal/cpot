@@ -139,7 +139,7 @@
 }
 
 .sidebar-header {
-    padding: 19px 32px 20px;
+    padding: 0px;
     background: #303641;
     border-bottom: 1px solid #343e50;
 }
@@ -148,7 +148,7 @@
 }
 .logo a {
     display: inline-block;
-    max-width: 120px;
+    /* max-width: 120px; */
 }
 
 .metismenu >li >a {

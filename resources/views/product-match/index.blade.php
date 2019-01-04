@@ -12,9 +12,9 @@
                             <thead class="bg-light text-capitalize">
                                 <tr>
                                     <th>#</th>
-                                    <th>Product Name</th>
-                                    <th>Match</th>
-                                    <th>Match</th>
+                                    <th>ชื่อสินค้า</th>
+                                    <th>สถานะจับคู่</th>
+                                    <th>จับคู่</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -22,9 +22,9 @@
                                 <tr>
                                     <td>{{ $k + 1 }}</td>
                                     <td>{{ $v->pd_name }}</td>
-                                    <td>@php echo (count($v->youtube) > 0) ? '<a href="#" class="badge badge-success">Match</a>' : '<a href="#" class="badge badge-secondary">Not Match</a>' @endphp</td>
+                                    <td>@php echo (count($v->youtube) > 0) ? '<a href="#" class="badge badge-success">จับคู่แล้ว</a>' : '<a href="#" class="badge badge-secondary">ยังไม่จับคู่</a>' @endphp</td>
                                     <td>
-                                        <?=link_to("/product-match/$v->pd_id/matching", $title = 'Match' , ['class' => 'btn btn-warning mb-3'], $secure = null); ?>
+                                        <?=link_to("/product-match/$v->pd_id/matching", $title = 'จับคู่' , ['class' => 'btn btn-warning mb-3'], $secure = null); ?>
                                     </td>
                                 </tr>
                                 @endforeach

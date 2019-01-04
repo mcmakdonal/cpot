@@ -1,3 +1,3 @@
-Hi <strong>{{ $name }}</strong>,
+สวัสดี <strong>{{ $name }}</strong>,
  
 <p>{{ $body }}</p>

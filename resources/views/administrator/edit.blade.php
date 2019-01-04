@@ -21,32 +21,32 @@
             => false]) !!}
             <div class="form-row">
                 <div class="col-md-6 mb-3">
-                    <label for="">First name</label>
+                    <label for="">ชื่อ</label>
                     <input type="text" class="form-control" id="" name="ad_firstname" placeholder="First name" value="{{ $data[0]->ad_firstname }}"
                         required="">
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">Last name</label>
+                    <label for="">นามสกุล</label>
                     <input type="text" class="form-control" id="" name="ad_lastname" placeholder="Last name" value="{{ $data[0]->ad_lastname }}"
                         required="">
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">Username</label>
+                    <label for="">ชื่อผู้ใช้</label>
                     <input type="text" class="form-control" id="" name="ad_username" placeholder="Username" value="{{ $data[0]->ad_username }}"
                         readonly="">
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">Password</label>
+                    <label for="">รหัสผ่าน</label>
                     <input type="password" class="form-control" id="" name="ad_password" placeholder="Password" value="">
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">Confirm Password</label>
+                    <label for="">ยืนยันรหัสผ่าน</label>
                     <input type="password" class="form-control" id="" name="conf_password" placeholder="Confirm Password" value="">
                 </div>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-success">Update</button>
-                <?=link_to('/administrator', $title = 'Cancle', ['class' => 'btn btn-warning'], $secure = null);?>
+                <button type="submit" class="btn btn-success">บันทึก</button>
+                <?=link_to('/administrator', $title = 'ยกเลิก', ['class' => 'btn btn-warning'], $secure = null);?>
             </div>
             {!! Form::close() !!}
         </div>

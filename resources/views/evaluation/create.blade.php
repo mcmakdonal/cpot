@@ -16,11 +16,11 @@
             @endif {!! Form::open(['url' => '/evaluation','class' => 'form-auth-small', 'method' => 'POST','files' => false]) !!}
             <div class="form-row">
                 <div class="col-md-10 mb-3">
-                    <label for="">Topic : </label>
+                    <label for="">หัวข้อ : </label>
                     <input type="text" class="form-control" id="" name="et_topic" placeholder="Topic" value="" required="">
                 </div>
                 <div class="col-md-2 mb-3">
-                    <label for="">Add Question : </label>
+                    <label for="">เพิ่มคำถาม : </label>
                     <button type="button" class="btn btn-info form-control" onclick="add_question()"><span class="ti-plus"></span></button>
                 </div>
             </div>
@@ -31,8 +31,8 @@
             </div>
             <div class="form-row" id="q_target">
                 <div class="col-md-11 mb-3 question">
-                    <label for="">Question : </label>
-                    <label class="sr-only" for="">Question</label>
+                    <label for="">คำถาม : </label>
+                    <label class="sr-only" for="">คำถาม</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <div class="input-group-text">1.</div>
@@ -43,8 +43,8 @@
                 <div class="col-md-1 mb-3"></div>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-success">Save</button>
-                <?=link_to('/evaluation', $title = 'Cancle', ['class' => 'btn btn-warning'], $secure = null);?>
+                <button type="submit" class="btn btn-success">บันทึก</button>
+                <?=link_to('/evaluation', $title = 'ยกเลิก', ['class' => 'btn btn-warning'], $secure = null);?>
             </div>
             {!! Form::close() !!}
         </div>
