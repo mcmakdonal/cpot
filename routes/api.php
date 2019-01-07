@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-
+// header('Access-Control-Allow-Headers: Content-Type, X-Auth-Token, Origin, Authorization');
 ///////// Product Category /////////////////////////////////
 Route::get('/category', 'CategoryController@list');
 Route::get('/main_category', 'CategoryController@main_list');
