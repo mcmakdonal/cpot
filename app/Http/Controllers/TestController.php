@@ -27,7 +27,7 @@ class TestController extends Controller
 
     public function product()
     {
-        $file_path = public_path('product.xlsx');
+        $file_path = public_path('product2.xlsx');
         $reader = \Excel::load($file_path); //this will load file
         $sheets = $reader->noHeading()->get()->toArray(); //this will convert file to array
         $sheets = $sheets[2];
@@ -52,7 +52,7 @@ class TestController extends Controller
                 'pd_price' => (int) $v[4],
                 'pd_sprice' => (int) $v[5],
                 'pd_store' => $v[6],
-                'pd_province' => $this->province($v[7]),
+                'pd_province' => $this->province(trim($v[7])),
                 'pd_phone' => $v[8],
                 'pd_history' => $v[10],
                 'pd_featured' => $v[11],
@@ -64,6 +64,7 @@ class TestController extends Controller
                 'mcat_id' => (int) $v[17],
                 'scat_id' => (int) $v[18],
                 'pd_image' => $v[9],
+                's_id' => "",
                 'create_date' => date('Y-m-d H:i:s'),
                 'create_by' => 1,
                 'update_date' => date('Y-m-d H:i:s'),
@@ -206,7 +207,7 @@ class TestController extends Controller
 
         $data = DB::table('tbl_product')
             ->select('pd_province', 'pd_store', 'pd_phone')
-            ->where($matchThese)
+            ->where('pd_id', '>', '1624')
             ->groupBy('pd_store')
             ->get()->toArray();
 
@@ -221,7 +222,9 @@ class TestController extends Controller
 
             array_push($args, $obj);
         }
-
+        unset($args[11]);
+        unset($args[7]);
+        $args = array_values($args);
         // dd($args);
         DB::beginTransaction();
         $result = DB::table('tbl_store')->insert($args);
@@ -242,8 +245,10 @@ class TestController extends Controller
 
         $data = DB::table('tbl_product')
             ->select('pd_id', 'pd_store')
-            ->where($matchThese)
+            ->where('pd_id', '>', '1624')
             ->get()->toArray();
+
+        // dd($data);
 
         $args = [];
         foreach ($data as $k => $v) {
@@ -439,4 +444,69 @@ class TestController extends Controller
         return "";
     }
 
+    public function update_images()
+    {
+        $matchThese = [];
+
+        $data = DB::table('tbl_product')
+            ->select('pd_id', 'pd_image')
+            ->where('pd_id', '>', '1624')
+            ->get()->toArray();
+
+        $start = 809;
+        // dd($data);
+        $args = [];
+        foreach ($data as $k => $v) {
+            DB::beginTransaction();
+            $args = [
+                'pd_image' => str_replace(substr($v->pd_image, 0, 3) . "-", $start . "-", $v->pd_image),
+            ];
+            $status = DB::table('tbl_product')->where('pd_id', $v->pd_id)->update($args);
+            if ($status) {
+                DB::commit();
+                echo "Success";
+                echo "<br />";
+                $start++;
+            } else {
+                DB::rollBack();
+                echo "Fail";
+                echo "<br />";
+            }
+        }
+    }
+
+    public function insert_images()
+    {
+        $matchThese = [];
+
+        $data = DB::table('tbl_product')
+            ->select('pd_id', 'pd_image')
+            ->where('pd_id', '>', '1156')
+            ->get()->toArray();
+
+        // dd($data);
+        foreach ($data as $k => $v) {
+            DB::beginTransaction();
+            $img = explode(",", $v->pd_image);
+            foreach ($img as $kk => $vv) {
+                if ($vv != "" || $vv != null || $vv != " ") {
+                    $arr = [
+                        'pd_id' => $v->pd_id,
+                        'path' => '/product_images/' . strtolower(trim($vv)),
+                    ];
+                }
+
+                $result = DB::table('tbl_product_images')->insert($arr);
+                if ($result) {
+                    DB::commit();
+                    echo "Success";
+                    echo "<br />";
+                } else {
+                    DB::rollBack();
+                    echo "Fail Insert Image";
+                    echo "<br />";
+                }
+            }
+        }
+    }
 }

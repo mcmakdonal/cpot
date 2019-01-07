@@ -1,13 +1,13 @@
 @extends('master.master') 
 @section('main')
-@section('title', 'รายงานการเข้าใช้งานระบบ' )
-@include('master.breadcrumb', ['mtitle' => 'รายงาน','stitle' => 'รายงานการเข้าใช้งานระบบ'])
+@section('title', 'รายงานการเข้าใช้งาน แอพพลิเคชัน CPOT' )
+@include('master.breadcrumb', ['mtitle' => 'รายงาน','stitle' => 'รายงานการเข้าใช้งาน แอพพลิเคชัน CPOT'])
 <div class="main-content-inner">
     <div class="row">
         <div class="col-12 mt-5">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="header-title">รายงานการเข้าใช้งานระบบ</h4>
+                    <h4 class="header-title">รายงานการเข้าใช้งาน แอพพลิเคชัน CPOT</h4>
                         <div class="data-tables">
                             <table id="report_dataTable" class="text-center">
                                 <thead class="bg-light text-capitalize">

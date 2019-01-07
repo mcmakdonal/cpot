@@ -39,7 +39,7 @@
             <div class="login-box ptb--100">
                 {!! Form::open(['url' => "/backend-login",'class' => 'form-auth-small', 'method' => 'POST','files' => false]) !!}
                 <div class="login-form-head">
-                    <h4>Sign In</h4>
+                    <img src="/assets/images/logo_backend.png" alt="logo">
                 </div>
                 @if ($errors->any())
                 <div class="alert alert-danger">

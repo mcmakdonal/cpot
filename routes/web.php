@@ -79,9 +79,11 @@ Route::get('/jwt', 'TestController@jwt');
 Route::get('/jwtdecode', 'TestController@jwtdecode');
 
 // Route::get('/product-excel', 'TestController@product');
-// Route::get('/blog-excel', 'TestController@blog');
+// // Route::get('/blog-excel', 'TestController@blog');
 // Route::get('/insert-p-t-s','TestController@insert_p_t_s');
 // Route::get('/update-s-t-p','TestController@update_s_t_p');
-// Route::get('/store-excel','TestController@store');
-// Route::get('/mat-excel','TestController@mat');
+// // Route::get('/store-excel','TestController@store');
+// // Route::get('/mat-excel','TestController@mat');
+// Route::get('/update-images','TestController@update_images');
+// Route::get('/insert-images','TestController@insert_images');
 //

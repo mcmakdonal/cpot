@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Mculture-Mobile : @yield('title')</title>
+    <title>Mculture-Mobile @yield('title')</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -66,13 +66,13 @@
                             <li class="{{ (strpos(url()->current(),'administrator') ) ? 'active' : '' }}"><a href="/administrator"><i class="ti-user"></i> <span>การจัดการผู้ดูแลระบบ</span></a></li>
                             <li class="{{ (strpos(url()->current(),'product-match') ) ? 'active' : '' }}"><a href="/product-match"><i class="ti-layers-alt"></i> <span>การจัดการ YouTube และ สินค้า</span></a></li>
                             <li class="{{ (strpos(url()->current(),'evaluation') ) ? 'active' : '' }}"><a href="/evaluation"><i class="ti-comment-alt"></i> <span>การจัดการแบบประเมิน</span></a></li>
-                            <li class="{{ (strpos(url()->current(),'ads') ) ? 'active' : '' }}"><a href="/ads"><i class="ti-blackboard"></i> <span>การจัดการโฆษณา</span></a></li>
+                            {{-- <li class="{{ (strpos(url()->current(),'ads') ) ? 'active' : '' }}"><a href="/ads"><i class="ti-blackboard"></i> <span>การจัดการโฆษณา</span></a></li> --}}
                             <li class="{{ (strpos(url()->current(),'background') ) ? 'active' : '' }}"><a href="/background"><i class="ti-panel"></i> <span>การจัดการแบล็คกราว</span></a></li>
                             <li class="{{ (strpos(url()->current(),'privacy') ) ? 'active' : '' }}"><a href="/privacy"><i class="ti-pencil-alt"></i> <span>การจัดการข้อกำหนด</span></a></li>
                             <li class="{{ (strpos(url()->current(),'report') ) ? 'active' : '' }}">
                                 <a href="javascript:void(0)" aria-expanded="true"><i class="ti-files"></i><span>รายงาน</span></a>
                                 <ul class="collapse">
-                                    <li><a href="/report/user">รายงานการเข้าใช้งานระบบ</a></li>
+                                    <li><a href="/report/user">รายงานการเข้าใช้งาน แอพพลิเคชัน CPOT</a></li>
                                     <li><a href="/report/evaluation">รายงานแบบประเมิน</a></li>
                                     <li><a href="/report/tag">รายงาน Tag ที่นิยม</a></li>
                                     <li><a href="/report/share">รายงานการแบ่งปันองค์ความรู้และทรัพยากรวัตถุดิบ</a></li>

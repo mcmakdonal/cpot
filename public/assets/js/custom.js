@@ -42,7 +42,8 @@ function select_youtube(e) {
     var cyoutube = $(".cyoutube").length + 1;
     var class_uq = uuidv4();
     var html = '';
-    html += '<div class="col-md-11 mb-3 cyoutube ' + class_uq + '"><label class="sr-only" for=""></label><div class="input-group"><div class="input-group-prepend"><div class="input-group-text">' + cyoutube + '.</div></div><input type="text" class="form-control" readonly value="' + data.my_title + '"></div></div>';
+    var title = data.my_title;
+    html += '<div class="col-md-11 mb-3 cyoutube ' + class_uq + '"><label class="sr-only" for=""></label><div class="input-group"><div class="input-group-prepend"><div class="input-group-text">' + cyoutube + '.</div></div><input type="text" class="form-control" readonly value="' + title.replace('"','') + '"></div></div>';
     html += '<div class="col-md-1 mb-3 ' + class_uq + '"><button type="button" data="' + class_uq + '" onclick="remove_block(this)" class="btn btn-wanring"><span class="ti-trash"></span></button></div>';
     $("#q_target").append(html);
 
@@ -53,6 +54,9 @@ function select_youtube(e) {
 
     $("#html-block").append(html);
     $(e).attr('disabled', 'disabled');
+    $(e).removeClass('btn-primary');
+    $(e).addClass('btn-disabled');
+    $(e).text("เลือกแล้ว");
 }
 
 function uuidv4() {

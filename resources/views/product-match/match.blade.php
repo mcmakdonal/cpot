@@ -51,7 +51,9 @@
                 @foreach($youtube as $k => $v)
                 <div class="col-lg-4 col-md-4 mt-3 d-flex align-items-stretch">
                     <div class="card card-bordered">
-                        <img class="card-img-top img-fluid" src="{{ $v->snippet->thumbnails->medium->url }}" alt="image">
+                        <a href="https://www.youtube.com/watch?v={{ $v->id->videoId }}" target="_blank">
+                            <img class="card-img-top img-fluid" src="{{ $v->snippet->thumbnails->medium->url }}" alt="image">
+                        </a>
                         <div class="card-body">
                             <h5 class="title">{{ $v->snippet->title }}</h5>
                             <p class="card-text">{{ $v->snippet->description }}</p>
@@ -68,12 +70,13 @@
             <div class="row mt-1 mb-1">
                 <div class="col-lg-12 col-md-12 col-xs-12">
                     <hr />
-                    <h3> ผลลัพท์ Items : </h3>
+                    <h3> ผลลัพท์ที่แสดงทั้งหมดคือ {{ count($youtube) }} : </h3>
                     <hr />
                 </div>
             </div>
 
             <div class="form-row mt-10" id="html-block">
+                <span>สามารถเลือกได้สูงสุด</span>
                 @foreach($select as $k => $v)
                     @php
                         $class = uniqid();
