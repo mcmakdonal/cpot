@@ -76,7 +76,7 @@ class Evaluation extends ServiceProvider
         // $matchThese[] = ['tbl_question_topic.record_status', '=', 'A'];
 
         $data = DB::table('tbl_question_topic')
-            ->select('tbl_question_topic.q_id', 'tbl_question_topic.et_id', 'tbl_question_topic.q_question', DB::raw('SUM(tbl_answer_topic.q_point) sum_point'))
+            ->select('tbl_question_topic.q_id', 'tbl_question_topic.et_id', 'tbl_question_topic.q_question', DB::raw('avg(tbl_answer_topic.q_point) sum_point'))
             ->leftJoin('tbl_answer_topic', 'tbl_answer_topic.q_id', '=', 'tbl_question_topic.q_id')
             ->where($matchThese)
             ->groupBy('tbl_question_topic.q_id')

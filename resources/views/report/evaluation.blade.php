@@ -13,9 +13,9 @@
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th style="width: 5%">#</th>
-                                        <th>ชื่อแบบประเมิน</th>
+                                        <th style="width: 20%">ชื่อแบบประเมิน</th>
                                         <th>สถานะ</th>
-                                        <th>จำนวนผู้โหวต</th>
+                                        <th style="width: 10%">จำนวนผู้โหวต</th>
                                         <th>คะแนน</th>
                                     </tr>
                                 </thead>
@@ -34,7 +34,7 @@
                                         <td>
                                             {{ $v->totol_vote }}
                                         </td>
-                                        <td>@foreach ($v->items as $key => $item)คำถาม : {{ $item->q_question }} | คะแนนรวมทั้งหมด : {{ $item->sum_point }}<br/>@endforeach</td>
+                                        <td>@foreach ($v->items as $key => $item)คำถาม : {{ $item->q_question }} | คะแนนเฉลี่ยรวมทั้งหมด : {{ number_format($item->sum_point) }}<br/>@endforeach</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
