@@ -13,6 +13,11 @@ use Illuminate\Http\Request;
 |
  */
 
+Route::post('/foo', function (Request $request) {
+    Log::debug($request->all());
+    return json_encode(['a' => 'a']);
+});
+
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
@@ -58,6 +63,7 @@ Route::get('/blog_sub_category/{bmc_id}', 'BlogCategoryController@blog_sub_list'
 Route::post('/user/check_email', 'UserController@check_email');
 Route::post('/user/create', 'UserController@store');
 Route::post('/user/check_login', 'UserController@check_login');
+Route::options('/user/check_login', 'UserController@check_login');
 Route::post('/user/update', 'UserController@update');
 Route::post('/user/delete', 'UserController@destroy');
 Route::get('/user/detail', 'UserController@show');
