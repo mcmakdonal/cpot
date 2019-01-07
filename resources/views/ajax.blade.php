@@ -6,7 +6,7 @@
 $(document).ready(function(){
     $("button").click(function(){
         $.ajax({
-        	url: "http://mvec.demotoday.net/api/main_category",
+        	url: "https://mvec.demotoday.net/api/main_category",
         	method: 'get',
         	success: function(result){
             console.log(result);
