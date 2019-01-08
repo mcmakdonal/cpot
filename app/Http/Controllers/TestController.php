@@ -128,8 +128,9 @@ class TestController extends Controller
             }
         }
         $sheets = array_values($sheets);
-
-        // dd($sheets);
+        // unset($sheets[0]);
+        // $sheets = array_values($sheets);
+        dd($sheets);
 
         $args = [];
         foreach ($sheets as $k => $v) {
@@ -508,5 +509,47 @@ class TestController extends Controller
                 }
             }
         }
+    }
+
+    public function p_to_b(){
+        $data = DB::table('tbl_blog')
+        ->select('bg_id', 'bg_title')
+        ->whereNull('pd_id')
+        ->get()->toArray();
+
+        // dd($data);
+
+        foreach($data as $k => $v){
+            $name = trim(str_replace(["เรียนรู้ผลิตภัณฑ์ ",""],"",$v->bg_title));
+            // echo $name;
+            // echo "<br />";
+
+            $matchThese = [];
+            $matchThese[] = ['pd_name', 'LIKE', "%$name%"];
+            $count = DB::table('tbl_product')
+                ->select('pd_id')
+                ->where($matchThese)
+                ->get()->toArray();
+
+            if (count($count) > 0) {
+                DB::beginTransaction();
+                $args = [
+                    'pd_id' => $count[0]->pd_id,
+                ];
+                $status = DB::table('tbl_blog')->where('bg_id', $v->bg_id)->update($args);
+                if ($status) {
+                    DB::commit();
+                    echo "Success";
+                    echo "<br />";
+                } else {
+                    DB::rollBack();
+                    echo "Fail";
+                    echo "<br />";
+                }
+            }
+
+
+        }
+
     }
 }

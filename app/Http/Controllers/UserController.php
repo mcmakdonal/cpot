@@ -140,6 +140,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id = "")
     {
+        Log::debug($request->all());
         // $validator = Validator::make($request->all(), [
         //     'data' => 'required',
         //     'file' => 'nullable',
