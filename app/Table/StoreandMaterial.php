@@ -15,6 +15,8 @@ class StoreandMaterial extends ServiceProvider
         'tbl_store.fb_id',
         'tbl_store.s_addr',
         'tbl_store.s_image',
+        'tbl_store.s_line',
+        'tbl_store.s_ig',
 
         'tbl_province.province_name',
         'tbl_province.province_sector',
