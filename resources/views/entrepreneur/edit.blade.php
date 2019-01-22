@@ -1,6 +1,6 @@
 @extends('master.master') 
 @section('main')
-    @include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'แก้ไขผู้ดูแลระบบ'])
+    @include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'แก้ไขผู้ประกอบการ'])
 <div class="col-12">
     <div class="card mt-5">
         <div class="card-body">
