@@ -1,5 +1,6 @@
 var dataTable = '';
 var report_dataTable = '';
+var select = '';
 $(document).ready(function () {
     dataTable = $('#dataTable').DataTable();
 
@@ -8,6 +9,8 @@ $(document).ready(function () {
         buttons: ['excel'],
         dom: 'Bfrtip'
     });
+
+    $('select').select2();
 });
 
 function destroy(src, id) {
@@ -43,7 +46,7 @@ function select_youtube(e) {
     var class_uq = uuidv4();
     var html = '';
     var title = data.my_title;
-    html += '<div class="col-md-11 mb-3 cyoutube ' + class_uq + '"><label class="sr-only" for=""></label><div class="input-group"><div class="input-group-prepend"><div class="input-group-text">' + cyoutube + '.</div></div><input type="text" class="form-control" readonly value="' + title.replace('"','') + '"></div></div>';
+    html += '<div class="col-md-11 mb-3 cyoutube ' + class_uq + '"><label class="sr-only" for=""></label><div class="input-group"><div class="input-group-prepend"><div class="input-group-text">' + cyoutube + '.</div></div><input type="text" class="form-control" readonly value="' + title.replace('"', '') + '"></div></div>';
     html += '<div class="col-md-1 mb-3 ' + class_uq + '"><button type="button" data="' + class_uq + '" onclick="remove_block(this)" class="btn btn-wanring"><span class="ti-trash"></span></button></div>';
     $("#q_target").append(html);
 
@@ -152,4 +155,102 @@ function func_unactive(src, id, type = "") {
             swal("Danger !", "Fail !", error + " Status : " + status, "error");
         }
     });
+}
+
+/////////////////////////////////////
+
+function search_district(init = false) {
+    var province_id = "";
+    if (init) {
+        province_id = $("#province_id").attr("data-id");
+    } else {
+        province_id = $("#province_id").val();
+    }
+    if (province_id == "") {
+        return clear_addr();
+    }
+    $.ajax({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+        },
+        url: "/api/get-district/" + province_id,
+        method: "GET",
+        success: function (result) {
+            clear_addr();
+            var check = false;
+            for (var i = 0; i < result.data_object.length; i++) {
+                if (result.data_object[i]["district_id"] == $("#district_id").attr("data-id")) {
+                    check = true;
+                }
+                $("#district_id").append(
+                    $("<option>", {
+                        value: result.data_object[i]["district_id"],
+                        text: result.data_object[i]["district_name"]
+                    })
+                );
+            }
+            if (check) {
+                $("#district_id").val($("#district_id").attr("data-id"));
+            }
+
+            search_subdistrict();
+        },
+        error(xhr, status, error) {
+            alert(error);
+        }
+    });
+}
+
+function search_subdistrict() {
+    var district_id = $("#district_id").val();
+    if (district_id == "") {
+        return false;
+    }
+
+    $("#sub_district_id option").remove();
+    $.ajax({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+        },
+        url: "/api/get-sub-district/" + district_id,
+        method: "GET",
+        success: function (result) {
+            var check = false;
+            for (var i = 0; i < result.data_object.length; i++) {
+                if (result.data_object[i]["sub_district_id"] == $("#sub_district_id").attr("data-id")) {
+                    check = true;
+                }
+                $("#sub_district_id").append(
+                    $("<option>", {
+                        value: result.data_object[i]["sub_district_id"],
+                        text: result.data_object[i]["sub_district_name"]
+                    })
+                );
+            }
+            if (check) {
+                $("#sub_district_id").val($("#sub_district_id").attr("data-id"));
+            }
+        },
+        error(xhr, status, error) {
+            alert(error);
+        }
+    });
+}
+
+function clear_addr() {
+    $("#district_id option").remove();
+    $("#sub_district_id option").remove();
+    $("#district_id").append(
+        $("<option>", {
+            value: "",
+            text: "กรุณาเลือกอำเภอ"
+        })
+    );
+    $("#sub_district_id").append(
+        $("<option>", {
+            value: "",
+            text: "กรุณาเลือกตำบล"
+        })
+    );
+    return false;
 }

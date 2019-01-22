@@ -49,7 +49,7 @@ class Addr extends ServiceProvider
         $data = DB::table('tbl_sub_district')
             ->select('*')
             ->where($matchThese)
-            ->orderBy('tbl_sub_district.district_name', 'ASC')
+            ->orderBy('tbl_sub_district.sub_district_name', 'ASC')
             ->get()->toArray();
 
         return $data;

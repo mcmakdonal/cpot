@@ -24,6 +24,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.min.css"> --}} {{--
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.jqueryui.min.css"> --}}
     <!-- style css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="/assets/css/typography.css">
     <link rel="stylesheet" href="/assets/css/default-css.css">
     <link rel="stylesheet" href="/assets/css/styles.css">
@@ -69,6 +71,8 @@
                             {{-- <li class="{{ (strpos(url()->current(),'ads') ) ? 'active' : '' }}"><a href="/ads"><i class="ti-blackboard"></i> <span>การจัดการโฆษณา</span></a></li> --}}
                             <li class="{{ (strpos(url()->current(),'background') ) ? 'active' : '' }}"><a href="/background"><i class="ti-panel"></i> <span>การจัดการแบล็คกราว</span></a></li>
                             {{-- <li class="{{ (strpos(url()->current(),'privacy') ) ? 'active' : '' }}"><a href="/privacy"><i class="ti-pencil-alt"></i> <span>การจัดการข้อกำหนด</span></a></li> --}}
+                            <li class="{{ (strpos(url()->current(),'entrepreneur') ) ? 'active' : '' }}"><a href="/entrepreneur"><i class="ti-user"></i> <span>การจัดการผู้ประกอบการ</span></a></li>
+                            <li class="{{ (strpos(url()->current(),'material') ) ? 'active' : '' }}"><a href="/material"><i class="ti-spray"></i> <span>การจัดการทรัพยากร</span></a></li>
                             <li class="{{ (strpos(url()->current(),'report') ) ? 'active' : '' }}">
                                 <a href="javascript:void(0)" aria-expanded="true"><i class="ti-files"></i><span>รายงาน</span></a>
                                 <ul class="collapse">
@@ -140,6 +144,7 @@
     <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <!-- others plugins -->
     <script src="/assets/js/plugins.js"></script>
     <script src="/assets/js/scripts.js"></script>

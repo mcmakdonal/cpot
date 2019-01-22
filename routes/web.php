@@ -46,7 +46,15 @@ Route::post('/evaluation/unactive', 'EvaluationController@unactive');
 Route::get('/product-match', 'ProductMapController@index');
 Route::get('/product-match/{id}/matching', 'ProductMapController@matching');
 Route::post('/product-match/{id}', 'ProductMapController@store');
+Route::get('/product-process', 'ProductMapController@list_process');
 // product match module //
+
+// Entrepreneur Material //
+
+Route::resource('entrepreneur', 'EntrepreneurController');
+Route::resource('material', 'MaterialController');
+
+// Entrepreneur Material //
 
 // image mobile //
 Route::get('/ads', 'ImagesController@ads');

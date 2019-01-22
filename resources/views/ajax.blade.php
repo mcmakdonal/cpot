@@ -6,7 +6,7 @@
 $(document).ready(function(){
     $("button").click(function(){
         $.ajax({
-        	url: "https://mvec.demotoday.net/api/main_category",
+        	url: "http://localhost:8002/content/api/getContent/11",
         	method: 'get',
         	success: function(result){
             console.log(result);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Table\Product;
+use DB;
 use Illuminate\Http\Request;
 
 class ProductMapController extends Controller
@@ -14,11 +15,28 @@ class ProductMapController extends Controller
 
     public function index()
     {
-        $data = Product::lists_formatch();
-        // dd($data['data_object']);
-        // $paginated = new \Illuminate\Pagination\LengthAwarePaginator($data['data_object'], sizeof($data['data_object']), 10);
-        // dd($paginated);
-        return view('product-match.index', ['data' => $data['data_object']]);
+        $cat = DB::table('tbl_main_category')->get();
+        return view('product-match.index', ['cat' => $cat]);
+    }
+
+    public function list_process(Request $request)
+    {
+        $draw = ($request->draw) ? $request->draw : 1;
+        $start = ($request->start) ? $request->start : 0;
+        $length = ($request->length) ? $request->length : 10;
+        $search = ($request->search['value']) ? $request->search['value'] : "";
+        $mcat_id = ($request->mcat_id) ? $request->mcat_id : "";
+        $order_column = ($request->order[0]['column']) ? $request->order[0]['column'] : "";
+        $order_dir = ($request->order[0]['dir']) ? $request->order[0]['dir'] : "";
+
+        $data = Product::lists_format($search, $mcat_id, $start, $order_column, $order_dir, $length);
+        $arr = [
+            'draw' => $draw + 1,
+            'recordsTotal' => $data['recordsTotal'],
+            'recordsFiltered' => $data['recordsFiltered'],
+            'data' => $data['data_object'],
+        ];
+        return json_encode($arr, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
     public function matching(Request $request, $id)

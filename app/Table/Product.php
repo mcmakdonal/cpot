@@ -126,47 +126,107 @@ class Product extends ServiceProvider
         return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalProduct' => $count_all];
     }
 
-    public static function lists_formatch()
+    public static function lists_format($search = "", $mcat_id = "", $offset = 0, $column = "", $order = "DESC", $limit = 10)
     {
-        $data = DB::table('tbl_product')
-            ->select(self::$product_field)
+        $matchThese = [];
+        $matchThese[] = ['tbl_product.record_status', '=', 'A'];
+        if ($mcat_id != "") {
+            $matchThese[] = ['tbl_main_category.mcat_id', '=', $mcat_id];
+        }
+        if ($search != "") {
+            $matchThese[] = ['tbl_product.pd_name', 'like', "%$search%"];
+        }
+
+        $field = [
+            'tbl_product.pd_id',
+            'tbl_product.pd_name',
+        ];
+
+        $count = DB::table('tbl_product')
+            ->select('tbl_product.pd_id')
             ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
             ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
             ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
-            ->orderBy('tbl_product.pd_id', 'desc')
-            ->groupBy(self::$product_field)
-            ->paginate(10);
+            ->leftJoin('tbl_youtube', 'tbl_youtube.pd_id', '=', 'tbl_product.pd_id')
+            ->groupBy('tbl_product.pd_id')
+            ->get()->toArray();
 
-        $data->getCollection()->transform(function ($v) {
-                $image = DB::table('tbl_product_images')->select('path')->where('pd_id', '=', $v->pd_id)->get()->toArray();
-                $img = [];
-                foreach ($image as $kk => $vv) {
-                    array_push($img, url($vv->path));
-                }
-                $v->pd_image = $img;
+        $count_all = count($count);
 
-                $v->youtube = DB::table('tbl_youtube')
-                    ->select('my_id', 'my_title', 'my_href', 'my_image', 'my_desc')
-                    ->where([['record_status', '=', 'A'], ['pd_id', '=', $v->pd_id]])->get()->toArray();
-            return $v;
-        });
+        $col = "";
+        switch ($column) {
+            case 0:
+                $col = "tbl_product.pd_id";
+                break;
+            case 1:
+                $col = "tbl_product.pd_name";
+                break;
+            case 2:
+                $col = "youtube";
+                break;
+            default:
+                $col = "tbl_product.pd_id";
+                break;
+        }
 
-        // foreach ($data as $k => $v) {
-        //     $image = DB::table('tbl_product_images')->select('path')->where('pd_id', '=', $v->pd_id)->get()->toArray();
-        //     $img = [];
-        //     foreach ($image as $kk => $vv) {
-        //         array_push($img, url($vv->path));
-        //     }
-        //     $data[$k]->pd_image = $img;
+        $data = DB::table('tbl_product')
+            ->select(DB::raw('count(tbl_youtube.my_id) as youtube'), 'tbl_product.pd_id', 'tbl_product.pd_name')
+            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+            ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
+            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
+            ->leftJoin('tbl_youtube', 'tbl_youtube.pd_id', '=', 'tbl_product.pd_id')
+            ->where($matchThese)
+            ->orderBy($col, $order)
+            ->where($matchThese)
+            ->groupBy('tbl_product.pd_id', 'tbl_product.pd_name')
+            ->offset($offset)
+            ->limit($limit)
+            ->get()->toArray();
 
-        //     $data[$k]->youtube = DB::table('tbl_youtube')
-        //         ->select('my_id', 'my_title', 'my_href', 'my_image', 'my_desc')
-        //         ->where([['record_status', '=', 'A'], ['pd_id', '=', $v->pd_id]])->get()->toArray();
-        // }
-
-        return ['data_object' => $data];
+        $filter_record = DB::table('tbl_product')
+            ->select(DB::raw('count(tbl_youtube.my_id) as youtube'), 'tbl_product.pd_id', 'tbl_product.pd_name')
+            ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+            ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
+            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
+            ->leftJoin('tbl_youtube', 'tbl_youtube.pd_id', '=', 'tbl_product.pd_id')
+            ->where($matchThese)
+            ->groupBy('tbl_product.pd_id', 'tbl_product.pd_name')
+            ->get()->toArray();
+            
+        return ['data_object' => $data, 'recordsTotal' => $count_all, 'recordsFiltered' => count($filter_record)];
     }
+
+    // public static function lists_formatch()
+    // {
+    //     $data = DB::table('tbl_product')
+    //         ->select(self::$product_field)
+    //         ->join('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+    //         ->join('tbl_sub_category', 'tbl_sub_category.scat_id', '=', 'tbl_product.scat_id')
+    //         ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_product.pd_province')
+    //         ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_product.s_id')
+    //         ->orderBy('tbl_product.pd_id', 'desc')
+    //         ->groupBy(self::$product_field)
+    //         ->paginate(10);
+
+    //     $data->getCollection()->transform(function ($v) {
+    //             $image = DB::table('tbl_product_images')->select('path')->where('pd_id', '=', $v->pd_id)->get()->toArray();
+    //             $img = [];
+    //             foreach ($image as $kk => $vv) {
+    //                 array_push($img, url($vv->path));
+    //             }
+    //             $v->pd_image = $img;
+
+    //             $v->youtube = DB::table('tbl_youtube')
+    //                 ->select('my_id', 'my_title', 'my_href', 'my_image', 'my_desc')
+    //                 ->where([['record_status', '=', 'A'], ['pd_id', '=', $v->pd_id]])->get()->toArray();
+    //         return $v;
+    //     });
+
+    //     return ['data_object' => $data];
+    // }
 
     public static function listsv2($search = "", $mcat_id = [], $search_tag = ['title', 'tag'], $page = 1, $price = "", $rating = "", $sector = [])
     {

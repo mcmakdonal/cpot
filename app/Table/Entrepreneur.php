@@ -4,49 +4,27 @@ namespace App\Table;
 
 use DB;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Log;
 
-class Admin extends ServiceProvider
+class Entrepreneur extends ServiceProvider
 {
-    public static function check_username_exists($email)
+    public static function lists()
     {
-        $matchThese[] = ['ad_username', '=', $email];
-        $matchThese[] = ['record_status', '=', 'A'];
-        $data = DB::table('tbl_administrator')
-            ->select('ad_id')
-            ->where($matchThese)
-            ->get();
-        $exists = [
-            'status' => true,
-            'message' => 'Username already exists',
-        ];
-
-        $notexists = [
-            'status' => false,
-            'message' => 'Username Can use',
-        ];
-        return (count($data) > 0) ? $exists : $notexists;
-    }
-
-    public static function lists() {
-        $matchThese[] = ['record_status', '=', 'A'];
-        $data = DB::table('tbl_administrator')
+        // $matchThese[] = ['record_status', '=', 'A'];
+        $data = DB::table('tbl_store')
             ->select('*')
-            ->where($matchThese)
-            ->orderBy('ad_id', 'desc')
+        // ->where($matchThese)
+            ->orderBy('s_id', 'desc')
             ->get()->toArray();
 
         return $data;
     }
 
-    public static function get_admin($id = "",$username = "")
+    public static function get_detail($id = "")
     {
-        $matchThese[] = ['record_status', '=', 'A'];
-        if ($id == "") {
-            $matchThese[] = ['ad_username', '=', $username];
-        } else {
-            $matchThese[] = ['ad_id', '=', $id];
-        }
-        $data = DB::table('tbl_administrator')
+        // $matchThese[] = ['record_status', '=', 'A'];
+        $matchThese[] = ['s_id', '=', $id];
+        $data = DB::table('tbl_store')
             ->select('*')
             ->where($matchThese)
             ->get()->toArray();
@@ -57,7 +35,7 @@ class Admin extends ServiceProvider
     public static function insert($args)
     {
         DB::beginTransaction();
-        $status = DB::table('tbl_administrator')->insertGetId($args);
+        $status = DB::table('tbl_store')->insertGetId($args);
         if ($status) {
             DB::commit();
             return [
@@ -77,7 +55,8 @@ class Admin extends ServiceProvider
     public static function update($args, $id)
     {
         DB::beginTransaction();
-        $status = DB::table('tbl_administrator')->where('ad_id', $id)->update($args);
+        $status = DB::table('tbl_store')->where('s_id', $id)->update($args);
+        Log::info($status);
         if ($status) {
             DB::commit();
             return [
@@ -93,14 +72,15 @@ class Admin extends ServiceProvider
         }
     }
 
-    public static function delete($id){
+    public static function delete($id)
+    {
         DB::beginTransaction();
         $args = [
             'update_date' => date('Y-m-d H:i:s'),
             'update_by' => 1,
             'record_status' => 'I',
         ];
-        $status = DB::table('tbl_administrator')->where('ad_id', $id)->update($args);
+        $status = DB::table('tbl_store')->where('s_id', $id)->update($args);
         if ($status) {
             DB::commit();
             return [
