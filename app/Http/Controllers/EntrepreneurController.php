@@ -91,6 +91,8 @@ class EntrepreneurController extends Controller
             's_onwer' => ($request->s_onwer) ? $request->s_onwer : "",
             's_phone' => ($request->s_phone) ? $request->s_phone : "",
             's_addr' => ($request->s_addr) ? $request->s_addr : "",
+            's_ig' => ($request->s_ig) ? $request->s_ig : "",
+            's_line' => ($request->s_line) ? $request->s_line : "",
             'province_id' => $request->province_id,
             'update_date' => date('Y-m-d H:i:s')
         ];

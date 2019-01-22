@@ -44,7 +44,7 @@
                         </div>
                         {!! Form::close() !!}
                         <div class="data-tables">
-                            <table id="dataTable" class="text-center">
+                            <table id="" class="text-center dataTable">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th>#</th>

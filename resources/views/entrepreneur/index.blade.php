@@ -9,7 +9,7 @@
                     <h4 class="header-title">การจัดการผู้ประกอบการ</h4>
                     <?=link_to('/entrepreneur/create', $title = 'สร้าง' , ['class' => 'd-none btn btn-success mb-3 float-right'], $secure = null); ?>
                         <div class="data-tables">
-                            <table id="dataTable" class="text-center">
+                            <table id="" class="text-center dataTable">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th>#</th>

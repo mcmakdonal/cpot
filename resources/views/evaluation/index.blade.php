@@ -9,7 +9,7 @@
                     <h4 class="header-title">การจัดการแบบประเมิน</h4>
                     <?=link_to('/evaluation/create', $title = 'สร้าง' , ['class' => 'btn btn-success mb-3 float-right'], $secure = null); ?>
                         <div class="data-tables">
-                            <table id="dataTable" class="text-center">
+                            <table id="" class="text-center dataTable">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th style="width: 5%">#</th>

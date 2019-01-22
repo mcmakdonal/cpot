@@ -77,7 +77,21 @@ YouTube และ สินค้า'])
                         return "<a class='btn btn-warning btn-xs' href='"+url+"'>จับคู่</a>";
                     },
                 }
-            ]
+            ],
+            "language": {
+                "lengthMenu": "กำลังแสดง _MENU_ ข้อมูล ต่อหน้า",
+                "zeroRecords": "ไม่พบข้อมูล",
+                "info": "กำลังแสดง หน้า _PAGE_ จาก _PAGES_",
+                "infoEmpty": "ไม่พบข้อมูล",
+                "infoFiltered": "(กรองจาก _MAX_ ข้อมูลทั้งหมด)",
+                "loadingRecords": "กำลังโหลด",
+                "processing":     "กำลังประมวลผล",
+                "search":         "ค้นหา :",
+                "paginate": {
+                    "previous": "ก่อนหน้า",
+                    "next" : "ถัดไป"
+                  }
+            }
         });
     });
 

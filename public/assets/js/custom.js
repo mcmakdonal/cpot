@@ -2,12 +2,41 @@ var dataTable = '';
 var report_dataTable = '';
 var select = '';
 $(document).ready(function () {
-    dataTable = $('#dataTable').DataTable();
+    dataTable = $('.dataTable').DataTable({
+        "language": {
+            "lengthMenu": "กำลังแสดง _MENU_ ข้อมูล ต่อหน้า",
+            "zeroRecords": "ไม่พบข้อมูล",
+            "info": "กำลังแสดง หน้า _PAGE_ จาก _PAGES_",
+            "infoEmpty": "ไม่พบข้อมูล",
+            "infoFiltered": "(กรองจาก _MAX_ ข้อมูลทั้งหมด)",
+            "loadingRecords": "กำลังโหลด",
+            "processing":     "กำลังประมวลผล",
+            "search":         "ค้นหา :",
+            "paginate": {
+                "previous": "ก่อนหน้า",
+                "next" : "ถัดไป"
+              }
+        }
+    });
 
     report_dataTable = $('#report_dataTable').DataTable({
         dom: 'Bfrtip',
         buttons: ['excel'],
-        dom: 'Bfrtip'
+        dom: 'Bfrtip',
+        "language": {
+            "lengthMenu": "กำลังแสดง _MENU_ ข้อมูล ต่อหน้า",
+            "zeroRecords": "ไม่พบข้อมูล",
+            "info": "กำลังแสดง หน้า _PAGE_ จาก _PAGES_",
+            "infoEmpty": "ไม่พบข้อมูล",
+            "infoFiltered": "(กรองจาก _MAX_ ข้อมูลทั้งหมด)",
+            "loadingRecords": "กำลังโหลด",
+            "processing":     "กำลังประมวลผล",
+            "search":         "ค้นหา :",
+            "paginate": {
+                "previous": "ก่อนหน้า",
+                "next" : "ถัดไป"
+              }
+        }
     });
 
     $('select').select2();

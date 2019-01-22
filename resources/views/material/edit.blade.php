@@ -4,7 +4,7 @@
 <div class="col-12">
     <div class="card mt-5">
         <div class="card-body">
-            <h4 class="header-title">แก้ไขผู้ประกอบการ</h4>
+            <h4 class="header-title">แกไขทรัพยากร</h4>
             @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -36,7 +36,6 @@
                         @endforeach
                     </select>
                 </div>
-
                 <div class="col-md-6 mb-3">
                     <div class="form-group">
                         <label for="" class="control-label">อำเภอ : </label>
@@ -44,7 +43,6 @@
                         <select>
                     </div>
                 </div>
-    
                 <div class="col-md-6 mb-3">
                     <div class="form-group">
                         <label for="" class="control-label">ตำบล : </label>
@@ -52,17 +50,16 @@
                         <select>
                     </div>
                 </div>
-
                 <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <label for="" class="control-label">ผู้ประกอบการ : </label>
-                            <select class="form-control select" id="s_id" name="s_id" size="1">
-                                @foreach($store as $k => $v)
-                                    <option value="{{ $v->s_id }}" {{ ($v->s_id == $data[0]->s_id )? "selected" : "" }}  > {{ $v->s_name}} </option>
-                                @endforeach
-                            <select>
-                        </div>
+                    <div class="form-group">
+                        <label for="" class="control-label">ผู้ประกอบการ : </label>
+                        <select class="form-control select" id="s_id" name="s_id" size="1">
+                            @foreach($store as $k => $v)
+                                <option value="{{ $v->s_id }}" {{ ($v->s_id == $data[0]->s_id )? "selected" : "" }}  > {{ $v->s_name}} </option>
+                            @endforeach
+                        <select>
                     </div>
+                </div>
 
             </div>
             <div class="form-group">
