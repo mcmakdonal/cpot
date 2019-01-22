@@ -96,6 +96,7 @@ class MaterialController extends Controller
             'province_id' => $request->province_id,
             'district_id' => ($request->district_id) ? $request->district_id : "",
             'sub_district_id' => ($request->sub_district_id) ? $request->sub_district_id : "",
+            'update_date' => date('Y-m-d H:i:s')
         ];
 
         $status = Material::update($args,$id);
