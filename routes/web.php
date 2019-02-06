@@ -30,12 +30,17 @@ Route::get('/backend-login', function () {
 Route::post('/backend-login', 'AdministratorController@check_login');
 Route::get('/backend-logout', function () {
     return redirect('/')->withCookie(Cookie::forget('ad_id'))
-        ->withCookie(Cookie::forget('ad_firstname'));
+    ->withCookie(Cookie::forget('ad_firstname'))
+    ->withCookie(Cookie::forget('ad_permission'))
+    ->withCookie(Cookie::forget('ad_role'));
 });
+Route::post('/forget-password', 'AdministratorController@forget_password');
 // login module //
 
 // admin module //
 Route::resource('administrator', 'AdministratorController');
+Route::get('/administrator/profile', 'AdministratorController@show');
+Route::post('/administrator/profile', 'AdministratorController@update_profile');
 
 Route::resource('evaluation', 'EvaluationController');
 Route::post('/evaluation/active', 'EvaluationController@active');
@@ -47,6 +52,7 @@ Route::get('/product-match', 'ProductMapController@index');
 Route::get('/product-match/{id}/matching', 'ProductMapController@matching');
 Route::post('/product-match/{id}', 'ProductMapController@store');
 Route::get('/product-process', 'ProductMapController@list_process');
+Route::post('/youtube-search', 'ProductMapController@youtube_search');
 // product match module //
 
 // Entrepreneur Material //
@@ -81,7 +87,8 @@ Route::delete('/privacy/{id}', 'PrivacyController@destroy');
 
 // test
 Route::get('/ajax', function () {
-    return view('ajax');
+    dd(\Helper::instance()->check_role());
+    // return view('ajax');
 });
 Route::get('/jwt', 'TestController@jwt');
 Route::get('/jwtdecode', 'TestController@jwtdecode');

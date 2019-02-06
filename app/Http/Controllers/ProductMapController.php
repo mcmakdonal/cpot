@@ -10,7 +10,7 @@ class ProductMapController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('islogin');
+        $this->middleware('islogin:1');
     }
 
     public function index()
@@ -46,10 +46,15 @@ class ProductMapController extends Controller
             return redirect("/product-macth")->with('status', 'error');
         }
         $tag = $data[0]->pd_tag;
-        $youtube = Product::search($tag);
         $select = Product::select_youtube($id);
-        // dd($youtube);
-        return view('product-match.match', ['data' => $data, 'youtube' => $youtube['items'], 'select' => $select]);
+        return view('product-match.match', ['data' => $data, 'select' => $select]);
+    }
+
+    public function youtube_search(Request $request){
+        $tag = $request->tag;
+        $pageToken = $request->pageToken;
+        $youtube = Product::search($tag,$pageToken);
+        return json_encode($youtube, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
     public function store(Request $request, $id)
@@ -72,9 +77,10 @@ class ProductMapController extends Controller
                     'record_status' => 'A',
                 ];
             }
-        } else {
-            return redirect()->back()->withErrors(array('error' => 'error'));
-        }
+        } 
+        // else {
+        //     return redirect()->back()->withErrors(array('error' => 'error'));
+        // }
 
         $result = Product::insert_youtube($args, $id);
         if ($result['status']) {

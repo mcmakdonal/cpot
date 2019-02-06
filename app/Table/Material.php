@@ -11,8 +11,8 @@ class Material extends ServiceProvider
     public static function lists()
     {
         $data = DB::table('tbl_material')
-            ->select('tbl_material.*','tbl_store.s_name')
-            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
+            ->select('*')
+            // ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
             ->orderBy('m_id', 'desc')
             ->get()->toArray();
 
@@ -24,7 +24,7 @@ class Material extends ServiceProvider
         $matchThese[] = ['tbl_material.m_id', '=', $id];
         $data = DB::table('tbl_material')
             ->select('tbl_material.*')
-            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
+            // ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
             ->where($matchThese)
             ->get()->toArray();
 
@@ -74,12 +74,13 @@ class Material extends ServiceProvider
     public static function delete($id)
     {
         DB::beginTransaction();
-        $args = [
-            'update_date' => date('Y-m-d H:i:s'),
-            'update_by' => 1,
-            'record_status' => 'I',
-        ];
-        $status = DB::table('tbl_material')->where('m_id', $id)->update($args);
+        // $args = [
+        //     'update_date' => date('Y-m-d H:i:s'),
+        //     'update_by' => 1,
+        //     'record_status' => 'I',
+        // ];
+        // $status = DB::table('tbl_material')->where('m_id', $id)->update($args);
+        $status = DB::table('tbl_material')->where('m_id', $id)->delete();
         if ($status) {
             DB::commit();
             return [

@@ -19,7 +19,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach($data as $k => $v)
-                                    <tr class="text-left">
+                                    <tr class="text-center">
                                         <td>{{ $k + 1 }}</td>
                                         <td>{{ $v->pd_tag }}</td>
                                         <td>{{ $v->counter }}</td>

@@ -1,10 +1,10 @@
 @extends('master.master') 
 @section('main')
-    @include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'แก้ไขผู้ดูแลระบบ'])
+    @include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'แก้ไขโปรไฟล์'])
 <div class="col-12">
     <div class="card mt-5">
         <div class="card-body">
-            <h4 class="header-title">แก้ไขผู้ดูแลระบบ</h4>
+            <h4 class="header-title">แก้ไขโปรไฟล์</h4>
             @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -17,7 +17,7 @@
             <div class="alert alert-success">
                 {{ session('status') }}
             </div>
-            @endif {!! Form::open(['url' => "/administrator/".$data[0]->ad_id,'class' => 'form-auth-small', 'method' => 'PUT','files'
+            @endif {!! Form::open(['url' => "/administrator/profile",'class' => 'form-auth-small', 'method' => 'POST','files'
             => false]) !!}
             <div class="form-row">
                 <div class="col-md-6 mb-3">
@@ -51,28 +51,6 @@
                 <div class="col-md-6 mb-3">
                     <label for>หน่วยงาน</label>
                     <input type="text" class="form-control" name="ad_ogz" value="{{ $data[0]->ad_ogz }}" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="">ระดับ</label>
-                    <select class="form-control" name="ad_permission" size="1" required>
-                        <option value="S">Super Administrator</option>
-                        <option value="A" selected>Administrator</option>
-                    </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="">สิทธิ์การเข้าถึง</label>
-                    <select class="form-control" name="ad_role[]" size="1" multiple="multiple">
-                        @php
-                            $have = json_decode($data[0]->ad_role);
-                        @endphp
-                        @foreach ($role as $key => $item)
-                        @if(count($have) > 0)
-                            <option value="{{$item['id']}}" @if(in_array($item['id'],$have)) selected="selected" @else @endif > {{$item['name']}} </option>
-                        @else
-                            <option value="{{$item['id']}}"> {{$item['name']}} </option>
-                        @endif
-                        @endforeach
-                    </select>
                 </div>
             </div>
             <div class="form-group text-center mt-3">

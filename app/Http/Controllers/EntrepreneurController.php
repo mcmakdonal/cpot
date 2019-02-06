@@ -9,6 +9,12 @@ use Illuminate\Http\Request;
 
 class EntrepreneurController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('islogin:4');
+    }
+
     /**
      * Display a listing of the resource.
      *

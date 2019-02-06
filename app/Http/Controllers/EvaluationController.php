@@ -10,7 +10,7 @@ class EvaluationController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('islogin');
+        $this->middleware('islogin:2');
     }
     /**
      * Display a listing of the resource.

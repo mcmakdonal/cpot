@@ -11,7 +11,7 @@ class Evaluation extends ServiceProvider
     {
         $matchThese[] = ['tbl_evaluation_topic.record_status', '=', 'A'];
         $data = DB::table('tbl_evaluation_topic')
-            ->select('tbl_evaluation_topic.*', DB::raw('count(tbl_answer_topic.et_id) totol_vote'))
+            ->select('tbl_evaluation_topic.*', DB::raw('count(Distinct tbl_answer_topic.u_id) user_vote'))
             ->leftJoin('tbl_answer_topic', 'tbl_answer_topic.et_id', '=', 'tbl_evaluation_topic.et_id')
             ->where($matchThese)
             ->groupBy('tbl_evaluation_topic.et_id')
@@ -53,21 +53,67 @@ class Evaluation extends ServiceProvider
             ->get()->toArray();
 
         $ques = [];
-        foreach($tbl_evaluation_topic as $k => $v){
-        $question = DB::table('tbl_question_topic')
-            ->select('*')
-            ->where('et_id', '=', $v->et_id)
-            ->orderBy('q_id', 'asc')
-            ->get()->toArray();
+        foreach ($tbl_evaluation_topic as $k => $v) {
+            $question = DB::table('tbl_question_topic')
+                ->select('*')
+                ->where('et_id', '=', $v->et_id)
+                ->orderBy('q_id', 'asc')
+                ->get()->toArray();
             $obj = [
                 'topic' => $v,
-                'question' => $question
+                'question' => $question,
             ];
 
             $ques[][] = $obj;
         }
 
         return $ques;
+    }
+
+    public static function get_question_point($et_id)
+    {
+        $matchThese = [];
+        $matchThese[] = ['record_status', '=', 'A'];
+        $matchThese[] = ['et_id', '=', $et_id];
+        $data = DB::table('tbl_answer_topic')
+            ->select('q_id','q_point')
+            ->where($matchThese)
+            ->get()->toArray();
+
+        $q_arr = [];
+        foreach ($data as $k => $v) {
+            if (!in_array($v->q_id, $q_arr)) {
+                array_push($q_arr, $v->q_id);
+            }
+        }
+
+        $args = [];
+        foreach ($q_arr as $kk => $q_id) {
+            $matchThese = [];
+            $matchThese[] = ['tbl_answer_topic.record_status', '=', 'A'];
+            $matchThese[] = ['tbl_answer_topic.et_id', '=', $et_id];
+            $matchThese[] = ['tbl_answer_topic.q_id', '=', $q_id];
+            $data = DB::table('tbl_answer_topic')
+                ->select(DB::raw('count(tbl_answer_topic.q_id) as qcount'), DB::raw('sum(tbl_answer_topic.q_point) as spoint'),'q_question')
+                ->leftjoin('tbl_question_topic', 'tbl_question_topic.q_id', '=', 'tbl_answer_topic.q_id')
+                ->where($matchThese)
+                ->get()->toArray();
+
+            // 4 is max point
+            $result = (($data[0]->spoint) / ($data[0]->qcount * 4)) * 100;
+            $arr = [
+                'et_id' => $et_id,
+                'q_id' => $q_id,
+                'q_question' => $data[0]->q_question,
+                'spoint' => $data[0]->spoint,
+                'qcount' => $data[0]->qcount,
+                'result' => number_format($result,2) . "%"
+            ];
+
+            array_push($args,$arr);
+        }
+
+        return $args;
     }
 
     public static function get_question_w_point($et_id)
@@ -227,7 +273,6 @@ class Evaluation extends ServiceProvider
             ];
         }
     }
-
 
     public static function total_user_evaluation($u_id)
     {

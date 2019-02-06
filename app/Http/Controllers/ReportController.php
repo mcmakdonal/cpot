@@ -12,7 +12,7 @@ class ReportController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('islogin');
+        $this->middleware('islogin:6');
     }
     /**
      * Display a listing of the resource.
@@ -23,7 +23,7 @@ class ReportController extends Controller
     {
         $data = Evaluation::lists();
         foreach($data as $k => $v){
-            $data[$k]->items = Evaluation::get_question_w_point($v->et_id);
+            $data[$k]->items = Evaluation::get_question_point($v->et_id);
         }
         // dd($data);
         return view('report.evaluation', ['data' => $data]);

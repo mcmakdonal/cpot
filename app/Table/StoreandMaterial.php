@@ -26,6 +26,15 @@ class StoreandMaterial extends ServiceProvider
         'tbl_material.m_id',
         'tbl_material.m_name',
         'tbl_material.m_price',
+
+        'tbl_material.sm_name',
+        'tbl_material.m_facebook',
+        'tbl_material.m_line',
+        'tbl_material.m_instagram',
+        'tbl_material.m_ogz',
+        'tbl_material.m_lat',
+        'tbl_material.m_long',
+
         'tbl_province.province_id',
         'tbl_province.province_name',
         'tbl_district.district_id',
@@ -33,15 +42,15 @@ class StoreandMaterial extends ServiceProvider
         'tbl_sub_district.sub_district_id',
         'tbl_sub_district.sub_district_name',
 
-        'tbl_store.s_id',
-        'tbl_store.s_name',
-        'tbl_store.s_onwer',
-        'tbl_store.s_phone',
-        'tbl_store.fb_id',
-        'tbl_store.s_line',
-        'tbl_store.s_ig',
-        'tbl_store.s_addr',
-        'tbl_store.s_image',
+        // 'tbl_store.s_id',
+        // 'tbl_store.s_name',
+        // 'tbl_store.s_onwer',
+        // 'tbl_store.s_phone',
+        // 'tbl_store.fb_id',
+        // 'tbl_store.s_line',
+        // 'tbl_store.s_ig',
+        // 'tbl_store.s_addr',
+        // 'tbl_store.s_image',
 
     ];
 
@@ -215,7 +224,7 @@ class StoreandMaterial extends ServiceProvider
             ->select(self::$material_field)
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
             ->join('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
-            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
+            // ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
             ->join('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
             ->where($matchThese)
             ->where(function ($query) use ($sector) {
@@ -236,7 +245,7 @@ class StoreandMaterial extends ServiceProvider
             ->select(self::$material_field)
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
             ->join('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
-            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
+            // ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
             ->join('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
             ->where($matchThese)
             ->where(function ($query) use ($sector) {
@@ -271,7 +280,7 @@ class StoreandMaterial extends ServiceProvider
             ->select(self::$material_field)
             ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
             ->join('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
-            ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
+            // ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
             ->join('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
             ->where($matchThese)
             ->orderBy('tbl_material.m_name', 'ASC')
@@ -283,29 +292,33 @@ class StoreandMaterial extends ServiceProvider
 
         // เอาวัตถุดิบมา วน loop
         $data = DB::table('tbl_material')
-            ->select('m_id', 'm_name', 's_id')
+            ->select(self::$material_field)
+            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
+            ->join('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
+            // ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
+            ->join('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
             ->where($matchThese)
             ->offset($offset)
             ->limit($limit)
-            ->groupBy('m_name')
+            ->groupBy(self::$material_field)
             ->orderBy('tbl_material.m_name', 'ASC')
             ->get()->toArray();
 
-        foreach ($data as $k => $v) {
-            $matchThese = [];
-            $matchThese[] = ['tbl_material.m_name', '=', $v->m_name];
+        // foreach ($data as $k => $v) {
+        //     $matchThese = [];
+        //     $matchThese[] = ['tbl_material.m_name', '=', $v->m_name];
 
-            $data[$k]->store = DB::table('tbl_store')
-                ->select(self::$store_field)
-                ->leftJoin('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
-                ->join('tbl_material', 'tbl_material.s_id', '=', 'tbl_store.s_id')
-                ->leftJoin('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
-                ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
-                ->where($matchThese)
-                ->orderBy('tbl_store.s_name', 'ASC')
-                ->groupBy(self::$store_field)
-                ->get()->toArray();
-        }
+        //     $data[$k]->store = DB::table('tbl_store')
+        //         ->select(self::$store_field)
+        //         ->leftJoin('tbl_product', 'tbl_product.s_id', '=', 'tbl_store.s_id')
+        //         ->join('tbl_material', 'tbl_material.s_id', '=', 'tbl_store.s_id')
+        //         ->leftJoin('tbl_main_category', 'tbl_main_category.mcat_id', '=', 'tbl_product.mcat_id')
+        //         ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_store.province_id')
+        //         ->where($matchThese)
+        //         ->orderBy('tbl_store.s_name', 'ASC')
+        //         ->groupBy(self::$store_field)
+        //         ->get()->toArray();
+        // }
 
         return ['data_object' => $data, 'totalPages' => $total, 'currentPage' => $page, 'totalMaterial' => count($count)];
 

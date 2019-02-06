@@ -2,48 +2,133 @@ var dataTable = '';
 var report_dataTable = '';
 var select = '';
 $(document).ready(function () {
+    $(".form-control").each(function () {
+        var txt = $(this).parent().find("label").text();
+        $(this).attr("placeholder", txt);
+    });
+
+    $("input").each(function () {
+        $(this).attr("maxlength", 255);
+        $(this).attr("autocomplete", "off");
+    });
+
+    $('input.numberinput').bind('keypress', function (e) {
+        return !(e.which != 8 && e.which != 0 &&
+            (e.which < 48 || e.which > 57) && e.which != 46);
+    });
+
+    // preload ajax
+    $.LoadingOverlaySetup({
+        image: "",
+        fontawesome: "fa fa-circle-o-notch fa-spin",
+        zIndex: 1000
+    });
+
+    $('select').select2();
+
     dataTable = $('.dataTable').DataTable({
         "language": {
             "lengthMenu": "กำลังแสดง _MENU_ ข้อมูล ต่อหน้า",
             "zeroRecords": "ไม่พบข้อมูล",
-            "info": "กำลังแสดง หน้า _PAGE_ จาก _PAGES_",
+            "info": "กำลังแสดง หน้า _PAGE_ จากทั้งหมด _PAGES_ มีข้อมูล _TOTAL_ ",
             "infoEmpty": "ไม่พบข้อมูล",
             "infoFiltered": "(กรองจาก _MAX_ ข้อมูลทั้งหมด)",
             "loadingRecords": "กำลังโหลด",
-            "processing":     "กำลังประมวลผล",
-            "search":         "ค้นหา :",
+            "processing": "กำลังประมวลผล",
+            "search": "ค้นหา :",
             "paginate": {
                 "previous": "ก่อนหน้า",
-                "next" : "ถัดไป"
-              }
+                "next": "ถัดไป"
+            }
         }
     });
 
     report_dataTable = $('#report_dataTable').DataTable({
         dom: 'Bfrtip',
-        buttons: ['excel'],
+        buttons: [{
+            extend: 'excel',
+            text: 'Export to Excel'
+        }],
         dom: 'Bfrtip',
         "language": {
             "lengthMenu": "กำลังแสดง _MENU_ ข้อมูล ต่อหน้า",
             "zeroRecords": "ไม่พบข้อมูล",
-            "info": "กำลังแสดง หน้า _PAGE_ จาก _PAGES_",
+            "info": "กำลังแสดง หน้า _PAGE_ จากทั้งหมด _PAGES_ มีข้อมูล _TOTAL_ ",
             "infoEmpty": "ไม่พบข้อมูล",
             "infoFiltered": "(กรองจาก _MAX_ ข้อมูลทั้งหมด)",
             "loadingRecords": "กำลังโหลด",
-            "processing":     "กำลังประมวลผล",
-            "search":         "ค้นหา :",
+            "processing": "กำลังประมวลผล",
+            "search": "ค้นหา :",
             "paginate": {
                 "previous": "ก่อนหน้า",
-                "next" : "ถัดไป"
-              }
+                "next": "ถัดไป"
+            }
         }
     });
 
-    $('select').select2();
+    var buttonCommon = {
+        exportOptions: {
+            format: {
+                body: function (data, column, row) {
+                    data = data.replace(/<br\s*\/?>/ig, "\r\n");
+                    data = data.replace(/<.*?>/g, "");
+                    data = data.replace("&amp;", "&");
+                    //   data = data.replace("&nbsp;", "");
+                    //   data = data.replace("&nbsp;", "");
+                    return data;
+                }
+            }
+        }
+    };
+    $('#eva_table').DataTable({
+        "lengthChange": false,
+        "pageLength": 100,
+        "orderClasses": false,
+        "stripeClasses": [],
+        dom: 'Bfrtip',
+        "language": {
+            "lengthMenu": "กำลังแสดง _MENU_ ข้อมูล ต่อหน้า",
+            "zeroRecords": "ไม่พบข้อมูล",
+            "info": "กำลังแสดง หน้า _PAGE_ จากทั้งหมด _PAGES_ มีข้อมูล _TOTAL_ ",
+            "infoEmpty": "ไม่พบข้อมูล",
+            "infoFiltered": "(กรองจาก _MAX_ ข้อมูลทั้งหมด)",
+            "loadingRecords": "กำลังโหลด",
+            "processing": "กำลังประมวลผล",
+            "search": "ค้นหา :",
+            "paginate": {
+                "previous": "ก่อนหน้า",
+                "next": "ถัดไป"
+            }
+        },
+        buttons: [
+            $.extend(true, {}, buttonCommon, {
+                extend: 'excel',
+                text: 'Export to Excel',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                },
+                customize: function (xlsx) {
+                    var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                    $('row c[r^="A"]', sheet).attr('s', '50'); //<-- left aligned text
+                    $('row c[r^="C"]', sheet).attr('s', '55'); //<-- wrapped text
+                    // $('row:first c', sheet).attr('s', '32');
+                    var col = $('col', sheet);
+                    var c = 1;
+                    col.each(function () {
+                        if (c === 3) {
+                            $(this).attr('width', 100);
+                        }
+                        c++;
+                    });
+                } 
+            })
+        ]
+    });
+
 });
 
 function destroy(src, id) {
-    var r = confirm("Delete this content !");
+    var r = confirm("ลบเนื้อหานี้ !");
     if (r == true) {
         $.ajax({
             headers: {
@@ -69,6 +154,80 @@ function destroy(src, id) {
     }
 }
 
+function generate_youtube(type = "") {
+    var tag = $(".tag-search").text().trim();
+    var pageToken = "";
+    if (type === "next") {
+        pageToken = $(".next").attr("token").trim();
+    }
+    if (type === "prev") {
+        pageToken = $(".prev").attr("token").trim();
+    }
+    $.ajax({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                "content"
+            )
+        },
+        url: "/youtube-search",
+        method: "post",
+        data: {
+            tag: tag,
+            pageToken: pageToken
+        },
+        beforeSend() {
+            $(".youtube-result").LoadingOverlay("show", {
+                fontawesome: "fa fa-circle-o-notch fa-spin",
+                zIndex: 10001
+            });
+        },
+        success: function (result) {
+            var obj = JSON.parse(result);
+            var items = obj.items;
+            $(".txt-youtube span").text(items.length);
+            $(".prev").attr("token", obj.prevPageToken);
+            $(".next").attr("token", obj.nextPageToken);
+
+            $(".card-youtube").remove();
+            for (i = 0; i < items.length; i++) {
+                var value = obj.items[i];
+                var path = value.id.videoId;
+                var img = value.snippet.thumbnails.high.url;
+                var title = value.snippet.title;
+                var date = new Date(value.snippet.publishedAt.substring(0, 10));
+                var d = (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear();
+                var desc = value.snippet.description;
+                var json = {
+                    my_title: title,
+                    my_href: path,
+                    my_image: img,
+                    my_desc: desc
+                };
+                var str_txt = "<div class=\"card-youtube col-lg-4 col-md-4 mt-3 d-flex align-items-stretch\">\n" +
+                    "                    <div class=\"card card-bordered\">\n" +
+                    "                        <a href=\"https://www.youtube.com/watch?v=" + path + "\" target=\"_blank\">\n" +
+                    "                            <img class=\"card-img-top img-fluid\" src=\"" + img + "\" alt=\"image\">\n" +
+                    "                        </a>\n" +
+                    "                        <div class=\"card-body flex-column d-flex\">\n" +
+                    "                            <h4 class=\"title\">" + title + "</h4>\n" +
+                    "                            <h6 class=\"title\">วันที่ : " + d + "</h6>\n" +
+                    "                            <p class=\"card-text\">\"" + desc + "</p>\n" +
+                    "                              <button type=\"button\" onclick=\"select_youtube(this)\" class=\"mt-auto btn btn-primary btn-youtube\" data=\'" + JSON.stringify(json) + "\'>เลือก</button>\n" +
+                    "                        </div>\n" +
+                    "                    </div>\n" +
+                    "                </div>";
+                $(".youtube-result").append(str_txt);
+            }
+
+            $(".youtube-result").LoadingOverlay("hide", true);
+        },
+        error(xhr, status, error) {
+            swal("Danger !", "Fail !", error + " Status : " + status, "error");
+            $(".youtube-result").LoadingOverlay("hide",true);
+        }
+    });
+}
+
 function select_youtube(e) {
     var data = JSON.parse($(e).attr('data'));
     var cyoutube = $(".cyoutube").length + 1;
@@ -76,7 +235,7 @@ function select_youtube(e) {
     var html = '';
     var title = data.my_title;
     html += '<div class="col-md-11 mb-3 cyoutube ' + class_uq + '"><label class="sr-only" for=""></label><div class="input-group"><div class="input-group-prepend"><div class="input-group-text">' + cyoutube + '.</div></div><input type="text" class="form-control" readonly value="' + title.replace('"', '') + '"></div></div>';
-    html += '<div class="col-md-1 mb-3 ' + class_uq + '"><button type="button" data="' + class_uq + '" onclick="remove_block(this)" class="btn btn-wanring"><span class="ti-trash"></span></button></div>';
+    html += '<div class="col-md-1 mb-3 ' + class_uq + '"><button type="button" data="' + class_uq + '" onclick="remove_block(this)" class="btn btn-danger"> ลบ <span class="ti-trash"></span></button></div>';
     $("#q_target").append(html);
 
 

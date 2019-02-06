@@ -195,7 +195,7 @@ class Product extends ServiceProvider
             ->where($matchThese)
             ->groupBy('tbl_product.pd_id', 'tbl_product.pd_name')
             ->get()->toArray();
-            
+
         return ['data_object' => $data, 'recordsTotal' => $count_all, 'recordsFiltered' => count($filter_record)];
     }
 
@@ -495,12 +495,19 @@ class Product extends ServiceProvider
         }
     }
 
-    public static function search($search)
+    public static function search($search, $pageToken = "")
     {
         $q = str_replace(",", "|", $search);
+        $q = str_replace(" ", "", $q);
         $curl = curl_init();
+        $url = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=24&type=video&order=relevance&q=$q";
+        if ($pageToken != "") {
+            $url .= "&pageToken=$pageToken";
+        }
+        $url .= "&key=AIzaSyASB9JR0hgdStc6q6-WMmVj6u0B1xrKDLY";
+
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=24&type=video&order=relevance&q=$q&key=AIzaSyASB9JR0hgdStc6q6-WMmVj6u0B1xrKDLY",
+            CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -529,7 +536,12 @@ class Product extends ServiceProvider
             return [
                 'status' => true,
                 'message' => 'Success',
+                't' => $url,
+                'data' => $data,
                 'items' => $data->items,
+                'nextPageToken' => (array_key_exists("nextPageToken", $data) ? $data->nextPageToken : ""),
+                'prevPageToken' => (array_key_exists("prevPageToken", $data) ? $data->prevPageToken : ""),
+                'pageInfo' => $data->pageInfo->totalResults,
             ];
         }
     }

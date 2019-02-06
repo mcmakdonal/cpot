@@ -21,7 +21,7 @@
             <div class="form-row">
                 <div class="col-md-10 mb-3">
                     <label for="">หัวข้อ : </label>
-                <input type="text" class="form-control" id="" name="et_topic" placeholder="Topic" value="{{ $data['evaluation'][0]->et_topic }}" required="">
+                <input type="text" class="form-control" id="" name="et_topic" value="{{ $data['evaluation'][0]->et_topic }}" required="">
                 </div>
                 <div class="col-md-2 mb-3">
                     <label for="">เพิ่มคำถาม : </label>
@@ -47,7 +47,7 @@
                             <div class="input-group-prepend">
                                 <div class="input-group-text">{{$k + 1}}.</div>
                             </div>
-                            <input type="text" class="form-control" name="question[]" value="{{$v->q_question}}" placeholder="Question" required>
+                            <input type="text" class="form-control" name="question[]" value="{{$v->q_question}}" required>
                         </div>
                     </div>
                     <div class="col-md-1 mb-3 {{ $class }}">
@@ -57,7 +57,7 @@
                     </div>
                 @endforeach
             </div>
-            <div class="form-group">
+            <div class="form-group text-center mt-3">
                 <button type="submit" class="btn btn-success">บันทึก</button>
                 <?=link_to('/evaluation', $title = 'ยกเลิก', ['class' => 'btn btn-warning'], $secure = null);?>
             </div>

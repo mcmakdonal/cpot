@@ -18,26 +18,26 @@
             <div class="form-row">
                 <div class="col-md-6 mb-3">
                     <label for="">ชื่อ</label>
-                    <input type="text" class="form-control" id="" name="ad_firstname" placeholder="First name" value="" required="">
+                    <input type="text" class="form-control" name="ad_firstname" value="" required="">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">นามสกลุ</label>
-                    <input type="text" class="form-control" id="" name="ad_lastname" placeholder="Last name" value="" required="">
+                    <input type="text" class="form-control" name="ad_lastname" value="" required="">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">ชื่อผู้ใช้</label>
-                    <input type="text" class="form-control" id="" name="ad_username" placeholder="Username" value="" required="">
+                    <input type="text" class="form-control" name="ad_username" value="" required="">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">รหัสผ่าน</label>
-                    <input type="password" class="form-control" id="" name="ad_password" placeholder="Password" value="" required="">
+                    <input type="password" class="form-control" name="ad_password" value="" required="">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">ยืนยันรหัสผ่าน</label>
-                    <input type="password" class="form-control" id="" name="conf_password" placeholder="Confirm Password" value="" required="">
+                    <input type="password" class="form-control" name="conf_password" value="" required="">
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group text-center mt-3">
                 <button type="submit" class="btn btn-success">บันทึก</button>
                 <?=link_to('/administrator', $title = 'ยกเลิก', ['class' => 'btn btn-warning'], $secure = null);?>
             </div>

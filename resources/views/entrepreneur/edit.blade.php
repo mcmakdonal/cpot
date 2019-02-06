@@ -21,16 +21,16 @@
             <div class="form-row">
                 <div class="col-md-6 mb-3">
                     <label for="">ชื่อร้านค้า</label>
-                    <input type="text" class="form-control" id="" name="s_name" placeholder="ชื่อร้านค้า" value="{{ $data[0]->s_name }}" required>
+                    <input type="text" class="form-control" name="s_name" value="{{ $data[0]->s_name }}" required>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">ชื่อผู้ประกอบการ</label>
-                    <input type="text" class="form-control" id="" name="s_onwer" placeholder="ชื่อผู้ประกอบการ" value="{{ $data[0]->s_onwer }}"
+                    <input type="text" class="form-control" name="s_onwer" value="{{ $data[0]->s_onwer }}"
                         required>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">เบอร์โทร</label>
-                    <input type="text" class="form-control" id="" name="s_phone" placeholder="เบอร์โทร" value="{{ $data[0]->s_phone }}" required>
+                    <input type="text" class="form-control" name="s_phone" value="{{ $data[0]->s_phone }}" required>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">จังหวัด</label>
@@ -42,22 +42,22 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">Facebook</label>
-                    <input type="url" class="form-control" id="" name="fb_id" placeholder="Facebook" value="{{ $data[0]->fb_id }}">
+                    <input type="url" class="form-control" id="" name="fb_id" value="{{ $data[0]->fb_id }}">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">Line ID</label>
-                    <input type="text" class="form-control" id="" name="s_line" placeholder="Line ID" value="{{ $data[0]->s_line }}" required>
+                    <input type="text" class="form-control" id="" name="s_line" value="{{ $data[0]->s_line }}" required>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">Instagram</label>
-                    <input type="text" class="form-control" id="" name="s_ig" placeholder="Instagram" value="{{ $data[0]->s_ig }}" required>
+                    <input type="text" class="form-control" id="" name="s_ig" value="{{ $data[0]->s_ig }}" required>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">ที่อยู่</label>
-                    <textarea class="form-control" id="" name="s_addr" placeholder="ที่อยู่" style="resize:none" rows="4">{{ $data[0]->s_addr }}</textarea>
+                    <textarea class="form-control" id="" name="s_addr" style="resize:none" rows="4">{{ $data[0]->s_addr }}</textarea>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group text-center mt-3">
                 <button type="submit" class="btn btn-success">บันทึก</button>
                 <?=link_to('/entrepreneur', $title = 'ยกเลิก', ['class' => 'btn btn-warning'], $secure = null);?>
             </div>

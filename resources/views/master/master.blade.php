@@ -56,32 +56,42 @@
                 <div class="menu-inner">
                     <nav>
                         <ul class="metismenu" id="menu">
-                            {{--
-                            <li class="active">
-                                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-dashboard"></i><span>dashboard</span></a>
-                                <ul class="collapse">
-                                    <li class="active"><a href="index.html">ICO dashboard</a></li>
-                                    <li><a href="index2.html">Ecommerce dashboard</a></li>
-                                    <li><a href="index3.html">SEO dashboard</a></li>
-                                </ul>
-                            </li> --}}
-                            <li class="{{ (strpos(url()->current(),'administrator') ) ? 'active' : '' }}"><a href="/administrator"><i class="ti-user"></i> <span>การจัดการผู้ดูแลระบบ</span></a></li>
-                            <li class="{{ (strpos(url()->current(),'product-match') ) ? 'active' : '' }}"><a href="/product-match"><i class="ti-layers-alt"></i> <span>การจัดการ YouTube และ สินค้า</span></a></li>
-                            <li class="{{ (strpos(url()->current(),'evaluation') ) ? 'active' : '' }}"><a href="/evaluation"><i class="ti-comment-alt"></i> <span>การจัดการแบบประเมิน</span></a></li>
+                            @if(\Helper::instance()->check_role())
+                                <li class="{{ (strpos(url()->current(),'administrator') ) ? 'active' : '' }}"><a href="/administrator"><i class="ti-user"></i> <span>การจัดการผู้ดูแลระบบ</span></a></li>
+                            @endif
+                            @if(\Helper::instance()->check_role(1))
+                                <li class="{{ (strpos(url()->current(),'product-match') ) ? 'active' : '' }}"><a href="/product-match"><i class="ti-layers-alt"></i> <span>การจัดการ YouTube และ สินค้า</span></a></li>
+                            @endif
+                            @if(\Helper::instance()->check_role(2))
+                                <li class="{{ (strpos(url()->current(),'evaluation') ) ? 'active' : '' }}"><a href="/evaluation"><i class="ti-comment-alt"></i> <span>การจัดการแบบประเมิน</span></a></li>
+                            @endif
                             {{-- <li class="{{ (strpos(url()->current(),'ads') ) ? 'active' : '' }}"><a href="/ads"><i class="ti-blackboard"></i> <span>การจัดการโฆษณา</span></a></li> --}}
-                            <li class="{{ (strpos(url()->current(),'background') ) ? 'active' : '' }}"><a href="/background"><i class="ti-panel"></i> <span>การจัดการแบล็คกราว</span></a></li>
+                            
+                            @if(\Helper::instance()->check_role(3))
+                                <li class="{{ (strpos(url()->current(),'background') ) ? 'active' : '' }}"><a href="/background"><i class="ti-panel"></i> <span>การจัดการแบล็คกราว</span></a></li>
+                            @endif
                             {{-- <li class="{{ (strpos(url()->current(),'privacy') ) ? 'active' : '' }}"><a href="/privacy"><i class="ti-pencil-alt"></i> <span>การจัดการข้อกำหนด</span></a></li> --}}
-                            <li class="{{ (strpos(url()->current(),'entrepreneur') ) ? 'active' : '' }}"><a href="/entrepreneur"><i class="ti-user"></i> <span>การจัดการผู้ประกอบการ</span></a></li>
-                            <li class="{{ (strpos(url()->current(),'material') ) ? 'active' : '' }}"><a href="/material"><i class="ti-spray"></i> <span>การจัดการทรัพยากร</span></a></li>
-                            <li class="{{ (strpos(url()->current(),'report') ) ? 'active' : '' }}">
-                                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-files"></i><span>รายงาน</span></a>
-                                <ul class="collapse">
-                                    <li><a href="/report/user">รายงานการเข้าใช้งาน แอพพลิเคชัน CPOT</a></li>
-                                    <li><a href="/report/evaluation">รายงานแบบประเมิน</a></li>
-                                    <li><a href="/report/tag">รายงาน Tag ที่นิยม</a></li>
-                                    <li><a href="/report/share">รายงานการแบ่งปันองค์ความรู้และทรัพยากรวัตถุดิบ</a></li>
-                                </ul>
-                            </li>
+                            
+                            @if(\Helper::instance()->check_role(4))
+                                <li class="{{ (strpos(url()->current(),'entrepreneur') ) ? 'active' : '' }}"><a href="/entrepreneur"><i class="ti-user"></i> <span>การจัดการผู้ประกอบการ</span></a></li>
+                            @endif
+                            @if(\Helper::instance()->check_role(5))
+                                <li class="{{ (strpos(url()->current(),'material') ) ? 'active' : '' }}"><a href="/material"><i class="ti-spray"></i> <span>การจัดการทรัพยากร</span></a></li>
+                            @endif
+                            @if(\Helper::instance()->check_role(6))
+                                <li class="{{ (strpos(url()->current(),'report') ) ? 'active' : '' }}">
+                                    <a href="javascript:void(0)" aria-expanded="true"><i class="ti-files"></i><span>รายงาน</span></a>
+                                    <ul class="collapse">
+                                        <li><a href="/report/user">รายงานการเข้าใช้งาน แอพพลิเคชัน CPOT</a></li>
+                                        <li><a href="/report/evaluation">รายงานแบบประเมิน</a></li>
+                                        <li><a href="/report/tag">รายงาน Tag ที่นิยม</a></li>
+                                        <li><a href="/report/share">รายงานการแบ่งปันองค์ความรู้และทรัพยากรวัตถุดิบ</a></li>
+                                    </ul>
+                                </li>
+                            @endif
+                            @if(\Helper::instance()->check_role(7))
+                                <li class="{{ (strpos(url()->current(),'manual') ) ? 'active' : '' }}"><a href="/manual"><i class="ti-blackboard"></i> <span>คู่มือการใช้งาน</span></a></li>
+                            @endif
                         </ul>
                     </nav>
                 </div>
@@ -146,6 +156,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <!-- others plugins -->
+    <script src="/assets/js/loadie.min.js"></script>
     <script src="/assets/js/plugins.js"></script>
     <script src="/assets/js/scripts.js"></script>
     <script src="/assets/js/custom.js"></script>

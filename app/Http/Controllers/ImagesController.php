@@ -8,6 +8,12 @@ use Validator;
 
 class ImagesController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('islogin:3');
+    }
+
     public function ads(Request $request)
     {
         $data = Images::lists("ads");

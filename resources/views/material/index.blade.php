@@ -7,14 +7,14 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="header-title">การจัดการทรัพยากร</h4>
-                    <?=link_to('/material/create', $title = 'สร้าง' , ['class' => 'd-none btn btn-success mb-3 float-right'], $secure = null); ?>
+                    <?=link_to('/material/create', $title = 'สร้าง' , ['class' => 'btn btn-success mb-3 float-right'], $secure = null); ?>
                         <div class="data-tables">
                             <table id="" class="text-center dataTable">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th>#</th>
-                                        <th>ชื่อร้าน</th>
-                                        <th>ชื่อทรัพยากร</th>
+                                        <th>แหล่งที่ซื้อทรัพยากร</th>
+                                        <th>ชื่อทรัพยากรหรือวัตถุดิบ</th>
                                         <th>ราคา</th>
                                         <th>แก้ไข</th>
                                         {{-- <th>ลบ</th> --}}
@@ -24,7 +24,7 @@
                                     @foreach($data as $k => $v)
                                     <tr>
                                         <td>{{ $k + 1 }}</td>
-                                        <td>{{ $v->s_name }}</td>
+                                        <td>{{ $v->sm_name }}</td>
                                         <td>{{ $v->m_name }}</td>
                                         <td>{{ $v->m_price }}</td>
                                         <td>

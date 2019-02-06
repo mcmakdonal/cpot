@@ -1,43 +1,69 @@
 @extends('master.master') 
 @section('main')
-@include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'เพิ่มผู้ดูแลระบบ'])
+    @include('master.breadcrumb', ['mtitle' => 'การจัดการ','stitle' => 'เพิ่มผู้ดูแลระบบ'])
 <div class="col-12">
     <div class="card mt-5">
         <div class="card-body">
             <h4 class="header-title">เพิ่มผู้ดูแลระบบ</h4>
             @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif 
-            {!! Form::open(['url' => '/administrator','class' => 'form-auth-small', 'method' => 'POST','files' => false]) !!}
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif {!! Form::open(['url' => '/administrator','class' => 'form-auth-small', 'method' => 'POST','files' => false]) !!}
             <div class="form-row">
                 <div class="col-md-6 mb-3">
-                    <label for="">ชื่อ</label>
-                    <input type="text" class="form-control" id="" name="ad_firstname" placeholder="First name" value="" required="">
+                    <label for>ชื่อ</label>
+                    <input type="text" class="form-control" name="ad_firstname" required>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">นามสกลุ</label>
-                    <input type="text" class="form-control" id="" name="ad_lastname" placeholder="Last name" value="" required="">
+                    <label for>นามสกุล</label>
+                    <input type="text" class="form-control" name="ad_lastname" required>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">ชื่อผู้ใช้</label>
-                    <input type="text" class="form-control" id="" name="ad_username" placeholder="Username" value="" required="">
+                    <label for>ชื่อผู้ใช้</label>
+                    <input type="text" class="form-control" name="ad_username" required>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">รหัสผ่าน</label>
-                    <input type="password" class="form-control" id="" name="ad_password" placeholder="Password" value="" required="">
+                    <label for>อีเมล</label>
+                    <input type="email" class="form-control" name="ad_email" required>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">ยืนยันรหัสผ่าน</label>
-                    <input type="password" class="form-control" id="" name="conf_password" placeholder="Confirm Password" value="" required="">
+                    <label for>รหัสผ่าน</label>
+                    <input type="password" class="form-control" name="ad_password" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for>ยืนยันรหัสผ่าน</label>
+                    <input type="password" class="form-control" name="conf_password" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for>เบอร์ติดต่อ</label>
+                    <input type="text" class="form-control numberinput" name="ad_phone" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for>หน่วยงาน</label>
+                    <input type="text" class="form-control" name="ad_ogz" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="">ระดับ</label>
+                    <select class="form-control" name="ad_permission" size="1" required>
+                        <option value="S">Super Administrator</option>
+                        <option value="A" selected>Administrator</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="">สิทธิ์การเข้าถึง</label>
+                    <select class="form-control" name="ad_role[]" size="1" multiple="multiple">
+                        @foreach ($role as $key => $item)
+                            <option value="{{$item['id']}}"> {{$item['name']}} </option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group text-center mt-3">
                 <button type="submit" class="btn btn-success">บันทึก</button>
                 <?=link_to('/administrator', $title = 'ยกเลิก', ['class' => 'btn btn-warning'], $secure = null);?>
             </div>
