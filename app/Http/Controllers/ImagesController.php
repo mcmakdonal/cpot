@@ -17,13 +17,15 @@ class ImagesController extends Controller
     public function ads(Request $request)
     {
         $data = Images::lists("ads");
-        return view('images_mobile.ads', ['data' => $data]);
+        $del = (\Cookie::get('ad_permission') == "S") ? true : false;
+        return view('images_mobile.ads', ['data' => $data, 'del' => $del]);
     }
 
     public function background(Request $request)
     {
         $data = Images::lists("background");
-        return view('images_mobile.background', ['data' => $data]);
+        $del = (\Cookie::get('ad_permission') == "S") ? true : false;
+        return view('images_mobile.background', ['data' => $data, 'del' => $del]);
     }
 
     public function ads_image(Request $request)

@@ -50,7 +50,9 @@
                                         <th>#</th>
                                         <th>รูป</th>
                                         <th>สถานะ</th>
-                                        <th>ลบ</th>
+                                        @if($del)
+                                            <th>ลบ</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -65,7 +67,9 @@
                                                 <button class="btn btn-info" type="button" onclick='func_active("/image-active",{{$v->id}})'>เปิดใช้งาน</button>
                                             @endif
                                         </td>
-                                        <td><button class="btn btn-danger" type="button" onclick='destroy("image-destroy",{{$v->id}})'>ลบ</button></td>
+                                        @if($del)
+                                            <td><button class="btn btn-danger" type="button" onclick='destroy("image-destroy",{{$v->id}})'>ลบ</button></td>
+                                        @endif
                                     </tr>
                                     @endforeach
                                 </tbody>

@@ -290,7 +290,7 @@ class AdministratorController extends Controller
                 ->cookie('ad_id', $user[0]->ad_id, 14660)
                 ->cookie('ad_permission', $user[0]->ad_permission, 14660)
                 ->cookie('ad_role', $user[0]->ad_role, 14660)
-                ->cookie('ad_firstname', $user[0]->ad_firstname . " " . $user[0]->ad_lastname, 14660)->with('status', 'บันทึกสำเร็จ');
+                ->cookie('ad_firstname', $user[0]->ad_firstname . " " . $user[0]->ad_lastname, 14660);
         } else {
             return redirect()->back()->withErrors(array('error' => 'Username or Password Incorrect'));
         }

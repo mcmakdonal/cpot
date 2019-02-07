@@ -45,6 +45,10 @@ Route::post('/administrator/profile', 'AdministratorController@update_profile');
 Route::resource('evaluation', 'EvaluationController');
 Route::post('/evaluation/active', 'EvaluationController@active');
 Route::post('/evaluation/unactive', 'EvaluationController@unactive');
+
+Route::get('/manual-page', function () {
+    return view('manual');        
+});
 // admin module //
 
 // product match module //

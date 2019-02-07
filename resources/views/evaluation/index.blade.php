@@ -16,7 +16,9 @@
                                         <th>หัวข้อ</th>
                                         <th>สถานะ</th>
                                         <th>แก้ไข</th>
-                                        <th>ลบ</th>
+                                        @if($del)
+                                            <th>ลบ</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -34,9 +36,11 @@
                                         <td>
                                             <?=link_to("/evaluation/$v->et_id/edit", $title = 'แก้ไข' , ['class' => 'btn btn-warning'], $secure = null); ?>
                                         </td>
-                                        <td>
-                                            <button class="btn btn-danger" type="button" onclick='destroy("evaluation",{{$v->et_id}})'>ลบ</button>
-                                        </td>
+                                        @if($del)
+                                            <td>
+                                                <button class="btn btn-danger" type="button" onclick='destroy("evaluation",{{$v->et_id}})'>ลบ</button>
+                                            </td>
+                                        @endif
                                     </tr>
                                     @endforeach
                                 </tbody>

@@ -90,7 +90,7 @@
                                 </li>
                             @endif
                             @if(\Helper::instance()->check_role(7))
-                                <li class="{{ (strpos(url()->current(),'manual') ) ? 'active' : '' }}"><a href="/manual"><i class="ti-blackboard"></i> <span>คู่มือการใช้งาน</span></a></li>
+                                <li class="{{ (strpos(url()->current(),'/manual-page') ) ? 'active' : '' }}"><a href="/manual-page"><i class="ti-blackboard"></i> <span>คู่มือการใช้งาน</span></a></li>
                             @endif
                         </ul>
                     </nav>

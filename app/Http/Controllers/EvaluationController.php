@@ -20,7 +20,8 @@ class EvaluationController extends Controller
     public function index()
     {
         $data = Evaluation::lists();
-        return view('evaluation.index', ['data' => $data]);
+        $del = (\Cookie::get('ad_permission') == "S") ? true : false;
+        return view('evaluation.index', ['data' => $data, 'del' => $del]);
     }
 
     /**
