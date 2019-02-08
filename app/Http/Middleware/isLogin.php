@@ -16,14 +16,23 @@ class isLogin
     public function handle($request, Closure $next, $role = "")
     {
         if (!(\Cookie::get('ad_id') !== null)) {
+            \Cookie::forget('ad_id');
+            \Cookie::forget('ad_role');
+            \Cookie::forget('ad_permission');
             abort(404);
         }
 
         if (!(\Cookie::get('ad_role') !== null)) {
+            \Cookie::forget('ad_id');
+            \Cookie::forget('ad_role');
+            \Cookie::forget('ad_permission');
             abort(404);
         }
 
         if (!(\Cookie::get('ad_permission') !== null)) {
+            \Cookie::forget('ad_id');
+            \Cookie::forget('ad_role');
+            \Cookie::forget('ad_permission');
             abort(404);
         }
 
