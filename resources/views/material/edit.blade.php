@@ -33,7 +33,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">แหล่งที่ซื้อทรัพยากร</label>
-                    <input type="text" class="form-control" name="sm_name" value="{{ $data[0]->m_unit }}" required>
+                    <input type="text" class="form-control" name="sm_name" value="{{ $data[0]->sm_name }}" required>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">เบอร์ติดต่อ</label>
