@@ -17,7 +17,9 @@
                                         <th>ชื่อทรัพยากรหรือวัตถุดิบ</th>
                                         <th>ราคา/หน่วย</th>
                                         <th>แก้ไข</th>
-                                        <th>ลบ</th>
+                                        @if($del)
+                                            <th>ลบ</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -30,7 +32,9 @@
                                         <td>
                                             <?=link_to("/material/$v->m_id/edit", $title = 'แก้ไข' , ['class' => 'btn btn-warning btn-xs'], $secure = null); ?>
                                         </td>
-                                        <td><button class="btn btn-danger" type="button" onclick='destroy("material",{{$v->m_id}})'>ลบ</button></td>
+                                        @if($del)
+                                            <td><button class="btn btn-danger" type="button" onclick='destroy("material",{{$v->m_id}})'>ลบ</button></td>
+                                        @endif
                                     </tr>
                                     @endforeach
                                 </tbody>
