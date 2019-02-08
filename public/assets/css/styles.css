@@ -2322,8 +2322,8 @@ table.dataTable thead td {
 
 .login-form-head {
     text-align: center;
-    background: #8655FC;
-    padding: 20px;
+    /* background: #8655FC;
+    padding: 20px; */
 }
 
 .login-form-head h4 {

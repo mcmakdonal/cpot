@@ -64,7 +64,7 @@
                     <div class="login-box">
                         {!! Form::open(['url' => "/backend-login",'class' => 'form-auth-small', 'method' => 'POST','files' => false]) !!}
                         <div class="login-form-head">
-                            <img src="/assets/images/logo_backend.png" alt="logo">
+                            <img src="/assets/images/backend_cover.png" alt="logo">
                         </div>
                         @if ($errors->any())
                         <div class="alert alert-danger">
