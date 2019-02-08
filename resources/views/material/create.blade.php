@@ -36,6 +36,10 @@
                     <input type="text" class="form-control" name="sm_name" required>
                 </div>
                 <div class="col-md-6 mb-3">
+                    <label for="">เบอร์ติดต่อ</label>
+                    <input type="text" class="form-control numberinput" name="m_phone">
+                </div>
+                <div class="col-md-6 mb-3">
                     <label for="">Facebook</label>
                     <input type="text" class="form-control" name="m_facebook">
                 </div>

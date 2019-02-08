@@ -36,6 +36,10 @@
                     <input type="text" class="form-control" name="sm_name" value="{{ $data[0]->m_unit }}" required>
                 </div>
                 <div class="col-md-6 mb-3">
+                    <label for="">เบอร์ติดต่อ</label>
+                    <input type="text" class="form-control numberinput" name="m_phone" value="{{ $data[0]->m_phone }}">
+                </div>
+                <div class="col-md-6 mb-3">
                     <label for="">Facebook</label>
                     <input type="text" class="form-control" name="m_facebook" value="{{ $data[0]->m_facebook }}">
                 </div>
