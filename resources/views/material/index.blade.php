@@ -15,9 +15,9 @@
                                         <th>#</th>
                                         <th>แหล่งที่ซื้อทรัพยากร</th>
                                         <th>ชื่อทรัพยากรหรือวัตถุดิบ</th>
-                                        <th>ราคา</th>
+                                        <th>ราคา/หน่วย</th>
                                         <th>แก้ไข</th>
-                                        {{-- <th>ลบ</th> --}}
+                                        <th>ลบ</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -26,11 +26,11 @@
                                         <td>{{ $k + 1 }}</td>
                                         <td>{{ $v->sm_name }}</td>
                                         <td>{{ $v->m_name }}</td>
-                                        <td>{{ $v->m_price }}</td>
+                                        <td>{{ $v->m_price }} / {{ $v->m_unit }}</td>
                                         <td>
                                             <?=link_to("/material/$v->m_id/edit", $title = 'แก้ไข' , ['class' => 'btn btn-warning btn-xs'], $secure = null); ?>
                                         </td>
-                                        {{-- <td><button class="btn btn-danger" type="button" onclick='destroy("administrator",{{$v->ad_id}})'>ลบ</button></td> --}}
+                                        <td><button class="btn btn-danger" type="button" onclick='destroy("material",{{$v->m_id}})'>ลบ</button></td>
                                     </tr>
                                     @endforeach
                                 </tbody>

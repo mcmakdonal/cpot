@@ -61,7 +61,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">สิทธิ์การเข้าถึง</label>
-                    <select class="form-control" name="ad_role[]" size="1" multiple="multiple">
+                    <select class="form-control role-multiple" name="ad_role[]" size="1" multiple="multiple">
                         @php
                             $have = json_decode($data[0]->ad_role);
                         @endphp
@@ -83,4 +83,11 @@
         </div>
     </div>
 </div>
+@endsection
+@section('script')
+    $(document).ready(function() {
+        $(".role-multiple").select2({
+            placeholder: 'กำหนดสิทธิ์การเข้าถึง'
+        });
+    });
 @endsection

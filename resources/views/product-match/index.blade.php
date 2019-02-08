@@ -82,7 +82,7 @@ YouTube และ สินค้า'])
             "language": {
                 "lengthMenu": "กำลังแสดง _MENU_ ข้อมูล ต่อหน้า",
                 "zeroRecords": "ไม่พบข้อมูล",
-                "info": "กำลังแสดง หน้า _PAGE_ จากทั้งหมด _PAGES_ มีข้อมูล _TOTAL_ ",
+                "info": "กำลังแสดง หน้า _PAGE_ จากทั้งหมด _PAGES_ หน้ามีข้อมูล _TOTAL_ ",
                 "infoEmpty": "ไม่พบข้อมูล",
                 "infoFiltered": "(กรองจาก _MAX_ ข้อมูลทั้งหมด)",
                 "loadingRecords": "กำลังโหลด",

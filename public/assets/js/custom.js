@@ -30,7 +30,7 @@ $(document).ready(function () {
         "language": {
             "lengthMenu": "กำลังแสดง _MENU_ ข้อมูล ต่อหน้า",
             "zeroRecords": "ไม่พบข้อมูล",
-            "info": "กำลังแสดง หน้า _PAGE_ จากทั้งหมด _PAGES_ มีข้อมูล _TOTAL_ ",
+            "info": "กำลังแสดง หน้า _PAGE_ จากทั้งหมด _PAGES_ หน้ามีข้อมูล _TOTAL_ ",
             "infoEmpty": "ไม่พบข้อมูล",
             "infoFiltered": "(กรองจาก _MAX_ ข้อมูลทั้งหมด)",
             "loadingRecords": "กำลังโหลด",
@@ -53,7 +53,7 @@ $(document).ready(function () {
         "language": {
             "lengthMenu": "กำลังแสดง _MENU_ ข้อมูล ต่อหน้า",
             "zeroRecords": "ไม่พบข้อมูล",
-            "info": "กำลังแสดง หน้า _PAGE_ จากทั้งหมด _PAGES_ มีข้อมูล _TOTAL_ ",
+            "info": "กำลังแสดง หน้า _PAGE_ จากทั้งหมด _PAGES_ หน้ามีข้อมูล _TOTAL_ ",
             "infoEmpty": "ไม่พบข้อมูล",
             "infoFiltered": "(กรองจาก _MAX_ ข้อมูลทั้งหมด)",
             "loadingRecords": "กำลังโหลด",
@@ -89,7 +89,7 @@ $(document).ready(function () {
         "language": {
             "lengthMenu": "กำลังแสดง _MENU_ ข้อมูล ต่อหน้า",
             "zeroRecords": "ไม่พบข้อมูล",
-            "info": "กำลังแสดง หน้า _PAGE_ จากทั้งหมด _PAGES_ มีข้อมูล _TOTAL_ ",
+            "info": "กำลังแสดง หน้า _PAGE_ จากทั้งหมด _PAGES_ หน้ามีข้อมูล _TOTAL_ ",
             "infoEmpty": "ไม่พบข้อมูล",
             "infoFiltered": "(กรองจาก _MAX_ ข้อมูลทั้งหมด)",
             "loadingRecords": "กำลังโหลด",
@@ -138,7 +138,12 @@ function destroy(src, id) {
             },
             url: src + "/" + id,
             method: "delete",
-            beforeSend() {},
+            beforeSend() {
+                $(".card").LoadingOverlay("show", {
+                    fontawesome: "fa fa-circle-o-notch fa-spin",
+                    zIndex: 10001
+                });
+            },
             success: function (result) {
                 var obj = result;
                 if (obj.status) {
@@ -146,9 +151,11 @@ function destroy(src, id) {
                 } else {
                     swal("Warning !", obj.message, "error");
                 }
+                $(".card").LoadingOverlay("hide", true);
             },
             error(xhr, status, error) {
                 swal("Danger !", "Fail !", error + " Status : " + status, "error");
+                $(".card").LoadingOverlay("hide", true);
             }
         });
     }
@@ -218,7 +225,6 @@ function generate_youtube(type = "") {
                     "                </div>";
                 $(".youtube-result").append(str_txt);
             }
-
             $(".youtube-result").LoadingOverlay("hide", true);
         },
         error(xhr, status, error) {
@@ -302,7 +308,12 @@ function func_active(src, id) {
         data: {
             id: id
         },
-        beforeSend() {},
+        beforeSend() {
+            $(".card").LoadingOverlay("show", {
+                fontawesome: "fa fa-circle-o-notch fa-spin",
+                zIndex: 10001
+            });
+        },
         success: function (result) {
             var obj = result;
             if (obj.status) {
@@ -310,9 +321,11 @@ function func_active(src, id) {
             } else {
                 swal("Warning !", obj.message, "error");
             }
+            $(".card").LoadingOverlay("hide", true);
         },
         error(xhr, status, error) {
             swal("Danger !", "Fail !", error + " Status : " + status, "error");
+            $(".card").LoadingOverlay("hide", true);
         }
     });
 }
@@ -330,7 +343,12 @@ function func_unactive(src, id, type = "") {
             id: id,
             type: type
         },
-        beforeSend() {},
+        beforeSend() {
+            $(".card").LoadingOverlay("show", {
+                fontawesome: "fa fa-circle-o-notch fa-spin",
+                zIndex: 10001
+            });
+        },
         success: function (result) {
             var obj = result;
             if (obj.status) {
@@ -338,9 +356,11 @@ function func_unactive(src, id, type = "") {
             } else {
                 swal("Warning !", obj.message, "error");
             }
+            $(".card").LoadingOverlay("hide", true);
         },
         error(xhr, status, error) {
             swal("Danger !", "Fail !", error + " Status : " + status, "error");
+            $(".card").LoadingOverlay("hide", true);
         }
     });
 }
@@ -363,6 +383,12 @@ function search_district(init = false) {
         },
         url: "/api/get-district/" + province_id,
         method: "GET",
+        beforeSend() {
+            $(".card").LoadingOverlay("show", {
+                fontawesome: "fa fa-circle-o-notch fa-spin",
+                zIndex: 10001
+            });
+        },
         success: function (result) {
             clear_addr();
             var check = false;
@@ -382,9 +408,11 @@ function search_district(init = false) {
             }
 
             search_subdistrict();
+            $(".card").LoadingOverlay("hide", true);
         },
         error(xhr, status, error) {
-            alert(error);
+            swal("Danger !", "Fail !", error + " Status : " + status, "error");
+            $(".card").LoadingOverlay("hide", true);
         }
     });
 }
@@ -399,6 +427,12 @@ function search_subdistrict() {
     $.ajax({
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+        },
+        beforeSend() {
+            $(".card").LoadingOverlay("show", {
+                fontawesome: "fa fa-circle-o-notch fa-spin",
+                zIndex: 10001
+            });
         },
         url: "/api/get-sub-district/" + district_id,
         method: "GET",
@@ -418,9 +452,11 @@ function search_subdistrict() {
             if (check) {
                 $("#sub_district_id").val($("#sub_district_id").attr("data-id"));
             }
+            $(".card").LoadingOverlay("hide", true);
         },
         error(xhr, status, error) {
-            alert(error);
+            swal("Danger !", "Fail !", error + " Status : " + status, "error");
+            $(".card").LoadingOverlay("hide", true);
         }
     });
 }

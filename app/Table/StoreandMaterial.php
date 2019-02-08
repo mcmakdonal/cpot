@@ -31,7 +31,7 @@ class StoreandMaterial extends ServiceProvider
         'tbl_material.m_facebook',
         'tbl_material.m_line',
         'tbl_material.m_instagram',
-        'tbl_material.m_ogz',
+        'tbl_material.m_unit',
         'tbl_material.m_lat',
         'tbl_material.m_long',
 

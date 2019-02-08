@@ -28,12 +28,12 @@
                     <input type="number" class="form-control" min="0" name="m_price" value="{{ $data[0]->m_price }}" required>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">หน่วยงาน</label>
-                    <input type="text" class="form-control" name="m_ogz" value="{{ $data[0]->m_ogz }}" required>
+                    <label for="">หน่วยสินค้า</label>
+                    <input type="text" class="form-control" name="m_unit" value="{{ $data[0]->m_unit }}" required>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">แหล่งที่ซื้อทรัพยากร</label>
-                    <input type="text" class="form-control" name="sm_name" value="{{ $data[0]->m_ogz }}" required>
+                    <input type="text" class="form-control" name="sm_name" value="{{ $data[0]->m_unit }}" required>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">Facebook</label>

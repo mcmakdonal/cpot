@@ -56,7 +56,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">สิทธิ์การเข้าถึง</label>
-                    <select class="form-control" name="ad_role[]" size="1" multiple="multiple">
+                    <select class="form-control role-multiple" name="ad_role[]" size="1" multiple="multiple">
                         @foreach ($role as $key => $item)
                             <option value="{{$item['id']}}"> {{$item['name']}} </option>
                         @endforeach
@@ -71,4 +71,11 @@
         </div>
     </div>
 </div>
+@endsection
+@section('script')
+    $(document).ready(function() {
+        $(".role-multiple").select2({
+            placeholder: 'กำหนดสิทธิ์การเข้าถึง'
+        });
+    });
 @endsection

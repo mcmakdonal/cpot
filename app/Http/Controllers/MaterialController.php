@@ -50,7 +50,7 @@ class MaterialController extends Controller
             'm_name' => 'required',
             'm_price' => 'required|numeric',
             // 's_id' => 'required',
-            'm_ogz' => 'required',
+            'm_unit' => 'required',
 
             'sm_name' => 'required',
             'm_facebook' => 'nullable',
@@ -72,7 +72,7 @@ class MaterialController extends Controller
             'm_name' => ($request->m_name) ? $request->m_name : "",
             'm_price' => ($request->m_price) ? $request->m_price : "",
             // 's_id' => ($request->s_id) ? $request->s_id : "",
-            'm_ogz' => ($request->m_ogz) ? $request->m_ogz : "",
+            'm_unit' => ($request->m_unit) ? $request->m_unit : "",
 
             'sm_name' => ($request->sm_name) ? $request->sm_name : "",
             'm_facebook' => ($request->m_facebook) ? $request->m_facebook : "",
@@ -134,7 +134,7 @@ class MaterialController extends Controller
             'm_name' => 'required',
             'm_price' => 'required|numeric',
             // 's_id' => 'required',
-            'm_ogz' => 'required',
+            'm_unit' => 'required',
 
             'sm_name' => 'required',
             'm_facebook' => 'nullable',
@@ -156,7 +156,7 @@ class MaterialController extends Controller
             'm_name' => ($request->m_name) ? $request->m_name : "",
             'm_price' => ($request->m_price) ? $request->m_price : "",
             // 's_id' => ($request->s_id) ? $request->s_id : "",
-            'm_ogz' => ($request->m_ogz) ? $request->m_ogz : "",
+            'm_unit' => ($request->m_unit) ? $request->m_unit : "",
 
             'sm_name' => ($request->sm_name) ? $request->sm_name : "",
             'm_facebook' => ($request->m_facebook) ? $request->m_facebook : "",
