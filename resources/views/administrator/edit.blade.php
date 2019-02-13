@@ -55,8 +55,8 @@
                 <div class="col-md-6 mb-3">
                     <label for="">ระดับ</label>
                     <select class="form-control" name="ad_permission" size="1" required>
-                        <option value="S">Super Administrator</option>
-                        <option value="A" selected>Administrator</option>
+                        <option value="S" {{ ($v->ad_permission == "S" )? "selected" : "" }}>Super Administrator</option>
+                        <option value="A" {{ ($v->ad_permission == "A" )? "selected" : "" }}>Administrator</option>
                     </select>
                 </div>
                 <div class="col-md-6 mb-3">
