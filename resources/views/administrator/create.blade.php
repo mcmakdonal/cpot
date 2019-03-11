@@ -54,13 +54,23 @@
                         <option value="A" selected>Administrator</option>
                     </select>
                 </div>
-                <div class="col-md-6 mb-3">
+                {{-- <div class="col-md-6 mb-3">
                     <label for="">สิทธิ์การเข้าถึง</label>
                     <select class="form-control role-multiple" name="ad_role[]" size="1" multiple="multiple">
                         @foreach ($role as $key => $item)
                             <option value="{{$item['id']}}"> {{$item['name']}} </option>
                         @endforeach
                     </select>
+                </div> --}}
+
+                <div class="col-md-12 mb-3">
+                    <label for="">สิทธิ์การเข้าถึง</label><br /> 
+                    @foreach ($role as $key => $item)
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                            <input type="checkbox" value="{{$item['id']}}" class="custom-control-input" name="ad_role[]" id="customCheck{{$item['id']}}" value="{{$item['id']}}">
+                            <label class="custom-control-label" for="customCheck{{$item['id']}}"> {{$item['name']}} </label>
+                        </div>
+                    @endforeach
                 </div>
             </div>
             <div class="form-group text-center mt-3">
@@ -72,10 +82,7 @@
     </div>
 </div>
 @endsection
-@section('script')
-    $(document).ready(function() {
-        $(".role-multiple").select2({
-            placeholder: 'กำหนดสิทธิ์การเข้าถึง'
-        });
-    });
+ 
+@section('script') $(document).ready(function() { $(".role-multiple").select2({ placeholder: 'กำหนดสิทธิ์การเข้าถึง'
+}); });
 @endsection

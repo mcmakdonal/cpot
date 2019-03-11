@@ -13,6 +13,7 @@ use App\Table\StoreandMaterial;
 use Illuminate\Http\Request;
 use Validator;
 use App\Table\Privacy;
+use App\Table\Images;
 
 class IndexController extends Controller
 {
@@ -476,4 +477,41 @@ class IndexController extends Controller
         ];
         return $obj;
     }
+
+    public function ads_image(Request $request)
+    {
+        $data = Images::lists("ads","A");
+        foreach($data as $k => $v){
+            unset($v->create_date);
+            unset($v->create_by);
+            unset($v->update_date);
+            unset($v->update_by);
+            unset($v->record_status);
+
+            $data[$k]->path = url($v->path);
+        }
+        $obj = [
+            'data_object' => $data
+        ];
+        return $obj;
+    }
+
+    public function background_image(Request $request)
+    {
+        $data = Images::lists("background","A");
+        foreach($data as $k => $v){
+            unset($v->create_date);
+            unset($v->create_by);
+            unset($v->update_date);
+            unset($v->update_by);
+            unset($v->record_status);
+
+            $data[$k]->path = url($v->path);
+        }
+        $obj = [
+            'data_object' => $data
+        ];
+        return $obj;
+    }
+
 }

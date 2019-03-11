@@ -28,43 +28,6 @@ class ImagesController extends Controller
         return view('images_mobile.background', ['data' => $data, 'del' => $del]);
     }
 
-    public function ads_image(Request $request)
-    {
-        $data = Images::lists("ads","A");
-        foreach($data as $k => $v){
-            unset($v->create_date);
-            unset($v->create_by);
-            unset($v->update_date);
-            unset($v->update_by);
-            unset($v->record_status);
-
-            $data[$k]->path = url($v->path);
-        }
-        $obj = [
-            'data_object' => $data
-        ];
-        return $obj;
-    }
-
-    public function background_image(Request $request)
-    {
-        $data = Images::lists("background","A");
-        foreach($data as $k => $v){
-            unset($v->create_date);
-            unset($v->create_by);
-            unset($v->update_date);
-            unset($v->update_by);
-            unset($v->record_status);
-
-            $data[$k]->path = url($v->path);
-        }
-        $obj = [
-            'data_object' => $data
-        ];
-        return $obj;
-    }
-
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

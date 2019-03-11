@@ -119,8 +119,8 @@ Route::get('/youtube/{id}/detail', 'IndexController@youtube');
 // Youtube Detail //
 
 // Ads & Wallpaer //
-Route::get('/ads-image', 'ImagesController@ads_image');
-Route::get('/background-image', 'ImagesController@background_image');
+Route::get('/ads-image', 'IndexController@ads_image');
+Route::get('/background-image', 'IndexController@background_image');
 // Ads & Wallpaer //
 
 // Province //
