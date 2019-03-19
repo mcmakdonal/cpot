@@ -17,7 +17,7 @@
             <div class="alert alert-success">
                 {{ session('status') }}
             </div>
-            @endif {!! Form::open(['url' => "/administrator/profile",'class' => 'form-auth-small', 'method' => 'POST','files'
+            @endif {!! Form::open(['url' => "/edit-profile",'class' => 'form-auth-small', 'method' => 'POST','files'
             => false]) !!}
             <div class="form-row">
                 <div class="col-md-6 mb-3">
@@ -35,14 +35,6 @@
                 <div class="col-md-6 mb-3">
                     <label for>อีเมล</label>
                     <input type="email" class="form-control" name="ad_email" value="{{ $data[0]->ad_email }}" readonly>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="">รหัสผ่าน</label>
-                    <input type="password" class="form-control" name="ad_password" value="">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="">ยืนยันรหัสผ่าน</label>
-                    <input type="password" class="form-control" name="conf_password" value="">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for>เบอร์ติดต่อ</label>

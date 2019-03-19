@@ -24,6 +24,10 @@ $(document).ready(function () {
         zIndex: 1000
     });
 
+    setInterval(() => {
+        change_word();
+    }, 1000);
+
     $('select').select2();
 
     dataTable = $('.dataTable').DataTable({
@@ -40,6 +44,9 @@ $(document).ready(function () {
                 "previous": "ก่อนหน้า",
                 "next": "ถัดไป"
             }
+        },
+        "initComplete": function (settings, json) {
+            move_info();
         }
     });
 
@@ -63,6 +70,9 @@ $(document).ready(function () {
                 "previous": "ก่อนหน้า",
                 "next": "ถัดไป"
             }
+        },
+        "initComplete": function (settings, json) {
+            move_info();
         }
     });
 
@@ -100,6 +110,9 @@ $(document).ready(function () {
                 "next": "ถัดไป"
             }
         },
+        "initComplete": function (settings, json) {
+            move_info();
+        },
         buttons: [
             $.extend(true, {}, buttonCommon, {
                 extend: 'excel',
@@ -120,9 +133,13 @@ $(document).ready(function () {
                         }
                         c++;
                     });
-                } 
+                }
             })
         ]
+    });
+
+    $("ul.pagination li a").on('click change',function () {
+        change_word();
     });
 
 });
@@ -229,7 +246,7 @@ function generate_youtube(type = "") {
         },
         error(xhr, status, error) {
             swal("Danger !", "Fail !", error + " Status : " + status, "error");
-            $(".youtube-result").LoadingOverlay("hide",true);
+            $(".youtube-result").LoadingOverlay("hide", true);
         }
     });
 }
@@ -477,4 +494,16 @@ function clear_addr() {
         })
     );
     return false;
+}
+
+function move_info() {
+    $(".dataTables_wrapper div.row div.col-md-6").removeClass("col-md-6").addClass("col-md-4");
+    $(".dataTables_wrapper div.row div.col-md-4:first").after("<div class='col-sm-12 col-md-4 info_txt'><div style='padding: 5px;' class='dataTables_info'></div></div>");
+    $("#DataTables_Table_0_info").hide();
+    change_word();
+}
+
+function change_word() {
+    var txt = $("#DataTables_Table_0_info").text();
+    $(".info_txt .dataTables_info").text(txt);
 }

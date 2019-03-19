@@ -13,10 +13,10 @@ use Illuminate\Http\Request;
 |
  */
 
-Route::post('/foo', function (Request $request) {
-    Log::debug($request->all());
-    return json_encode(['a' => 'a']);
-});
+// Route::post('/foo', function (Request $request) {
+//     Log::debug($request->all());
+//     return json_encode(['a' => 'a']);
+// });
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
@@ -73,18 +73,18 @@ Route::post('/user/register_facebook', 'UserController@register_facebook');
 //////// User /////////////////////////////////
 
 /// Search Common ///
-Route::post('/search_title_all', function (Request $request) {
-    return [
-        'status' => false,
-        'message' => "Please use endpoint /search-all",
-    ];
-});
-Route::post('/search_tag_all', function (Request $request) {
-    return [
-        'status' => false,
-        'message' => "Please use endpoint /search-all",
-    ];
-});
+// Route::post('/search_title_all', function (Request $request) {
+//     return [
+//         'status' => false,
+//         'message' => "Please use endpoint /search-all",
+//     ];
+// });
+// Route::post('/search_tag_all', function (Request $request) {
+//     return [
+//         'status' => false,
+//         'message' => "Please use endpoint /search-all",
+//     ];
+// });
 
 Route::post('/search-all', 'IndexController@search');
 

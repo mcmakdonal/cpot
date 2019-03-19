@@ -16,7 +16,8 @@
                 @if (Cookie::get('ad_id') !== null)
                     <h4 class="user-name dropdown-toggle" data-toggle="dropdown"> <i class="fa fa-angle-down"></i> {{ Cookie::get('ad_firstname') }}</h4>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/administrator/profile">ข้อมูลส่วนตัว</a>
+                        <a class="dropdown-item" href="/edit-profile">ข้อมูลส่วนตัว</a>
+                        <a class="dropdown-item" href="/change-password">เปลี่ยนรหัสผ่าน</a>
                         <a class="dropdown-item" href="/backend-logout">ออกจากระบบ</a>
                     </div>
                 @endif

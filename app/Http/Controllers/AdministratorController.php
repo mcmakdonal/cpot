@@ -12,7 +12,7 @@ class AdministratorController extends Controller
     public function __construct()
     {
         $this->middleware('islogin', ['except' => [
-            'check_login', 'forget_password','show','update_profile'
+            'check_login', 'forget_password', 'show', 'update_profile','edit_password','update_password'
         ]]);
     }
     /**
@@ -22,7 +22,7 @@ class AdministratorController extends Controller
      */
     public function index()
     {
-        if(\Cookie::get('ad_permission') != "S"){
+        if (\Cookie::get('ad_permission') != "S") {
             abort(404);
         }
         $data = Admin::lists();
@@ -36,7 +36,7 @@ class AdministratorController extends Controller
      */
     public function create()
     {
-        if(\Cookie::get('ad_permission') != "S"){
+        if (\Cookie::get('ad_permission') != "S") {
             abort(404);
         }
         $role = Admin::$role;
@@ -51,7 +51,7 @@ class AdministratorController extends Controller
      */
     public function store(Request $request)
     {
-        if(\Cookie::get('ad_permission') != "S"){
+        if (\Cookie::get('ad_permission') != "S") {
             abort(404);
         }
         $validator = Validator::make($request->all(), [
@@ -133,16 +133,10 @@ class AdministratorController extends Controller
             'ad_lastname' => 'required',
             'ad_phone' => 'required|numeric',
             'ad_ogz' => 'required',
-            'ad_password' => 'nullable',
-            'conf_password' => 'nullable',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        if ($request->ad_password != $request->conf_password) {
-            return redirect()->back()->withErrors(array('error' => 'Password not macth !'));
         }
 
         $id = \Cookie::get('ad_id');
@@ -154,10 +148,6 @@ class AdministratorController extends Controller
             'update_date' => date('Y-m-d H:i:s'),
             'update_by' => \Cookie::get('ad_id'),
         ];
-
-        if ($request->ad_password != "") {
-            $args['ad_password'] = Hash::make($request->ad_password);
-        }
 
         $status = Admin::update($args, $id);
         if ($status['status']) {
@@ -175,12 +165,12 @@ class AdministratorController extends Controller
      */
     public function edit($id)
     {
-        if(\Cookie::get('ad_permission') != "S"){
+        if (\Cookie::get('ad_permission') != "S") {
             abort(404);
         }
         $data = Admin::get_admin($id);
         $role = Admin::$role;
-        return view('administrator.edit', ['data' => $data,'role' => $role]);
+        return view('administrator.edit', ['data' => $data, 'role' => $role]);
     }
 
     /**
@@ -192,7 +182,7 @@ class AdministratorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if(\Cookie::get('ad_permission') != "S"){
+        if (\Cookie::get('ad_permission') != "S") {
             abort(404);
         }
         $validator = Validator::make($request->all(), [
@@ -215,7 +205,7 @@ class AdministratorController extends Controller
         }
 
         $ad_role = [];
-        if($request->ad_role != null){
+        if ($request->ad_role != null) {
             if (count($request->ad_role) > 0) {
                 foreach ($request->ad_role as $key => $value) {
                     array_push($ad_role, $value);
@@ -254,7 +244,7 @@ class AdministratorController extends Controller
      */
     public function destroy($id)
     {
-        if(\Cookie::get('ad_permission') != "S"){
+        if (\Cookie::get('ad_permission') != "S") {
             abort(404);
         }
         if ($id === '1' || \Cookie::get('ad_id') == $id) {
@@ -308,5 +298,44 @@ class AdministratorController extends Controller
 
         $user = Admin::forget_password($request->email);
         return response()->json($user);
+    }
+
+    public function edit_password()
+    {
+        if (!(\Cookie::get('ad_id') !== null)) {
+            abort(404);
+        }
+        $id = \Cookie::get('ad_id');
+        $data = Admin::get_admin($id);
+        return view('administrator.cpassword', ['data' => $data]);
+    }
+
+    public function update_password(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'ad_password' => 'required|string|max:250',
+            'conf_password' => 'required|string|max:250',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        if ($request->ad_password != $request->conf_password) {
+            return redirect()->back()->withErrors(array('error' => 'Password not macth !'));
+        }
+
+        $args = [
+            'ad_password' => Hash::make($request->ad_password),
+            'update_date' => date('Y-m-d H:i:s'),
+            'update_by' => \Cookie::get('ad_id'),
+        ];
+
+        $status = Admin::update($args, \Cookie::get('ad_id'));
+        if ($status['status']) {
+            return redirect("/change-password")->with('status', 'บันทึกสำเร็จ');
+        } else {
+            return redirect()->back()->withErrors(array('error' => 'error'));
+        }
     }
 }

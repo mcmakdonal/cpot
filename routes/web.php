@@ -39,8 +39,11 @@ Route::post('/forget-password', 'AdministratorController@forget_password');
 
 // admin module //
 Route::resource('administrator', 'AdministratorController');
-Route::get('/administrator/profile', 'AdministratorController@show');
-Route::post('/administrator/profile', 'AdministratorController@update_profile');
+Route::get('/edit-profile', 'AdministratorController@show');
+Route::post('/edit-profile', 'AdministratorController@update_profile');
+
+Route::get('/change-password', 'AdministratorController@edit_password');
+Route::post('/change-password', 'AdministratorController@update_password');
 
 Route::resource('evaluation', 'EvaluationController');
 Route::post('/evaluation/active', 'EvaluationController@active');

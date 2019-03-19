@@ -92,6 +92,9 @@ YouTube และ สินค้า'])
                     "previous": "ก่อนหน้า",
                     "next" : "ถัดไป"
                   }
+            },
+            "initComplete": function(settings, json) {
+                move_info();
             }
         });
     });
