@@ -47,23 +47,23 @@
                     <label for>หน่วยงาน</label>
                     <input type="text" class="form-control" name="ad_ogz" required>
                 </div>
-                <div class="col-md-6 mb-3">
+                {{-- <div class="col-md-6 mb-3">
                     <label for="">ระดับ</label>
                     <select class="form-control" name="ad_permission" size="1" required>
                         <option value="S">Super Administrator</option>
                         <option value="A" selected>Administrator</option>
                     </select>
-                </div>
-                {{-- <div class="col-md-6 mb-3">
+                </div> --}}
+                <div class="col-md-6 mb-3">
                     <label for="">สิทธิ์การเข้าถึง</label>
-                    <select class="form-control role-multiple" name="ad_role[]" size="1" multiple="multiple">
-                        @foreach ($role as $key => $item)
-                            <option value="{{$item['id']}}"> {{$item['name']}} </option>
+                    <select class="form-control role-multiple" name="per_id" size="1">
+                        @foreach ($per as $key => $item)
+                            <option value="{{$item->per_id}}"> {{$item->per_name}} </option>
                         @endforeach
                     </select>
-                </div> --}}
+                </div>
 
-                <div class="col-md-12 mb-3">
+                {{-- <div class="col-md-12 mb-3">
                     <label for="">สิทธิ์การเข้าถึง</label><br /> 
                     @foreach ($role as $key => $item)
                         <div class="custom-control custom-checkbox custom-control-inline">
@@ -71,7 +71,7 @@
                             <label class="custom-control-label" for="customCheck{{$item['id']}}"> {{$item['name']}} </label>
                         </div>
                     @endforeach
-                </div>
+                </div> --}}
             </div>
             <div class="form-group text-center mt-3">
                 <button type="submit" class="btn btn-success">บันทึก</button>

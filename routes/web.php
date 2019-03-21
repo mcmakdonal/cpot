@@ -32,6 +32,7 @@ Route::get('/backend-logout', function () {
     return redirect('/')->withCookie(Cookie::forget('ad_id'))
     ->withCookie(Cookie::forget('ad_firstname'))
     ->withCookie(Cookie::forget('ad_permission'))
+    ->withCookie(Cookie::forget('per_id'))
     ->withCookie(Cookie::forget('ad_role'));
 });
 Route::post('/forget-password', 'AdministratorController@forget_password');
@@ -44,6 +45,8 @@ Route::post('/edit-profile', 'AdministratorController@update_profile');
 
 Route::get('/change-password', 'AdministratorController@edit_password');
 Route::post('/change-password', 'AdministratorController@update_password');
+
+Route::resource('permission', 'PermissionController');
 
 Route::resource('evaluation', 'EvaluationController');
 Route::post('/evaluation/active', 'EvaluationController@active');

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Table\Evaluation;
+use App\Table\Permission;
 use Illuminate\Http\Request;
 use Validator;
 
-class EvaluationController extends Controller
+class PermissionController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('islogin:2');
+        $this->middleware('islogin');
     }
     /**
      * Display a listing of the resource.
@@ -19,9 +19,11 @@ class EvaluationController extends Controller
      */
     public function index()
     {
-        $data = Evaluation::lists();
-        $del = (\Helper::instance()->check_role(2)) ? true : false;
-        return view('evaluation.index', ['data' => $data, 'del' => $del]);
+        if (!\Helper::instance()->check_role(9)) {
+            abort(404);
+        }
+        $data = Permission::lists();
+        return view('permission.index', ['data' => $data]);
     }
 
     /**
@@ -31,7 +33,11 @@ class EvaluationController extends Controller
      */
     public function create()
     {
-        return view('evaluation.create');
+        if (!\Helper::instance()->check_role(9)) {
+            abort(404);
+        }
+        $role = Permission::$role;
+        return view('permission.create', ['role' => $role]);
     }
 
     /**
@@ -42,18 +48,28 @@ class EvaluationController extends Controller
      */
     public function store(Request $request)
     {
+        if (!\Helper::instance()->check_role(9)) {
+            abort(404);
+        }
         $validator = Validator::make($request->all(), [
-            'et_topic' => 'required',
-            'et_question.*' => 'required|string|min:1',
+            'per_name' => 'required',
+            'per_role' => 'required',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        $per_role = [];
+        if (count($request->per_role) > 0) {
+            foreach ($request->per_role as $value) {
+                array_push($per_role, $value);
+            }
+        }
+
         $args = [
-            'et_topic' => $request->et_topic,
-            'et_active' => "I",
+            'per_name' => $request->per_name,
+            'per_role' => json_encode($per_role),
             'create_date' => date('Y-m-d H:i:s'),
             'create_by' => \Cookie::get('ad_id'),
             'update_date' => date('Y-m-d H:i:s'),
@@ -61,18 +77,10 @@ class EvaluationController extends Controller
             'record_status' => 'A',
         ];
 
-        $question = [];
-        foreach ($request->question as $k => $v) {
-            $q = [
-                'q_question' => $v,
-            ];
-            array_push($question, $q);
-        }
-
-        $status = Evaluation::insert($args, $question);
+        $status = Permission::insert($args);
         if ($status['status']) {
             $id = $status['id'];
-            return redirect("/evaluation/$id/edit")->with('status', 'บันทึกสำเร็จ');
+            return redirect("/permission/$id/edit")->with('status', 'บันทึกสำเร็จ');
         } else {
             return redirect()->back()->withErrors(array('error' => 'error'));
         }
@@ -97,8 +105,12 @@ class EvaluationController extends Controller
      */
     public function edit($id)
     {
-        $data = Evaluation::get_data($id);
-        return view('evaluation.edit', ['data' => $data]);
+        if (!\Helper::instance()->check_role(9)) {
+            abort(404);
+        }
+        $data = Permission::get($id);
+        $role = Permission::$role;
+        return view('permission.edit', ['data' => $data, 'role' => $role]);
     }
 
     /**
@@ -110,32 +122,37 @@ class EvaluationController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!\Helper::instance()->check_role(9)) {
+            abort(404);
+        }
         $validator = Validator::make($request->all(), [
-            'et_topic' => 'required',
-            'et_question.*' => 'required|string|min:1',
+            'per_name' => 'required',
+            'per_role' => 'required',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        $per_role = [];
+        if ($request->per_role != null) {
+            if (count($request->per_role) > 0) {
+                foreach ($request->per_role as $value) {
+                    array_push($per_role, $value);
+                }
+            }
+        }
+
         $args = [
-            'et_topic' => $request->et_topic,
+            'per_name' => $request->per_name,
+            'per_role' => json_encode($per_role),
             'update_date' => date('Y-m-d H:i:s'),
             'update_by' => \Cookie::get('ad_id'),
         ];
 
-        $question = [];
-        foreach ($request->question as $k => $v) {
-            $q = [
-                'q_question' => $v,
-            ];
-            array_push($question, $q);
-        }
-
-        $status = Evaluation::update($args, $question, $id);
+        $status = Permission::update($args, $id);
         if ($status['status']) {
-            return redirect("/evaluation/$id/edit")->with('status', 'บันทึกสำเร็จ');
+            return redirect("/permission/$id/edit")->with('status', 'บันทึกสำเร็จ');
         } else {
             return redirect()->back()->withErrors(array('error' => 'error'));
         }
@@ -149,42 +166,16 @@ class EvaluationController extends Controller
      */
     public function destroy($id)
     {
-        if ($id == '' || $id == null) {
+        if (!\Helper::instance()->check_role(9)) {
+            abort(404);
+        }
+        if(Permission::check_in_use($id)){
             return response()->json([
                 'status' => false,
+                'message' => 'ถูกใช้งานอยู่ ไม่สามารถลบได้'
             ]);
         }
-        $result = Evaluation::delete($id);
+        $result = Permission::delete($id);
         return response()->json($result);
-    }
-
-    public function active(Request $request)
-    {
-        $id = $request->id;
-        if ($id == "" || $id == null) {
-            return response()->json([
-                'status' => false,
-                'message' => 'error',
-            ]);
-        } else {
-            $ad_id = \Cookie::get('ad_id');
-            $result = Evaluation::active($id, $ad_id, "A");
-            return response()->json($result);
-        }
-    }
-
-    public function unactive(Request $request)
-    {
-        $id = $request->id;
-        if ($id == "" || $id == null) {
-            return response()->json([
-                'status' => false,
-                'message' => 'error',
-            ]);
-        } else {
-            $ad_id = \Cookie::get('ad_id');
-            $result = Evaluation::active($id, $ad_id, "I");
-            return response()->json($result);
-        }
     }
 }

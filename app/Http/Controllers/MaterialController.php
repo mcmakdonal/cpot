@@ -23,7 +23,7 @@ class MaterialController extends Controller
     public function index()
     {
         $data = Material::lists();
-        $del = (\Cookie::get('ad_permission') == "S") ? true : false;
+        $del = (\Helper::instance()->check_role(5)) ? true : false;
         return view('material.index', ['data' => $data, 'del' => $del]);
     }
 

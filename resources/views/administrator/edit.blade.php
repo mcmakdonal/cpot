@@ -54,9 +54,10 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">ระดับ</label>
-                    <select class="form-control" name="ad_permission" size="1" required>
-                        <option value="S" {{ ($data[0]->ad_permission == "S" )? "selected" : "" }}>Super Administrator</option>
-                        <option value="A" {{ ($data[0]->ad_permission == "A" )? "selected" : "" }}>Administrator</option>
+                    <select class="form-control" name="per_id" size="1" required>
+                        @foreach ($per as $key => $item)
+                            <option value="{{$item->per_id}}" {{ ($item->per_id == $data[0]->per_id )? "selected" : "" }} > {{$item->per_name}} </option>
+                        @endforeach
                     </select>
                 </div>
                 {{-- <div class="col-md-6 mb-3">
@@ -75,7 +76,7 @@
                     </select>
                 </div> --}}
 
-                <div class="col-md-12 mb-3">
+                {{-- <div class="col-md-12 mb-3">
                     <label for="">สิทธิ์การเข้าถึง</label><br /> 
                     @php
                         $have = json_decode($data[0]->ad_role);
@@ -86,7 +87,8 @@
                             <label class="custom-control-label" for="customCheck{{$item['id']}}"> {{$item['name']}} </label>
                         </div>
                     @endforeach
-                </div>
+                </div> --}}
+                
             </div>
             <div class="form-group text-center mt-3">
                 <button type="submit" class="btn btn-success">บันทึก</button>

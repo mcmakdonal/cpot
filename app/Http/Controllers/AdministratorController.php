@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Table\Admin;
+use App\Table\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Validator;
@@ -12,7 +13,7 @@ class AdministratorController extends Controller
     public function __construct()
     {
         $this->middleware('islogin', ['except' => [
-            'check_login', 'forget_password', 'show', 'update_profile','edit_password','update_password'
+            'check_login', 'forget_password', 'show', 'update_profile', 'edit_password', 'update_password',
         ]]);
     }
     /**
@@ -22,7 +23,7 @@ class AdministratorController extends Controller
      */
     public function index()
     {
-        if (\Cookie::get('ad_permission') != "S") {
+        if (!\Helper::instance()->check_role(8)) {
             abort(404);
         }
         $data = Admin::lists();
@@ -36,11 +37,12 @@ class AdministratorController extends Controller
      */
     public function create()
     {
-        if (\Cookie::get('ad_permission') != "S") {
+        if (!\Helper::instance()->check_role(8)) {
             abort(404);
         }
-        $role = Admin::$role;
-        return view('administrator.create', ['role' => $role]);
+        // $role = Admin::$role;
+        $per = Permission::lists();
+        return view('administrator.create', ['per' => $per]);
     }
 
     /**
@@ -51,7 +53,7 @@ class AdministratorController extends Controller
      */
     public function store(Request $request)
     {
-        if (\Cookie::get('ad_permission') != "S") {
+        if (!\Helper::instance()->check_role(8)) {
             abort(404);
         }
         $validator = Validator::make($request->all(), [
@@ -62,8 +64,9 @@ class AdministratorController extends Controller
             'ad_email' => 'required|unique:tbl_administrator,ad_email',
             'ad_phone' => 'required|numeric',
             'ad_ogz' => 'required',
-            'ad_permission' => 'required',
-            'ad_role' => 'nullable',
+            'per_id' => 'required',
+            // 'ad_permission' => 'required',
+            // 'ad_role' => 'nullable',
             'conf_password' => 'required',
         ], [
             'ad_email.unique' => 'อีเมลนี้ถูกใช้ไปแล้ว กรุณาใช้อีเมลใหม่',
@@ -77,12 +80,12 @@ class AdministratorController extends Controller
             return redirect()->back()->withErrors(array('error' => 'Password not macth !'));
         }
 
-        $ad_role = [];
-        if (count($request->ad_role) > 0) {
-            foreach ($request->ad_role as $key => $value) {
-                array_push($ad_role, $value);
-            }
-        }
+        // $ad_role = [];
+        // if (count($request->ad_role) > 0) {
+        //     foreach ($request->ad_role as $key => $value) {
+        //         array_push($ad_role, $value);
+        //     }
+        // }
 
         $args = [
             'ad_firstname' => $request->ad_firstname,
@@ -92,8 +95,9 @@ class AdministratorController extends Controller
             'ad_email' => $request->ad_email,
             'ad_phone' => $request->ad_phone,
             'ad_ogz' => $request->ad_ogz,
-            'ad_permission' => $request->ad_permission,
-            'ad_role' => json_encode($ad_role),
+            'per_id' => $request->per_id,
+            // 'ad_permission' => $request->ad_permission,
+            // 'ad_role' => json_encode($ad_role),
             'create_date' => date('Y-m-d H:i:s'),
             'create_by' => \Cookie::get('ad_id'),
             'update_date' => date('Y-m-d H:i:s'),
@@ -165,12 +169,13 @@ class AdministratorController extends Controller
      */
     public function edit($id)
     {
-        if (\Cookie::get('ad_permission') != "S") {
+        if (!\Helper::instance()->check_role(8)) {
             abort(404);
         }
         $data = Admin::get_admin($id);
-        $role = Admin::$role;
-        return view('administrator.edit', ['data' => $data, 'role' => $role]);
+        // $role = Admin::$role;
+        $per = Permission::lists();
+        return view('administrator.edit', ['data' => $data, 'per' => $per]);
     }
 
     /**
@@ -182,7 +187,7 @@ class AdministratorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (\Cookie::get('ad_permission') != "S") {
+        if (!\Helper::instance()->check_role(8)) {
             abort(404);
         }
         $validator = Validator::make($request->all(), [
@@ -190,8 +195,9 @@ class AdministratorController extends Controller
             'ad_lastname' => 'required',
             'ad_phone' => 'required|numeric',
             'ad_ogz' => 'required',
-            'ad_permission' => 'required',
-            'ad_role' => 'nullable',
+            // 'ad_permission' => 'required',
+            // 'ad_role' => 'nullable',
+            'per_id' => 'required',
             'ad_password' => 'nullable',
             'conf_password' => 'nullable',
         ]);
@@ -204,22 +210,23 @@ class AdministratorController extends Controller
             return redirect()->back()->withErrors(array('error' => 'Password not macth !'));
         }
 
-        $ad_role = [];
-        if ($request->ad_role != null) {
-            if (count($request->ad_role) > 0) {
-                foreach ($request->ad_role as $key => $value) {
-                    array_push($ad_role, $value);
-                }
-            }
-        }
+        // $ad_role = [];
+        // if ($request->ad_role != null) {
+        //     if (count($request->ad_role) > 0) {
+        //         foreach ($request->ad_role as $key => $value) {
+        //             array_push($ad_role, $value);
+        //         }
+        //     }
+        // }
 
         $args = [
             'ad_firstname' => $request->ad_firstname,
             'ad_lastname' => $request->ad_lastname,
             'ad_phone' => $request->ad_phone,
             'ad_ogz' => $request->ad_ogz,
-            'ad_permission' => $request->ad_permission,
-            'ad_role' => json_encode($ad_role),
+            // 'ad_permission' => $request->ad_permission,
+            // 'ad_role' => json_encode($ad_role),
+            'per_id' => $request->per_id,
             'update_date' => date('Y-m-d H:i:s'),
             'update_by' => \Cookie::get('ad_id'),
         ];
@@ -244,7 +251,7 @@ class AdministratorController extends Controller
      */
     public function destroy($id)
     {
-        if (\Cookie::get('ad_permission') != "S") {
+        if (!\Helper::instance()->check_role(8)) {
             abort(404);
         }
         if ($id === '1' || \Cookie::get('ad_id') == $id) {
@@ -278,9 +285,10 @@ class AdministratorController extends Controller
         if (Hash::check($request->password, $user[0]->ad_password)) {
             return redirect("/administrator/profile")
                 ->cookie('ad_id', $user[0]->ad_id, 14660)
-                ->cookie('ad_permission', $user[0]->ad_permission, 14660)
-                ->cookie('ad_role', $user[0]->ad_role, 14660)
-                ->cookie('ad_firstname', $user[0]->ad_firstname . " " . $user[0]->ad_lastname, 14660);
+                // ->cookie('ad_permission', $user[0]->ad_permission, 14660)
+                // ->cookie('ad_role', $user[0]->ad_role, 14660)
+                ->cookie('ad_firstname', $user[0]->ad_firstname . " " . $user[0]->ad_lastname, 14660)
+                ->cookie('per_id', $user[0]->per_id, 14660);
         } else {
             return redirect()->back()->withErrors(array('error' => 'Username or Password Incorrect'));
         }

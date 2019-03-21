@@ -1,7 +1,8 @@
 <?php
 
 namespace App;
-use App\Table\Admin;
+
+use App\Table\Permission;
 
 class Helper
 {
@@ -27,12 +28,17 @@ class Helper
 
     public function check_role($role2check = "")
     {
-        $ad_permission = \Cookie::get('ad_permission');
-        if($ad_permission == "S"){
-            return true;
+        $per_id = \Cookie::get('per_id');
+
+        $per = Permission::get($per_id);
+        if (count($per) == 0) {
+            header("location ". url("backend-login"));
         }
-        $ad_role = json_decode(\Cookie::get('ad_role'));
-        if(in_array( $role2check,$ad_role )){
+        // if($ad_permission == "S"){
+        //     return true;
+        // }
+        $ad_role = json_decode($per[0]->per_role);
+        if (in_array($role2check, $ad_role)) {
             return true;
         }
 
