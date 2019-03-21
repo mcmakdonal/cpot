@@ -56,11 +56,11 @@
                 <div class="menu-inner">
                     <nav>
                         <ul class="metismenu" id="menu">
-                            @if(\Helper::instance()->check_role(8))
-                                <li class="{{ (strpos(url()->current(),'permission') ) ? 'active' : '' }}"><a href="/permission"><i class="ti-user"></i> <span>การจัดสิทธิ์การใช้งาน</span></a></li>
-                            @endif
                             @if(\Helper::instance()->check_role(9))
                                 <li class="{{ (strpos(url()->current(),'administrator') ) ? 'active' : '' }}"><a href="/administrator"><i class="ti-user"></i> <span>การจัดการผู้ดูแลระบบ</span></a></li>
+                            @endif
+                            @if(\Helper::instance()->check_role(8))
+                                <li class="{{ (strpos(url()->current(),'permission') ) ? 'active' : '' }}"><a href="/permission"><i class="ti-user"></i> <span>การจัดสิทธิ์การใช้งาน</span></a></li>
                             @endif
                             @if(\Helper::instance()->check_role(1))
                                 <li class="{{ (strpos(url()->current(),'product-match') ) ? 'active' : '' }}"><a href="/product-match"><i class="ti-layers-alt"></i> <span>การจัดการ YouTube และ สินค้า</span></a></li>
