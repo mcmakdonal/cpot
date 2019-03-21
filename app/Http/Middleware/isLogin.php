@@ -24,7 +24,7 @@ class isLogin
         if (!(\Cookie::get('per_id') !== null)) {
             \Cookie::forget('ad_id');
             \Cookie::forget('per_id');
-            return redirect('/backend-login');
+            return redirect('/backend-logout');
             abort(404);
         }
 

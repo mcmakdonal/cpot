@@ -32,7 +32,7 @@ class Helper
 
         $per = Permission::get($per_id);
         if (count($per) == 0) {
-            header("location ". url("backend-login"));
+            return redirect('/backend-logout');
         }
         // if($ad_permission == "S"){
         //     return true;
