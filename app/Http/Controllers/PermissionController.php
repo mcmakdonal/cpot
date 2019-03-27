@@ -126,7 +126,7 @@ class PermissionController extends Controller
             abort(404);
         }
         $validator = Validator::make($request->all(), [
-            'per_name' => 'required',
+            // 'per_name' => 'required',
             'per_role' => 'required',
         ]);
 
@@ -144,7 +144,7 @@ class PermissionController extends Controller
         }
 
         $args = [
-            'per_name' => $request->per_name,
+            // 'per_name' => $request->per_name,
             'per_role' => json_encode($per_role),
             'update_date' => date('Y-m-d H:i:s'),
             'update_by' => \Cookie::get('ad_id'),

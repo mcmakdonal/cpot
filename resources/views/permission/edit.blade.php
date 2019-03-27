@@ -22,19 +22,42 @@
             <div class="form-row">
                 <div class="col-md-6 mb-3">
                     <label for="">ชื่อสิทธิ์</label>
-                    <input type="text" class="form-control" name="per_name" value="{{ $data[0]->per_name }}" required="">
+                    <input type="text" class="form-control" value="{{ $data[0]->per_name }}" required="" readonly>
                 </div>
-                <div class="col-md-12 mb-3">
+                <div class="col-md-6 mb-3">
                     <label for="">สิทธิ์การเข้าถึง</label><br /> 
                     @php
                         $have = json_decode($data[0]->per_role);
                     @endphp
-                    @foreach ($role as $key => $item)
+                    {{-- @foreach ($role as $key => $item)
                         <div class="custom-control custom-checkbox custom-control-inline">
                             <input type="checkbox" @if(in_array($item['id'],$have)) checked="checked" @else @endif value="{{$item['id']}}" class="custom-control-input" name="per_role[]" id="customCheck{{$item['id']}}" value="{{$item['id']}}">
                             <label class="custom-control-label" for="customCheck{{$item['id']}}"> {{$item['name']}} </label>
                         </div>
-                    @endforeach
+                    @endforeach --}}
+
+                    <div class="data-tables">
+                        <table id="" class="text-center table">
+                            {{-- <thead class="bg-light text-capitalize">
+                                <tr>
+                                    <th>สิทธิ์การเข้าถึง</th>
+                                </tr>
+                            </thead> --}}
+                            <tbody>
+                                @foreach ($role as $key => $item)
+                                <tr>
+                                    <td class="text-left">
+                                        <div class="custom-control custom-checkbox custom-control-inline">
+                                            <input type="checkbox" @if(in_array($item['id'],$have)) checked="checked" @else @endif value="{{$item['id']}}" class="custom-control-input" name="per_role[]" id="customCheck{{$item['id']}}" value="{{$item['id']}}">
+                                            <label class="custom-control-label" for="customCheck{{$item['id']}}"> {{$item['name']}} </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
             <div class="form-group text-center mt-3">

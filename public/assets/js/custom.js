@@ -138,7 +138,7 @@ $(document).ready(function () {
         ]
     });
 
-    $("ul.pagination li a").on('click change',function () {
+    $("ul.pagination li a").on('click change', function () {
         change_word();
     });
 
@@ -212,6 +212,14 @@ function generate_youtube(type = "") {
             $(".prev").attr("token", obj.prevPageToken);
             $(".next").attr("token", obj.nextPageToken);
 
+            var txt = [];
+            $(".text-select").each(function () {
+                // alert($(this).val());
+                txt.push($(this).val());
+            });
+
+            console.log(txt);
+
             $(".card-youtube").remove();
             for (i = 0; i < items.length; i++) {
                 var value = obj.items[i];
@@ -227,6 +235,21 @@ function generate_youtube(type = "") {
                     my_image: img,
                     my_desc: desc
                 };
+
+                var btn_class = "";
+                var btn_attr = "";
+                var btn_txt = "";
+                if (jQuery.inArray(title, txt) != -1) {
+                    // console.log("is in array");
+                    btn_class = "btn-disabled";
+                    btn_attr = "disabled";
+                    btn_txt = "เลือกแล้ว";
+                } else {
+                    // console.log("is NOT in array");
+                    btn_class = "btn-primary";
+                    btn_txt = "เลือก";
+                }
+
                 var str_txt = "<div class=\"card-youtube col-lg-4 col-md-4 mt-3 d-flex align-items-stretch\">\n" +
                     "                    <div class=\"card card-bordered\">\n" +
                     "                        <a href=\"https://www.youtube.com/watch?v=" + path + "\" target=\"_blank\">\n" +
@@ -236,7 +259,7 @@ function generate_youtube(type = "") {
                     "                            <h4 class=\"title\">" + title + "</h4>\n" +
                     "                            <h6 class=\"title\">วันที่ : " + d + "</h6>\n" +
                     "                            <p class=\"card-text\">\"" + desc + "</p>\n" +
-                    "                              <button type=\"button\" onclick=\"select_youtube(this)\" class=\"mt-auto btn btn-primary btn-youtube\" data=\'" + JSON.stringify(json) + "\'>เลือก</button>\n" +
+                    "                              <button type=\"button\" onclick=\"select_youtube(this)\" class=\"mt-auto btn " + btn_class + " btn-youtube\" " + btn_attr + " data=\'" + JSON.stringify(json) + "\'> " + btn_txt + " </button>\n" +
                     "                        </div>\n" +
                     "                    </div>\n" +
                     "                </div>";
@@ -257,7 +280,7 @@ function select_youtube(e) {
     var class_uq = uuidv4();
     var html = '';
     var title = data.my_title;
-    html += '<div class="col-md-11 mb-3 cyoutube ' + class_uq + '"><label class="sr-only" for=""></label><div class="input-group"><div class="input-group-prepend"><div class="input-group-text">' + cyoutube + '.</div></div><input type="text" class="form-control" readonly value="' + title.replace('"', '') + '"></div></div>';
+    html += '<div class="col-md-11 mb-3 cyoutube ' + class_uq + '"><label class="sr-only" for=""></label><div class="input-group"><div class="input-group-prepend"><div class="input-group-text">' + cyoutube + '.</div></div><input type="text" class="form-control text-select" readonly value="' + title.replace('"', '') + '"></div></div>';
     html += '<div class="col-md-1 mb-3 ' + class_uq + '"><button type="button" data="' + class_uq + '" onclick="remove_block(this)" class="btn btn-danger"> ลบ <span class="ti-trash"></span></button></div>';
     $("#q_target").append(html);
 
@@ -507,3 +530,36 @@ function change_word() {
     var txt = $("#DataTables_Table_0_info").text();
     $(".info_txt .dataTables_info").text(txt);
 }
+
+$("input[name=ad_username].edit").on('keyup', function () {
+    var data = {
+        ad_username: $(this).val(),
+        ad_id: $(this).attr("data-id")
+    };
+    $.ajax({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                "content"
+            )
+        },
+        url: "/check-username-exists",
+        method: "post",
+        data: data,
+        beforeSend() {},
+        success: function (result) {
+            var obj = result;
+            console.log(obj);
+            if(obj.status){
+                $(".username-check").show();
+                $("input[name=check]").val("false");
+            } else {
+                $(".username-check").hide();
+                $("input[name=check]").val("true");
+            }
+        },
+        error(xhr, status, error) {
+            swal("Danger !", "Fail !", error + " Status : " + status, "error");
+            $(".card").LoadingOverlay("hide", true);
+        }
+    });
+});

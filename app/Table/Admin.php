@@ -35,9 +35,10 @@ class Admin extends ServiceProvider
         ],
     ];
 
-    public static function check_username_exists($email)
+    public static function check_username_exists($ad_username, $ad_id)
     {
-        $matchThese[] = ['ad_username', '=', $email];
+        $matchThese[] = ['ad_username', '=', $ad_username];
+        $matchThese[] = ['ad_id', '!=', $ad_id];
         $matchThese[] = ['record_status', '=', 'A'];
         $data = DB::table('tbl_administrator')
             ->select('ad_id')

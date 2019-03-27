@@ -31,7 +31,7 @@
             </div>
             <div class="form-group text-center mt-3">
                 <button type="submit" class="btn btn-success">บันทึก</button>
-                <?=link_to('/administrator', $title = 'ยกเลิก', ['class' => 'btn btn-warning'], $secure = null);?>
+                <?=link_to('/edit-profile', $title = 'ยกเลิก', ['class' => 'btn btn-warning'], $secure = null);?>
             </div>
             {!! Form::close() !!}
         </div>

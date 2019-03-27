@@ -30,11 +30,18 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">ชื่อผู้ใช้</label>
-                    <input type="text" class="form-control" name="ad_username" value="{{ $data[0]->ad_username }}" readonly="">
+                    @if($edit_username)
+                        <input type="text" class="form-control edit" name="ad_username" data-id="{{$data[0]->ad_id}}" value="{{ $data[0]->ad_username }}" required>
+                        <div class="alert alert-danger username-check" role="alert" style="display: none">
+                            <strong> Error !</strong> Username นี้ถูกใช้ไปแล้ว
+                        </div>
+                    @else
+                        <input type="text" class="form-control" value="{{ $data[0]->ad_username }}" readonly>
+                    @endif
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for>อีเมล</label>
-                    <input type="email" class="form-control" name="ad_email" value="{{ $data[0]->ad_email }}" readonly>
+                    <input type="email" class="form-control" name="ad_email" value="{{ $data[0]->ad_email }}">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">รหัสผ่าน</label>
@@ -91,6 +98,7 @@
                 
             </div>
             <div class="form-group text-center mt-3">
+                <input type="hidden" value="true" name="check">
                 <button type="submit" class="btn btn-success">บันทึก</button>
                 <?=link_to('/administrator', $title = 'ยกเลิก', ['class' => 'btn btn-warning'], $secure = null);?>
             </div>

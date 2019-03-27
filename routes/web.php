@@ -36,6 +36,7 @@ Route::get('/backend-logout', function () {
     ->withCookie(Cookie::forget('ad_role'));
 });
 Route::post('/forget-password', 'AdministratorController@forget_password');
+Route::post('/check-username-exists', 'AdministratorController@fn_check_username_exists');
 // login module //
 
 // admin module //

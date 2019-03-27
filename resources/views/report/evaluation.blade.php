@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <h4 class="header-title">รายงานแบบประเมิน</h4>
                     <div class="data-tables">
-                        <table id="eva_table" class="text-center" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <table id="eva_table" class="text-center">
                             <thead class="bg-light text-capitalize">
                                 <tr>
                                     <th style="width: 5%">#</th>

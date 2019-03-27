@@ -35,6 +35,9 @@ class Permission extends ServiceProvider
         ], [
             'id' => 9,
             'name' => 'จัดการสิทธิ์การใช้งาน',
+        ], [
+            'id' => 10,
+            'name' => 'สามารถแก้ไขข้อมูลส่วนตัวได้ทั้งหมด',
         ],
     ];
 

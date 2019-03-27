@@ -68,7 +68,7 @@
                             <div class="input-group-prepend">
                                 <div class="input-group-text">{{$k + 1}}.</div>
                             </div>
-                            <input type="text" class="form-control" type="text" value="{{ $v->my_title }}" readonly="">
+                            <input type="text" class="form-control text-select" type="text" value="{{ $v->my_title }}" readonly="">
                         </div>
                     </div>
                     <div class="col-md-2 col-xs-2 mb-3 {{ $class }}">

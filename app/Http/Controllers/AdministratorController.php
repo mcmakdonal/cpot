@@ -127,7 +127,8 @@ class AdministratorController extends Controller
         }
         $id = \Cookie::get('ad_id');
         $data = Admin::get_admin($id);
-        return view('administrator.profile', ['data' => $data]);
+        $edit_username = \Helper::instance()->check_role(10);
+        return view('administrator.profile', ['data' => $data, 'edit_username' => $edit_username]);
     }
 
     public function update_profile(Request $request)
@@ -137,10 +138,16 @@ class AdministratorController extends Controller
             'ad_lastname' => 'required',
             'ad_phone' => 'required|numeric',
             'ad_ogz' => 'required',
+            'ad_email' => 'required',
+            'check' => 'required',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        if (strtolower($request->check) === "false") {
+            return redirect()->back()->withErrors(array('error' => 'Username นี้ถูกใช้ไปแล้ว !'));
         }
 
         $id = \Cookie::get('ad_id');
@@ -149,13 +156,14 @@ class AdministratorController extends Controller
             'ad_lastname' => $request->ad_lastname,
             'ad_phone' => $request->ad_phone,
             'ad_ogz' => $request->ad_ogz,
+            'ad_email' => $request->ad_email,
             'update_date' => date('Y-m-d H:i:s'),
             'update_by' => \Cookie::get('ad_id'),
         ];
 
         $status = Admin::update($args, $id);
         if ($status['status']) {
-            return redirect("/administrator/profile")->cookie('ad_firstname', $request->ad_firstname . " " . $request->ad_lastname, 14660)->with('status', 'บันทึกสำเร็จ');
+            return redirect("/edit-profile")->cookie('ad_firstname', $request->ad_firstname . " " . $request->ad_lastname, 14660)->with('status', 'บันทึกสำเร็จ');
         } else {
             return redirect()->back()->withErrors(array('error' => 'error'));
         }
@@ -175,7 +183,8 @@ class AdministratorController extends Controller
         $data = Admin::get_admin($id);
         // $role = Admin::$role;
         $per = Permission::lists();
-        return view('administrator.edit', ['data' => $data, 'per' => $per]);
+        $edit_username = \Helper::instance()->check_role(10);
+        return view('administrator.edit', ['data' => $data, 'per' => $per, 'edit_username' => $edit_username]);
     }
 
     /**
@@ -190,20 +199,28 @@ class AdministratorController extends Controller
         if (!\Helper::instance()->check_role(8)) {
             abort(404);
         }
+
         $validator = Validator::make($request->all(), [
+            'ad_username' => (\Helper::instance()->check_role(10)) ? 'required' : 'nullable',
             'ad_firstname' => 'required',
             'ad_lastname' => 'required',
             'ad_phone' => 'required|numeric',
             'ad_ogz' => 'required',
             // 'ad_permission' => 'required',
             // 'ad_role' => 'nullable',
+            'ad_email' => 'required',
             'per_id' => 'required',
             'ad_password' => 'nullable',
             'conf_password' => 'nullable',
+            'check' => 'required',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        if (strtolower($request->check) === "false") {
+            return redirect()->back()->withErrors(array('error' => 'Username นี้ถูกใช้ไปแล้ว !'));
         }
 
         if ($request->ad_password != $request->conf_password) {
@@ -224,12 +241,17 @@ class AdministratorController extends Controller
             'ad_lastname' => $request->ad_lastname,
             'ad_phone' => $request->ad_phone,
             'ad_ogz' => $request->ad_ogz,
+            'ad_email' => $request->ad_email,
             // 'ad_permission' => $request->ad_permission,
             // 'ad_role' => json_encode($ad_role),
             'per_id' => $request->per_id,
             'update_date' => date('Y-m-d H:i:s'),
             'update_by' => \Cookie::get('ad_id'),
         ];
+
+        if (\Helper::instance()->check_role(10)) {
+            $args['ad_username'] = $request->ad_username;
+        }
 
         if ($request->ad_password != "") {
             $args['ad_password'] = Hash::make($request->ad_password);
@@ -283,7 +305,7 @@ class AdministratorController extends Controller
         }
 
         if (Hash::check($request->password, $user[0]->ad_password)) {
-            return redirect("/administrator/profile")
+            return redirect("/edit-profile")
                 ->cookie('ad_id', $user[0]->ad_id, 14660)
                 // ->cookie('ad_permission', $user[0]->ad_permission, 14660)
                 // ->cookie('ad_role', $user[0]->ad_role, 14660)
@@ -345,5 +367,20 @@ class AdministratorController extends Controller
         } else {
             return redirect()->back()->withErrors(array('error' => 'error'));
         }
+    }
+
+    public function fn_check_username_exists(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'ad_username' => 'required|string|max:250',
+            'ad_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(array('error' => 'error', 'status' => true));
+        }
+
+        $user = Admin::check_username_exists($request->ad_username, $request->ad_id);
+        return response()->json($user);
     }
 }
