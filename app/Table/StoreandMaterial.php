@@ -267,7 +267,7 @@ class StoreandMaterial extends ServiceProvider
     {
         $limit = 4;
         $matchThese = [];
-
+        $matchThese[] = ['tbl_material.record_status', '=', "A"];
         if ($id != "") {
             $matchThese[] = ['tbl_material.m_id', '=', "$id"];
         }
@@ -278,10 +278,10 @@ class StoreandMaterial extends ServiceProvider
         // วัตถุดิบทั้งหมด
         $count = DB::table('tbl_material')
             ->select(self::$material_field)
-            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
-            ->join('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
+            ->leftJoin('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
+            ->leftJoin('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
             // ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
-            ->join('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
+            ->leftJoin('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
             ->where($matchThese)
             ->orderBy('tbl_material.m_name', 'ASC')
             ->get()->toArray();
@@ -293,10 +293,10 @@ class StoreandMaterial extends ServiceProvider
         // เอาวัตถุดิบมา วน loop
         $data = DB::table('tbl_material')
             ->select(self::$material_field)
-            ->join('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
-            ->join('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
+            ->leftJoin('tbl_province', 'tbl_province.province_id', '=', 'tbl_material.province_id')
+            ->leftJoin('tbl_district', 'tbl_district.district_id', '=', 'tbl_material.district_id')
             // ->join('tbl_store', 'tbl_store.s_id', '=', 'tbl_material.s_id')
-            ->join('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
+            ->leftJoin('tbl_sub_district', 'tbl_sub_district.sub_district_id', '=', 'tbl_material.sub_district_id')
             ->where($matchThese)
             ->offset($offset)
             ->limit($limit)
